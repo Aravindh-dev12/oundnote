@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Prompt · Meet2Notes{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="/static/css/prompt.css?v={{ asset_version }}">
+<link rel="stylesheet" href="/static/css/post-meeting-assistant.css?v={{ asset_version }}">
+{% endblock %}
+{% block content %}
+<div class="page prompt-page">
+  <header class="meetings-page-header prompt-header">
+    <div class="workspace-heading">
+      <span class="workspace-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/><path d="M18 16v5M15.5 18.5h5"/></svg></span>
+      <div><h1>Prompt</h1><p>Ask your connected AI about one meeting or your complete local history.</p></div>
+    </div>
+    <div class="page-header-actions">
+      {% include "_theme_toggle.html" %}
+      <a class="icon-button" href="/settings#rag" aria-label="RAG settings" title="RAG settings"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="m19.4 15 .1.1-1.8 3.1-.2-.1a2 2 0 0 0-2.4.3l-.6.4a2 2 0 0 0-.9 2.2v.2H10V21a2 2 0 0 0-.9-2.2l-.6-.4a2 2 0 0 0-2.4-.3l-.2.1-1.8-3.1.1-.1a2 2 0 0 0 1-2v-.8a2 2 0 0 0-1-2l-.1-.1L5.9 7l.2.1a2 2 0 0 0 2.4-.3l.6-.4A2 2 0 0 0 10 4.2V4h3.6v.2a2 2 0 0 0 .9 2.2l.6.4a2 2 0 0 0 2.4.3l.2-.1 1.8 3.1-.1.1a2 2 0 0 0-1 2v.8a2 2 0 0 0 1 2Z"/></svg></a>
+    </div>
+  </header>
+
+  <main class="prompt-assistant" aria-label="Meeting Assistant">
+    {% set post_assistant_context = 'prompt' %}
+    {% set post_assistant_layout = 'embedded' %}
+    {% include "_post_meeting_assistant.html" %}
+  </main>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/post-meeting-assistant.js?v={{ asset_version }}" defer></script>{% endblock %}

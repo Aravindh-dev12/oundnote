@@ -1,0 +1,637 @@
+{% extends "base.html" %}
+{% block title %}Transcription · Meet2Notes{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="/static/css/transcription.css?v={{ asset_version }}">
+<link rel="stylesheet" href="/static/css/post-meeting-assistant.css?v={{ asset_version }}">
+{% endblock %}
+{% block content %}
+<div
+  class="page minimal-transcript-page"
+  data-meeting-id="{{ meeting.id if meeting else '' }}"
+  data-default-title="{{ default_title }}"
+>
+  <header class="minimal-page-header">
+    <div class="workspace-heading">
+      <span class="workspace-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3M8 22h8"/></svg>
+      </span>
+      <div>
+        <h1 data-i18n="workspace.title">Transcription</h1>
+        <p>Capture or import audio and turn it into editable text.</p>
+      </div>
+    </div>
+    <div class="page-header-actions">
+      {% include "_theme_toggle.html" %}
+      <a class="icon-button" href="/settings" aria-label="Settings" title="Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="m19.4 15 .1.1-1.8 3.1-.2-.1a2 2 0 0 0-2.4.3l-.6.4a2 2 0 0 0-.9 2.2v.2H10V21a2 2 0 0 0-.9-2.2l-.6-.4a2 2 0 0 0-2.4-.3l-.2.1-1.8-3.1.1-.1a2 2 0 0 0 1-2v-.8a2 2 0 0 0-1-2l-.1-.1L5.9 7l.2.1a2 2 0 0 0 2.4-.3l.6-.4A2 2 0 0 0 10 4.2V4h3.6v.2a2 2 0 0 0 .9 2.2l.6.4a2 2 0 0 0 2.4.3l.2-.1 1.8 3.1-.1.1a2 2 0 0 0-1 2v.8a2 2 0 0 0 1 2Z"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <div class="transcription-workspace" id="transcription-workspace">
+  <section class="transcription-canvas panel">
+    <header class="transcription-canvas-header">
+      <div class="transcription-name-control">
+        <button
+          type="button"
+          id="transcription-title-display"
+          class="transcription-title-display"
+          title="Click to rename this transcription"
+        >{{ default_title }}</button>
+        <input
+          id="transcription-title-input"
+          class="transcription-title-input hidden"
+          maxlength="200"
+          aria-label="Transcription name"
+        >
+        <span class="rename-hint">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 16-.5 4.5L8 20l11-11-4-4L4 16Z"/><path d="m13 7 4 4"/></svg>
+          Click the name to rename
+        </span>
+      </div>
+
+      <div class="transcription-primary-actions">
+        <button type="button" class="button primary start-transcription-button {{ '' if request.query_params.get('new') == '1' else 'hidden' }}" id="start-transcription">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3M8 22h8"/></svg>
+          Start transcription
+        </button>
+        <div class="live-action-group hidden" id="live-actions">
+          <button type="button" class="live-pause-button" id="pause-capture">
+            <svg class="pause-symbol" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14M16 5v14"/></svg>
+            <svg class="resume-symbol hidden" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 11 7-11 7V5Z"/></svg>
+            <span id="pause-capture-label">Pause transcription</span>
+          </button>
+          <button type="button" class="live-stop-button" id="stop-capture" title="Stop and transcribe">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1"/></svg>
+            <span>Stop</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <nav class="meeting-tabs hidden" id="meeting-tabs" role="tablist" aria-label="Meeting workspace">
+      <button type="button" class="active" role="tab" aria-selected="true" aria-controls="meeting-tab-transcript" data-meeting-tab="transcript">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6zM15 3v5h5M9 12h7M9 16h7"/></svg>
+        Transcription
+      </button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="meeting-tab-speakers" data-meeting-tab="speakers">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9.5 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM17 11l2 2 3-4"/></svg>
+        Speakers
+      </button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="meeting-tab-intelligence" data-meeting-tab="intelligence">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 9.8 8.8 4 11l5.8 2.2L12 19l2.2-5.8L20 11l-5.8-2.2L12 3ZM5 3v4M3 5h4"/></svg>
+        AI notes
+      </button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="meeting-tab-utilities" data-meeting-tab="utilities">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14M5 4h3M16 4h3"/></svg>
+        Utilities
+      </button>
+    </nav>
+
+    <div class="meeting-tab-panel active" id="meeting-tab-transcript" role="tabpanel" data-meeting-panel="transcript">
+    <div class="live-capture-strip hidden" id="live-capture-strip">
+      <span class="live-indicator"><i></i> Live</span>
+      <div class="live-source-copy">
+        <strong id="live-source-name">Audio source</strong>
+        <span id="live-capture-state">Listening locally</span>
+      </div>
+      <div class="level-meter" aria-label="Input level">
+        <span id="capture-level"></span>
+      </div>
+      <time id="capture-elapsed">00:00</time>
+      <div class="live-input-levels hidden" id="live-input-levels" aria-label="Audio input levels"></div>
+    </div>
+
+    <section class="live-ai-assistant-widget hidden" id="live-ai-assistant" aria-label="Live AI Assistant" data-collapsed="false">
+      <header class="live-ai-assistant-widget-header" id="live-ai-assistant-drag-handle">
+        <span class="live-ai-assistant-widget-icon" aria-hidden="true"><img src="/static/assets/images/live-assistant-avatar.png" alt=""></span>
+        <div class="live-ai-assistant-widget-title"><span class="eyebrow">Native copilot</span><strong>Live AI Assistant</strong></div>
+        <span class="live-ai-assistant-widget-status"><i></i><span id="live-ai-assistant-status">Idle</span></span>
+        <button class="live-ai-assistant-widget-toggle" id="live-ai-assistant-toggle" type="button" aria-label="Minimize Live AI Assistant" aria-expanded="true">
+          <img class="live-ai-assistant-collapsed-avatar" src="/static/assets/images/live-assistant-avatar.png" alt="" aria-hidden="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg>
+        </button>
+      </header>
+      <div class="live-ai-assistant-widget-body" id="live-ai-assistant-widget-body">
+        <p class="live-ai-assistant-empty" id="live-ai-assistant-empty">Listening for a useful moment in the meeting...</p>
+        <div id="live-ai-assistant-insight-list" aria-live="polite"></div>
+      </div>
+      <form class="live-ai-assistant-composer" id="live-ai-assistant-question-form">
+        <textarea id="live-ai-assistant-question" rows="1" maxlength="4000" placeholder="Ask the Live Assistant..." aria-label="Question for the Live Assistant"></textarea>
+        <button id="live-ai-assistant-send" type="submit" aria-label="Send question">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 4 17 8-17 8 3-8-3-8Zm3 8h14"/></svg>
+        </button>
+      </form>
+      <span class="live-ai-assistant-resize-hint" id="live-ai-assistant-resize-handle" role="separator" aria-label="Resize Live AI Assistant" tabindex="0"></span>
+    </section>
+
+    <section class="live-agent-insights hidden" id="live-agent-insights" aria-live="polite">
+      <header><div><span class="eyebrow">Remote live agent</span><strong>Meeting insights</strong></div><span id="live-agent-insight-count"></span></header>
+      <div id="live-agent-insight-list"></div>
+    </section>
+
+    <div class="canvas-audio-row hidden" id="audio-row">
+      <span class="canvas-audio-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3M8 22h8"/></svg>
+      </span>
+      <div class="canvas-audio-copy">
+        <strong id="audio-filename">Recording</strong>
+        <span>Original audio · stored locally</span>
+      </div>
+      <audio id="meeting-audio" controls preload="metadata"></audio>
+      <span class="save-indicator" id="editor-save-state"><i></i> Saved</span>
+    </div>
+
+    <div class="job-progress-card hidden" id="transcription-progress">
+      <span class="pulse-orbit"><i></i></span>
+      <div>
+        <div class="progress-copy">
+          <strong id="transcription-progress-message">Preparing transcription…</strong>
+          <span id="transcription-progress-value">0%</span>
+        </div>
+        <progress id="transcription-progress-bar" max="100" value="0"></progress>
+        <p>Segments appear as soon as the local model produces them.</p>
+      </div>
+      <button class="text-button" id="cancel-transcription">Cancel</button>
+    </div>
+
+    <div class="minimal-editor-toolbar">
+      <label class="search-box minimal-transcript-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <input id="transcript-search" type="search" placeholder="Search transcript" aria-label="Search transcript">
+      </label>
+      <div class="transcript-view-controls hidden" id="transcript-view-controls">
+        <label>
+          <span>Speaker</span>
+          <select id="transcript-speaker-filter" aria-label="Filter transcript by speaker">
+            <option value="all">All speakers</option>
+          </select>
+        </label>
+        <label>
+          <span>Order</span>
+          <select id="transcript-order" aria-label="Order transcript segments">
+            <option value="time">Timeline</option>
+            <option value="speaker">By speaker</option>
+          </select>
+        </label>
+      </div>
+      <span id="editor-meta">No transcript yet</span>
+    </div>
+
+    <div class="transcript-segments minimal-segments" id="transcript-segments">
+      <div class="minimal-empty-state">
+        <span class="minimal-empty-icon">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M13 18h38M13 31h26M13 44h32"/><path d="M47 40a8 8 0 1 0 0 16 8 8 0 0 0 0-16Z"/><path d="m53 52 7 7"/></svg>
+        </span>
+        <h2>Your transcript will appear here</h2>
+        <p>Start with a microphone, system audio, an audio interface, or a media file.</p>
+        {% if request.query_params.get('new') == '1' %}
+        <button type="button" class="button primary" data-empty-start>Start transcription</button>
+        {% endif %}
+      </div>
+    </div>
+    </div>
+
+    <section class="meeting-tab-panel" id="meeting-tab-speakers" role="tabpanel" data-meeting-panel="speakers" hidden>
+      <header class="result-panel-header compact-result-panel-header">
+        <h2>Speaker identification</h2>
+        <div class="result-header-actions">
+          <button class="ai-note-action" id="speaker-rebuild-identification" type="button" title="Run speaker identification again">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6v5h-5M4 18v-5h5"/><path d="M18.5 10a7 7 0 0 0-12-3L4 11M5.5 14a7 7 0 0 0 12 3l2.5-4"/></svg>
+            <span>Rebuild identification</span>
+          </button>
+          <span class="result-status" id="speaker-result-status">Waiting</span>
+        </div>
+      </header>
+      <div class="speaker-results" id="speaker-results"></div>
+    </section>
+
+    <section class="meeting-tab-panel" id="meeting-tab-intelligence" role="tabpanel" data-meeting-panel="intelligence" hidden>
+      <header class="result-panel-header compact-result-panel-header">
+        <h2>Meeting intelligence</h2>
+        <div class="ai-result-controls">
+          <span class="result-status" id="ai-result-status">Waiting</span>
+          <div class="ai-result-actions" aria-label="AI note actions">
+            <button class="ai-note-action" id="ai-rebuild-notes" type="button" title="Rebuild AI notes">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6v5h-5M4 18v-5h5"/><path d="M18.5 10a7 7 0 0 0-12-3L4 11M5.5 14a7 7 0 0 0 12 3l2.5-4"/></svg>
+              <span>Rebuild AI</span>
+            </button>
+            <button class="ai-note-action" id="ai-copy-notes" type="button" title="Copy all AI notes" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg>
+              <span>Copy All</span>
+            </button>
+            <button class="ai-note-action" id="ai-edit-notes" type="button" title="Edit AI notes" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 16-.5 4.5L8 20l11-11-4-4L4 16Z"/><path d="m13 7 4 4"/></svg>
+              <span>Edit</span>
+            </button>
+            <button class="ai-note-action" id="ai-toggle-view" type="button" title="Show AI notes as plain text" hidden aria-pressed="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+              <span id="ai-view-mode-label">Markdown</span>
+            </button>
+            <button class="ai-note-action primary" id="ai-save-notes" type="button" title="Save AI notes" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12l2 2v14H5zM8 4v6h8V4M8 20v-6h8v6"/></svg>
+              <span>Save</span>
+            </button>
+          </div>
+        </div>
+      </header>
+      <article class="ai-report-content" id="ai-report-content"></article>
+      <textarea class="ai-report-editor" id="ai-report-editor" spellcheck="true" hidden aria-label="Edit AI notes as Markdown"></textarea>
+    </section>
+
+    <section class="meeting-tab-panel" id="meeting-tab-utilities" role="tabpanel" data-meeting-panel="utilities" hidden>
+      <div class="utility-grid">
+        <section class="utility-card utility-card-audio" aria-labelledby="utility-audio-title">
+          <header><span class="utility-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3M8 22h8"/></svg></span><div><h3 id="utility-audio-title">Audio</h3><p id="utility-audio-status">Original recording</p></div></header>
+          <div class="utility-actions">
+            <button type="button" data-audio-export="mp3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v5h5M9 15h6M10 12h4"/></svg>Export MP3</button>
+            <button type="button" data-audio-export="wav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v5h5M9 15h6M10 12h4"/></svg>Export WAV</button>
+            <button type="button" data-audio-export="flac"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v5h5M9 15h6M10 12h4"/></svg>Export FLAC</button>
+            <button type="button" class="utility-delete-action" id="delete-meeting-audio"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></svg>Delete audio</button>
+          </div>
+        </section>
+        <section class="utility-card utility-card-transcript" aria-labelledby="utility-transcript-title">
+          <header><span class="utility-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v5h5M10 12h5M10 16h5"/></svg></span><div><h3 id="utility-transcript-title">Transcription</h3><p>Editable conversation</p></div></header>
+          <div class="utility-actions">
+            <button type="button" data-export-source="transcript" data-export-format="markdown"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM8 15V9l4 4 4-4v6"/></svg>Export Markdown</button>
+            <button type="button" data-export-source="transcript" data-export-format="word"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v5h5M9 12l1 5 2-3 2 3 1-5"/></svg>Export Word</button>
+            <button type="button" data-export-source="transcript" data-export-format="pdf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v5h5M9 16h6M9 12h4"/></svg>Export PDF</button>
+            <button type="button" data-export-source="transcript" data-export-format="clipboard"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg>Copy to Clipboard</button>
+          </div>
+        </section>
+        <section class="utility-card utility-card-notes" aria-labelledby="utility-notes-title">
+          <header><span class="utility-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 9.8 8.8 4 11l5.8 2.2L12 19l2.2-5.8L20 11l-5.8-2.2L12 3Z"/></svg></span><div><h3 id="utility-notes-title">AI notes</h3><p>Meeting insights</p></div></header>
+          <div class="utility-actions">
+            <button type="button" data-export-source="notes" data-export-format="markdown"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM8 15V9l4 4 4-4v6"/></svg>Export Markdown</button>
+            <button type="button" data-export-source="notes" data-export-format="word"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v5h5M9 12l1 5 2-3 2 3 1-5"/></svg>Export Word</button>
+            <button type="button" data-export-source="notes" data-export-format="pdf"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v5h5M9 16h6M9 12h4"/></svg>Export PDF</button>
+            <button type="button" data-export-source="notes" data-export-format="clipboard"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2"/></svg>Copy to Clipboard</button>
+          </div>
+        </section>
+        <section class="utility-card utility-card-other" aria-labelledby="utility-other-title">
+          <header><span class="utility-card-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3M16 3h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-3M10 8l-3 4 3 4M14 8l3 4-3 4"/></svg></span><div><h3 id="utility-other-title">Others</h3><p>Meeting archive</p></div></header>
+          <div class="utility-actions"><button type="button" id="download-meeting-json"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14"/></svg>Download JSON</button></div>
+        </section>
+      </div>
+    </section>
+  </section>
+  <div
+    class="workspace-resizer"
+    id="activity-log-resizer"
+    role="separator"
+    tabindex="0"
+    aria-label="Resize activity log"
+    aria-orientation="horizontal"
+    aria-controls="activity-log-card"
+    aria-valuemin="44"
+    aria-valuemax="420"
+    aria-valuenow="180"
+    title="Drag to resize the activity log"
+  ><span></span></div>
+  <section class="activity-log-card panel" id="activity-log-card" aria-labelledby="activity-log-title">
+    <header class="activity-log-header">
+      <div>
+        <span class="activity-live-indicator"><i></i> Live</span>
+        <h2 id="activity-log-title">Activity log</h2>
+        <p>Engine loading, configuration changes, transcription progress and errors.</p>
+      </div>
+      <button type="button" class="text-button" id="clear-activity-log">Clear view</button>
+    </header>
+    <textarea
+      id="activity-log-output"
+      class="activity-log-output"
+      readonly
+      spellcheck="false"
+      aria-label="Meet2Notes activity events"
+      placeholder="Waiting for application events…"
+    ></textarea>
+  </section>
+  </div>
+</div>
+
+<dialog class="modal export-modal" id="export-dialog">
+  <form class="modal-panel export-modal-panel" id="export-form">
+    <div class="modal-header">
+      <div><span class="eyebrow">Export</span><h2 id="export-dialog-title">Export transcription</h2><p>Choose how the content should be arranged in the exported file.</p></div>
+      <button type="button" class="icon-button close-button" id="export-close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+    <fieldset class="export-option-group" id="export-layout-options"><legend>Arrangement</legend><label><input type="radio" name="export-layout" value="speaker" checked> Group by speaker</label><label><input type="radio" name="export-layout" value="time"> Follow timeline</label></fieldset>
+    <fieldset class="export-option-group" id="export-detail-options"><legend>Include</legend><label><input id="export-timestamps" type="checkbox" checked> Timestamps</label><label><input id="export-speakers" type="checkbox" checked> Speakers</label></fieldset>
+    <div class="modal-actions"><button type="button" class="button secondary" id="export-cancel">Cancel</button><button type="submit" class="button primary" id="export-confirm">Export</button></div>
+  </form>
+</dialog>
+
+<dialog class="modal capture-modal" id="transcription-dialog">
+  <form class="modal-panel capture-modal-panel" id="transcription-form">
+    <div class="modal-header capture-modal-header">
+      <div>
+        <span class="eyebrow">New transcription</span>
+        <h2>Choose your audio sources</h2>
+        <p>For a video call, combine your microphone with system audio.</p>
+      </div>
+      <button type="button" class="icon-button close-button" data-close-transcription aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+
+    <div class="source-mode-grid" role="group" aria-label="Audio sources" aria-describedby="source-selection-summary">
+      <label class="source-mode-card">
+        <input type="checkbox" name="source-mode" value="microphone" checked>
+        <span class="source-mode-icon microphone">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3M8 22h8"/></svg>
+        </span>
+        <span><strong>Microphone</strong><small>Your voice · built-in, USB or interface</small></span>
+        <i></i>
+      </label>
+      <label class="source-mode-card">
+        <input type="checkbox" name="source-mode" value="system">
+        <span class="source-mode-icon system">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M8 10h2l2-3 3 6 2-3h2"/></svg>
+        </span>
+        <span><strong>System audio</strong><small>Other participants · headphones or speakers</small></span>
+        <i></i>
+      </label>
+      <label class="source-mode-card">
+        <input type="checkbox" name="source-mode" value="file">
+        <span class="source-mode-icon file">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7zM14 3v5h5M10 13h5M10 17h5"/></svg>
+        </span>
+        <span><strong>Media file</strong><small>MP3, WAV, M4A, MP4 and more</small></span>
+        <i></i>
+      </label>
+    </div>
+    <div class="source-selection-summary" id="source-selection-summary" role="status" aria-live="polite"></div>
+
+    <section class="source-picker-panel" id="native-source-panel">
+      <div class="source-picker-heading">
+        <div>
+          <strong id="source-picker-title">Recording inputs</strong>
+          <span id="capture-platform">Detecting native audio system…</span>
+        </div>
+        <button type="button" class="icon-button" id="refresh-sources" aria-label="Refresh audio sources" title="Refresh sources">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6v5h-5M4 18v-5h5"/><path d="M18.5 10a7 7 0 0 0-12-3L4 11M5.5 14a7 7 0 0 0 12 3l2.5-4"/></svg>
+        </button>
+      </div>
+      <div class="native-source-list" id="native-source-list">
+        <div class="source-loading"><i class="mini-spinner"></i> Scanning audio devices…</div>
+      </div>
+      <div class="source-guidance hidden" id="source-guidance"></div>
+    </section>
+
+    <section class="file-source-panel hidden" id="file-source-panel">
+      <label class="compact-file-drop" id="capture-file-drop">
+        <input id="capture-file" type="file" accept=".wav,.mp3,.m4a,.flac,.ogg,.aac,.mp4,.mkv,.webm,.mov">
+        <span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 14v5h14v-5"/></svg>
+        </span>
+        <strong id="capture-file-name">Drop a file here or browse</strong>
+        <small id="capture-file-help">Audio and video up to the configured local limit</small>
+      </label>
+    </section>
+
+    <a class="capture-settings-note" href="/settings#transcription-engine">
+      Transcription quality, language and model are configured in Settings.
+    </a>
+
+    <div class="capture-privacy-note">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.9 8.1 7 10 4.1-1.9 7-5.4 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-5"/></svg>
+      <span><strong>Local and private.</strong> Recording never starts without this button and no audio is uploaded.</span>
+    </div>
+
+    <div class="modal-actions capture-modal-actions">
+      <button type="button" class="button secondary" data-close-transcription>Cancel</button>
+      <button type="submit" class="button primary" id="transcription-submit">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3M8 22h8"/></svg>
+        <span>Start live transcription</span>
+      </button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="modal postprocess-modal" id="postprocess-dialog">
+  <div class="modal-panel postprocess-modal-panel">
+    <div class="postprocess-hero">
+      <span class="postprocess-orbit"><i></i></span>
+      <div>
+        <span class="eyebrow">Finishing your meeting</span>
+        <h2 id="postprocess-title">Turning the conversation into useful notes</h2>
+        <p id="postprocess-description">Meet2Notes is processing everything locally. You can continue in the background.</p>
+      </div>
+    </div>
+    <section class="postprocess-options hidden" id="postprocess-options" aria-labelledby="postprocess-options-title">
+      <div class="postprocess-options-heading">
+        <strong id="postprocess-options-title">Choose the final processing</strong>
+        <small>These choices apply only to this meeting.</small>
+      </div>
+      <div class="postprocess-option-card postprocess-speaker-option">
+        <input id="postprocess-diarization" type="checkbox" checked>
+        <div>
+          <label for="postprocess-diarization"><strong>Identify speakers</strong></label>
+          <div class="postprocess-speakers" id="postprocess-speakers">
+            <span>Number of speakers</span>
+            <div class="postprocess-speaker-choices">
+              <label><input type="radio" name="postprocess-speaker-mode" value="auto" checked> Automatic</label>
+              <label><input type="radio" name="postprocess-speaker-mode" value="known"> I know it:</label>
+              <input id="postprocess-speaker-count" type="number" min="1" max="20" value="2" inputmode="numeric" disabled aria-label="Known number of speakers">
+            </div>
+          </div>
+        </div>
+      </div>
+      <label class="postprocess-option-card" id="postprocess-final-pass-option" for="postprocess-final-pass">
+        <input id="postprocess-final-pass" type="checkbox" checked>
+        <span><strong>Final transcription pass</strong><small id="postprocess-final-pass-help">Reprocess the complete recording for the most accurate transcript.</small></span>
+      </label>
+      <div class="postprocess-option-card postprocess-summary-option" id="postprocess-summary-option">
+        <input id="postprocess-summary" type="checkbox" checked aria-labelledby="postprocess-summary-label">
+        <div>
+          <label for="postprocess-summary" id="postprocess-summary-label"><strong>Create AI notes</strong><small>Generate structured notes with the selected format.</small></label>
+          <label class="postprocess-format-field" for="postprocess-summary-template"><span>Note format</span><select id="postprocess-summary-template" aria-label="Note format"><option value="">Loading note formats…</option></select></label>
+          <small class="postprocess-summary-sizing" id="postprocess-summary-sizing">Estimating transcript size…</small>
+        </div>
+      </div>
+      <div class="postprocess-actions postprocess-options-actions">
+        <button type="button" class="button danger postprocess-discard" id="postprocess-options-cancel-all">Cancel and discard meeting</button>
+        <button type="button" class="button secondary" id="postprocess-options-cancel">Cancel</button>
+        <button type="button" class="button primary" id="postprocess-options-start">Start processing</button>
+      </div>
+    </section>
+    <div id="postprocess-progress-view">
+      <div class="postprocess-overall">
+        <div><span>Overall progress</span><strong id="postprocess-percent">0%</strong></div>
+        <progress id="postprocess-progress" max="100" value="0"></progress>
+      </div>
+      <ol class="postprocess-steps">
+      <li data-workflow-step="transcription">
+        <span class="workflow-step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6zM15 3v5h5M9 12h7M9 16h7"/></svg></span>
+        <span><strong>Refining the transcript</strong><small>Faster Whisper · final pass over the saved audio</small></span>
+        <b class="workflow-step-state">Waiting</b>
+      </li>
+      <li data-workflow-step="diarization">
+        <span class="workflow-step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2M9.5 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM17 11l2 2 3-4"/></svg></span>
+        <span><strong>Identifying speakers</strong><small id="workflow-diarization-engine">Sherpa ONNX · voice clustering</small></span>
+        <b class="workflow-step-state">Waiting</b>
+      </li>
+      <li data-workflow-step="summary">
+        <span class="workflow-step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 9.8 8.8 4 11l5.8 2.2L12 19l2.2-5.8L20 11l-5.8-2.2L12 3Z"/></svg></span>
+        <span><strong>Creating AI notes</strong><small id="workflow-summary-engine">Selected AI engine</small></span>
+        <b class="workflow-step-state">Waiting</b>
+      </li>
+      </ol>
+      <section class="postprocess-log-section" aria-labelledby="postprocess-log-title">
+        <div>
+          <strong id="postprocess-log-title">Processing log</strong>
+          <small>Live details from the local engines</small>
+        </div>
+        <textarea id="postprocess-log" readonly spellcheck="false" aria-live="polite" aria-label="Transcription processing log"></textarea>
+      </section>
+      <div class="postprocess-actions">
+        <button type="button" class="button danger postprocess-discard" id="postprocess-cancel-all">Cancel and discard meeting</button>
+        <button type="button" class="button secondary" id="postprocess-background">Continue in background</button>
+        <button type="button" class="button primary hidden" id="postprocess-results">View meeting results</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="modal compact-modal" id="delete-audio-dialog" aria-labelledby="delete-audio-title">
+  <div class="modal-panel delete-audio-modal-panel">
+    <div class="modal-header">
+      <div>
+        <span class="eyebrow">Privacy and storage</span>
+        <h2 id="delete-audio-title">Permanently delete meeting audio?</h2>
+        <p>This removes the original recording, normalized audio and generated audio exports from this meeting.</p>
+      </div>
+      <button type="button" class="icon-button close-button" id="delete-audio-close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+    </div>
+    <div class="delete-audio-warning">
+      <strong>The audio cannot be recovered.</strong>
+      <ul>
+        <li>The transcript, identified speakers, AI notes and text exports are kept.</li>
+        <li>Playback, audio exports, speaker rebuilding and future audio processing will be unavailable.</li>
+        <li>Voice profiles previously remembered from this meeting are stored separately and are not deleted.</li>
+      </ul>
+      <p id="delete-audio-size"></p>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="button secondary" id="delete-audio-cancel">Cancel</button>
+      <button type="button" class="button danger" id="delete-audio-confirm">Delete audio permanently</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="modal compact-modal" id="ai-rebuild-dialog" aria-labelledby="ai-rebuild-title">
+  <div class="modal-panel ai-rebuild-modal-panel">
+    <div class="modal-header">
+      <div>
+        <span class="eyebrow">AI notes</span>
+        <h2 id="ai-rebuild-title">Rebuild AI notes?</h2>
+        <p>A new version will be generated from the active transcript. Existing notes are kept in the meeting history.</p>
+      </div>
+      <button class="icon-button close-button" id="ai-rebuild-close" type="button" aria-label="Close">×</button>
+    </div>
+    <label class="engine-field" for="ai-rebuild-format">
+      <span>Note format</span>
+      <select id="ai-rebuild-format"><option value="">Loading note formats…</option></select>
+      <small>The default format from Settings is selected automatically.</small>
+    </label>
+    <div class="modal-actions">
+      <button class="button secondary" id="ai-rebuild-cancel" type="button">Cancel</button>
+      <button class="button primary" id="ai-rebuild-confirm" type="button">Rebuild AI notes</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="modal compact-modal" id="speaker-rebuild-dialog" aria-labelledby="speaker-rebuild-title">
+  <div class="modal-panel ai-rebuild-modal-panel">
+    <div class="modal-header">
+      <div>
+        <span class="eyebrow">Speaker identification</span>
+        <h2 id="speaker-rebuild-title">Rebuild speaker identification</h2>
+        <p id="speaker-rebuild-description">Run diarization again without changing the transcript or AI notes.</p>
+      </div>
+      <button class="icon-button close-button" id="speaker-rebuild-close" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div id="speaker-rebuild-options">
+      <fieldset class="speaker-rebuild-choice">
+        <legend>Number of speakers</legend>
+        <label><input type="radio" name="speaker-rebuild-mode" value="auto" checked> Detect automatically</label>
+        <label><input type="radio" name="speaker-rebuild-mode" value="known"> I know the number</label>
+        <input id="speaker-rebuild-count" type="number" min="1" max="20" value="2" inputmode="numeric" disabled aria-label="Known number of speakers">
+      </fieldset>
+      <div class="modal-actions">
+        <button class="button secondary" id="speaker-rebuild-cancel" type="button">Cancel</button>
+        <button class="button primary" id="speaker-rebuild-confirm" type="button">Rebuild identification</button>
+      </div>
+    </div>
+    <div id="speaker-rebuild-progress-view" hidden aria-live="polite">
+      <div class="speaker-rebuild-progress-copy">
+        <span id="speaker-rebuild-status">Preparing speaker identification...</span>
+        <strong id="speaker-rebuild-percent">0%</strong>
+      </div>
+      <progress id="speaker-rebuild-progress" max="100" value="0"></progress>
+      <div class="modal-actions">
+        <button class="button secondary" id="speaker-rebuild-background" type="button">Continue in background</button>
+        <button class="button primary" id="speaker-rebuild-done" type="button" hidden>Close</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="modal compact-modal" id="ai-unsaved-dialog" aria-labelledby="ai-unsaved-title">
+  <div class="modal-panel ai-rebuild-modal-panel">
+    <div class="modal-header">
+      <div>
+        <span class="eyebrow">Unsaved changes</span>
+        <h2 id="ai-unsaved-title">Discard your AI note changes?</h2>
+        <p>Your latest edits have not been saved. Stay here to save them, or discard them and continue.</p>
+      </div>
+      <button class="icon-button close-button" id="ai-unsaved-close" type="button" aria-label="Stay on this page">×</button>
+    </div>
+    <div class="modal-actions">
+      <button class="button secondary" id="ai-unsaved-stay" type="button">Stay here</button>
+      <button class="button primary" id="ai-unsaved-discard" type="button">Discard changes</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="modal postprocess-modal speaker-summary-modal" id="speaker-summary-dialog">
+  <div class="modal-panel postprocess-modal-panel speaker-summary-modal-panel">
+    <div class="postprocess-hero">
+      <span class="postprocess-orbit"><i></i></span>
+      <div>
+        <span class="eyebrow">Speaker intelligence</span>
+        <h2 id="speaker-summary-title">Summarizing this speaker</h2>
+        <p id="speaker-summary-description">The selected AI engine is analyzing only this speaker's contributions.</p>
+      </div>
+    </div>
+    <div class="postprocess-overall" id="speaker-summary-progress-wrap">
+      <div><span id="speaker-summary-status">Preparing the transcript</span><strong id="speaker-summary-percent">0%</strong></div>
+      <progress id="speaker-summary-progress" max="100" value="0"></progress>
+    </div>
+    <article class="speaker-summary-content hidden" id="speaker-summary-content"></article>
+    <div class="postprocess-actions">
+      <button type="button" class="button secondary" id="speaker-summary-close">Continue in background</button>
+      <button type="button" class="button primary hidden" id="speaker-summary-done">Close</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="modal compact-modal" id="remember-voice-dialog" aria-labelledby="remember-voice-title">
+  <div class="modal-panel remember-voice-modal-panel">
+    <div class="modal-header">
+      <div><span class="eyebrow">Saved voice</span><h2 id="remember-voice-title">Remember this voice?</h2><p id="remember-voice-description">Meet2Notes can use this meeting's voice sample to recognize this person in future meetings.</p></div>
+      <button type="button" class="icon-button close-button" data-close-remember-voice aria-label="Close">×</button>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="button secondary" data-close-remember-voice>Not now</button>
+      <button type="button" class="button primary" id="remember-renamed-voice">Remember this voice</button>
+    </div>
+  </div>
+</dialog>
+{% set post_assistant_context = 'meeting' %}
+{% include "_post_meeting_assistant.html" %}
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/transcript.js?v={{ asset_version }}" defer></script>
+<script src="/static/js/post-meeting-assistant.js?v={{ asset_version }}" defer></script>
+{% endblock %}

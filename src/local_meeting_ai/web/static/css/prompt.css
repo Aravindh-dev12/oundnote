@@ -1,0 +1,33 @@
+.prompt-page {
+  display: flex;
+  min-height: calc(100vh - 48px);
+  flex-direction: column;
+}
+
+.prompt-header {
+  display: flex;
+  min-height: 58px;
+  margin-bottom: 17px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.prompt-header .workspace-icon { width: 44px; height: 44px; min-width: 44px; }
+.prompt-header .workspace-heading h1 { font-size: 24px; }
+.prompt-header .page-header-actions { margin-left: auto; flex: 0 0 auto; }
+
+.prompt-assistant {
+  position: relative;
+  display: flex;
+  min-height: 620px;
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .prompt-header { align-items: flex-start; }
+  .prompt-header .workspace-heading p { max-width: 260px; }
+  .prompt-header .page-header-actions { margin-left: auto; }
+  .prompt-assistant { min-height: calc(100vh - 150px); }
+}
