@@ -21,6 +21,7 @@ param(
 
     [switch]$SkipFfmpeg,
     [switch]$Dev,
+    [switch]$Desktop,
     [switch]$Start
 )
 
@@ -154,6 +155,10 @@ Invoke-Checked $EnvironmentPython @(
 Invoke-Checked $EnvironmentPython @(
     "-m", "pip", "install", "-e", ".[capture,transcription,diarization,nvidia-asr,pyannote-diarization]"
 )
+if ($Desktop) {
+    Write-Step "Installing native desktop shell"
+    Invoke-Checked $EnvironmentPython @("-m", "pip", "install", "-e", ".[desktop]")
+}
 Invoke-Checked $EnvironmentPython @(
     "-m", "pip", "install", "huggingface-hub>=0.27,<2"
 )
