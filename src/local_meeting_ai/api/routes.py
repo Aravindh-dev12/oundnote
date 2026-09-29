@@ -2034,6 +2034,29 @@ def list_transcriptions(
     ]
 
 
+@router.get("/meetings/{meeting_id}/notes")
+def get_meeting_notes(meeting_id: int, container: ContainerDependency) -> dict[str, Any]:
+    meeting = container.meetings.get(meeting_id)
+    if not meeting:
+        raise NotFoundError("Meeting not found")
+    return {"meeting_id": meeting_id, "personal_notes": meeting.personal_notes}
+
+
+@router.put("/meetings/{meeting_id}/notes")
+def update_meeting_notes(
+    meeting_id: int,
+    payload: MeetingNotesUpdate,
+    container: ContainerDependency,
+) -> dict[str, Any]:
+    meeting = container.meetings.get(meeting_id)
+    if not meeting:
+        raise NotFoundError("Meeting not found")
+    updated = container.meetings.update(meeting_id, {"personal_notes": payload.personal_notes})
+    if not updated:
+        raise NotFoundError("Meeting not found")
+    return {"meeting_id": meeting_id, "personal_notes": updated.personal_notes}
+
+
 @router.get(
     "/meetings/{meeting_id}/transcript",
     response_model=ActiveTranscriptPageResponse,
