@@ -220,21 +220,43 @@ def _register_web_routes(
         selected_meeting = None
         if requested_meeting and not new_meeting:
             try:
-                requested_id = int(requested_meeting)
-            except ValueError:
-                requested_id = 0
-            selected_meeting = next(
-                (meeting for meeting in meetings if meeting.id == requested_id),
-                None,
-            )
+                selected_meeting = container.meetings.get(int(requested_meeting))
+            except (ValueError, TypeError):
+                selected_meeting = None
+        if new_meeting:
+            return RedirectResponse(url="/capture", status_code=307)
+        return templates.TemplateResponse(
+            request=request,
+            name="hub.html",
+            context={
+                "version": __version__,
+                "page": "home",
+                "meeting": selected_meeting,
+                "meetings": meetings,
+                "capture_count": len(meetings),
+                "hours_captured": round(sum((m.duration_ms or 0) for m in meetings) / 3600000, 1),
+                "live_agent_enabled": bool(container.live_assistant_service.config().get("enabled")),
+                "root_workspace": True,
+            },
+        )
+
+    @app.get("/capture", include_in_schema=False)
+    async def capture_page(request: Request) -> object:
+        meeting_id = request.query_params.get("meeting")
+        selected = None
+        if meeting_id:
+            try:
+                selected = container.meetings.get(int(meeting_id))
+            except (ValueError, TypeError):
+                selected = None
         return templates.TemplateResponse(
             request=request,
             name="studio.html",
             context={
                 "version": __version__,
-                "page": "dashboard",
-                "meeting": selected_meeting,
-                "meetings": meetings,
+                "page": "capture",
+                "meeting": selected,
+                "meetings": container.meeting_service.list(limit=100),
                 "root_workspace": True,
                 "default_title": container.transcriptions.next_default_title(),
             },
