@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "oundnote"
-version = "0.7.0"
+version = "0.7.1"
 description = "Private local AI memory capture, live notes, transcription, and summaries."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -51,6 +51,10 @@ dependencies = [
 youtube = [
     "yt-dlp[default]>=2026.8.19,<2027",
     "youtube-transcript-api>=1.2.4,<2",
+]
+desktop = [
+    "pywebview>=6.2.1,<7",
+    "pynput>=1.8.2,<2",
 ]
 transcription = [
     "faster-whisper>=1.1.0,<2",
@@ -102,6 +106,7 @@ dev = [
 ]
 
 [project.scripts]
+oundnote-desktop = "local_meeting_ai.desktop:run"
 oundnote = "local_meeting_ai.cli:main"
 oundnote-models = "local_meeting_ai.model_setup:main"
 
