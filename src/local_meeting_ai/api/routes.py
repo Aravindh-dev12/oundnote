@@ -51,6 +51,7 @@ from local_meeting_ai.api.schemas import (
     LiveCaptureStopResponse,
     McpConfigurationResponse,
     MeetingCreate,
+    MeetingNotesUpdate,
     MeetingResponse,
     MeetingUpdate,
     ModelDirectoryMoveRequest,
