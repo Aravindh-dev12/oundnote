@@ -24,6 +24,7 @@ class Meeting:
     recording_count: int = 0
     audio_deleted_at: str | None = None
     audio_deleted_bytes: int | None = None
+    personal_notes: str = ""
 
 
 @dataclass(frozen=True, slots=True)
