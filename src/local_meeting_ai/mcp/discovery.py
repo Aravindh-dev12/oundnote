@@ -22,7 +22,7 @@ def candidate_base_urls() -> list[str]:
 
     urls: list[str] = []
     for directory in _candidate_data_directories():
-        metadata_path = directory / "meet2notes.instance.lock.json"
+        metadata_path = directory / "oundnote.instance.lock.json"
         try:
             decoded = json.loads(metadata_path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
@@ -62,7 +62,7 @@ def _candidate_data_directories() -> list[Path]:
 
     candidates.extend(
         [
-            user_data_path("Meet2Notes", appauthor=False).resolve(),
+            user_data_path("Oundnote", appauthor=False).resolve(),
             default_data_directory(),
             user_data_path("LocalMeet2Resume", appauthor=False).resolve(),
         ]
@@ -77,7 +77,7 @@ def _candidate_data_directories() -> list[Path]:
 def _validated_base_url(value: str) -> str:
     parsed = urlparse(value.strip())
     if parsed.scheme not in {"http", "https"} or not parsed.hostname:
-        raise DiscoveryError("Meet2Notes MCP requires a valid HTTP backend URL")
+        raise DiscoveryError("Oundnote MCP requires a valid HTTP backend URL")
     allow_remote = os.environ.get("M2N_MCP_ALLOW_REMOTE", "").strip().lower() in {
         "1",
         "true",
@@ -85,7 +85,7 @@ def _validated_base_url(value: str) -> str:
     }
     if not allow_remote and not _is_loopback(parsed.hostname):
         raise DiscoveryError(
-            "Meet2Notes MCP only connects to loopback addresses unless "
+            "Oundnote MCP only connects to loopback addresses unless "
             "M2N_MCP_ALLOW_REMOTE=1 is explicitly configured"
         )
     return value.strip().rstrip("/")

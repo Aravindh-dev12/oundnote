@@ -13,7 +13,7 @@ from typing import Any
 def main() -> int:
     # wespeakerruntime hard-codes Path.home()/.wespeaker for its small
     # embedding weight. Redirect that dependency only inside this isolated
-    # child so all diarize assets remain under Meet2Notes' model directory.
+    # child so all diarize assets remain under Oundnote' model directory.
     runtime_home = os.environ.get("M2N_DIARIZE_RUNTIME_HOME")
     if runtime_home:
         Path.home = classmethod(lambda cls: Path(runtime_home))  # type: ignore[assignment]

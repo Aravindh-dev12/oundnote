@@ -38,7 +38,7 @@ from local_meeting_ai.infrastructure.database.repositories import SettingsReposi
 from local_meeting_ai.infrastructure.ffmpeg import FFmpegClient
 from local_meeting_ai.paths import AppPaths
 
-logger = logging.getLogger("meet2notes.diarization_evaluator")
+logger = logging.getLogger("oundnote.diarization_evaluator")
 
 PROVIDERS = ("cpu", "cuda")
 ENGINE_CHOICES = ("sherpa-onnx", "diarize", "pyannote-community-1")
@@ -388,7 +388,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=[Path("debate_ceuta.wav")],
         help="WAV or MP3 file(s) to benchmark (default: debate_ceuta.wav).",
     )
-    parser.add_argument("--data-dir", type=Path, help="Meet2Notes data directory override.")
+    parser.add_argument("--data-dir", type=Path, help="Oundnote data directory override.")
     parser.add_argument("--models-dir", type=Path, help="AI models directory override.")
     parser.add_argument(
         "--results-dir",
@@ -561,7 +561,7 @@ def _export_timeline_files(run: dict[str, Any], results_dir: Path) -> list[Path]
         ) + ".txt"
         destination = results_dir / "timelines" / filename
         lines = [
-            "Meet2Notes diarization evaluation timeline",
+            "Oundnote diarization evaluation timeline",
             f"Run: {run_id}",
             f"Source: {evaluation.get('source_path')}",
             f"Engine: {evaluation.get('engine')}",

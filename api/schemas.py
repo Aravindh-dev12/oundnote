@@ -146,7 +146,7 @@ class SummaryEnginePreference(BaseModel):
     model_path: str | None = Field(default=None, max_length=1000)
     base_url: str | None = Field(default=None, max_length=500)
     api_key_env: str = Field(
-        default="MEET2NOTES_AI_API_KEY",
+        default="OUNDNOTE_AI_API_KEY",
         pattern=r"^[A-Z][A-Z0-9_]{0,127}$",
     )
     context_length: int = Field(default=16384, ge=2048, le=131072)

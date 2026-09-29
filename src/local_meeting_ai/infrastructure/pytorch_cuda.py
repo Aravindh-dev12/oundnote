@@ -49,7 +49,7 @@ class PytorchCudaRuntime:
         message = None
         if restart_required:
             message = (
-                "CUDA PyTorch is already installed in .venv. Restart Meet2Notes "
+                "CUDA PyTorch is already installed in .venv. Restart Oundnote "
                 "to activate it; do not install it again."
             )
         elif state == "cuda_unavailable":
@@ -82,14 +82,14 @@ class PytorchCudaRuntime:
     def _install_sync(self) -> dict[str, Any]:
         status = self.status()
         if status["cuda_available"]:
-            logger.info("CUDA-enabled PyTorch is already active in the Meet2Notes environment")
+            logger.info("CUDA-enabled PyTorch is already active in the Oundnote environment")
             return {
                 **status,
                 "restart_required": False,
                 "message": "CUDA-enabled PyTorch is already active.",
             }
         if status["restart_required"]:
-            logger.info("CUDA PyTorch is installed; a Meet2Notes restart is required")
+            logger.info("CUDA PyTorch is installed; a Oundnote restart is required")
             return status
         if status["cuda_wheel_installed"]:
             raise CapabilityUnavailableError(
@@ -98,7 +98,7 @@ class PytorchCudaRuntime:
             )
         if not status["is_virtual_environment"]:
             raise CapabilityUnavailableError(
-                "CUDA PyTorch can only be installed from Meet2Notes' private .venv. "
+                "CUDA PyTorch can only be installed from Oundnote' private .venv. "
                 "Start the application with start.bat and try again."
             )
         if not status["nvidia_gpu_detected"]:
@@ -154,7 +154,7 @@ class PytorchCudaRuntime:
                     "CUDA PyTorch could not be installed. Review the installation log."
                 )
             logger.info(
-                "CUDA PyTorch packages were installed in .venv; restart Meet2Notes "
+                "CUDA PyTorch packages were installed in .venv; restart Oundnote "
                 "before loading GPU models"
             )
             return {
@@ -162,7 +162,7 @@ class PytorchCudaRuntime:
                 "state": "restart_required",
                 "restart_required": True,
                 "message": (
-                    "CUDA PyTorch was installed in .venv. Restart Meet2Notes "
+                    "CUDA PyTorch was installed in .venv. Restart Oundnote "
                     "to activate GPU acceleration."
                 ),
             }

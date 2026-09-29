@@ -1,14 +1,14 @@
 <div align="center">
-  <img src="src/local_meeting_ai/web/static/icons/mark.svg" alt="Meet2Notes logo" width="88">
-  <h1>Meet2Notes</h1>
+  <img src="src/local_meeting_ai/web/static/icons/mark.svg" alt="Oundnote logo" width="88">
+  <h1>Oundnote</h1>
   <p><strong>Private AI meeting notes, local transcription, and speaker diarization.</strong></p>
   <p>Record, transcribe, identify speakers, and create structured meeting summaries on your own computer.</p>
 
   <p>
-    <a href="https://meet2notes.eu"><strong>Website</strong></a> ·
+    <a href="https://oundnote.eu"><strong>Website</strong></a> ·
     <a href="#installation">Install</a> ·
     <a href="docs/README.md">Documentation</a> ·
-    <a href="https://github.com/estebanstifli/Meet2Notes/issues">Support</a>
+    <a href="https://github.com/Aravindh-dev12/oundnote/issues">Support</a>
   </p>
 
   <p>
@@ -20,7 +20,7 @@
   </p>
 </div>
 
-Meet2Notes is an open-source, self-hosted AI meeting assistant for Windows,
+Oundnote is an open-source, self-hosted AI meeting assistant for Windows,
 macOS, and Linux. It captures microphone and system audio, imports recordings,
 creates live or high-quality final transcripts, separates and recognizes
 speakers, and turns conversations into searchable, structured meeting notes.
@@ -31,31 +31,31 @@ For video calls, select **Microphone + System audio** together to record both
 sides of the conversation. See the [audio capture setup guide](docs/audio-capture.md)
 for Windows loopback, Linux monitors, and macOS virtual inputs.
 
-Meet2Notes is a private, local-first alternative to commercial AI meeting
+Oundnote is a private, local-first alternative to commercial AI meeting
 assistants such as **Granola**, **Fireflies.ai**, **Fathom**, and **Otter.ai**.
 It is also an open-source alternative to **Meetily** for people and teams that
 want self-hosted meeting transcription, speaker diarization, and AI notes
 without surrendering control of their recordings.
 
-The official product website is [meet2notes.eu](https://meet2notes.eu).
+The official product website is [oundnote.eu](https://oundnote.eu).
 
 The processing pipeline is intentionally modular. Transcription, diarization,
 saved-voice matching, and analysis are independent stages with their own model
 selection, settings, lifecycle, and worker. A meeting is not tied to Faster
 Whisper, Sherpa-ONNX, or a particular language model.
 
-> Meet2Notes is in active alpha development. Back up important recordings and
+> Oundnote is in active alpha development. Back up important recordings and
 > obtain every consent required before recording a conversation.
 
-## Meet2Notes 0.6: the complete meeting, available to your AI
+## Oundnote 0.6: the complete meeting, available to your AI
 
 Version **0.6.2** adds the source and setup documentation for the optional
 [Anna integration](integrations/anna/README.md). On Windows x86_64, Anna can
-search your existing library and display transcripts and AI notes while Meet2Notes
+search your existing library and display transcripts and AI notes while Oundnote
 and Anna Local Agent run on the same computer. Enable MCP access explicitly to
 use it. Retrieved text passes through Anna and may reach its AI provider in chat.
 The Anna app v0.1.3 is pending Marketplace review and uses independent versioning.
-Meet2Notes works normally without an Anna account, agent, or installation.
+Oundnote works normally without an Anna account, agent, or installation.
 
 
 Version 0.6.1 can record **Microphone + System audio** simultaneously, capturing
@@ -65,10 +65,10 @@ transcription and the final WAV while preserving headroom when people speak at
 the same time. Windows uses native WASAPI loopback, while the setup guide explains
 the virtual or monitor inputs used on macOS and Linux.
 
-The 0.6 series also turns Meet2Notes into a private knowledge source for the desktop
+The 0.6 series also turns Oundnote into a private knowledge source for the desktop
 AI tools people already use. Its local **Model Context Protocol (MCP)**
 server connects **Claude Desktop, ChatGPT Desktop, Codex**, and compatible MCP
-clients to completed meetings without copying the Meet2Notes database or
+clients to completed meetings without copying the Oundnote database or
 introducing another cloud service.
 
 Instead of manually finding and pasting old transcripts, users can ask their AI
@@ -87,11 +87,11 @@ remains under the user's control.
 | Disable MCP access at any time from Settings | Gives the user an explicit local privacy control |
 
 Technically, every desktop client starts a lightweight `stdio` MCP process from
-the existing Meet2Notes virtual environment. That process talks only to the
+the existing Oundnote virtual environment. That process talks only to the
 running application's bounded read API; it does not open `app.db`, load a second
 copy of the AI models, rebuild the RAG index, or expose recording, editing,
 deletion, settings, audio, or filesystem tools. Loopback is enforced by default,
-and multiple clients can safely use the same running Meet2Notes instance.
+and multiple clients can safely use the same running Oundnote instance.
 
 Configuration snippets and their destination paths are generated in
 **Settings -> General -> MCP desktop clients**, ready to copy for Claude Desktop
@@ -132,7 +132,7 @@ setup, tools, lifecycle, and security details.
   deletion asks for confirmation and removes that meeting's audio, transcript,
   notes, Live Assistant data, RAG index entries, jobs, and private files.
 - A Local AI Status panel showing engine state, model residency, system RAM,
-  GPU name, VRAM when available, and the Meet2Notes GPU process.
+  GPU name, VRAM when available, and the Oundnote GPU process.
 - Model tables in Settings with installed state, download size, selection,
   install, load, unload, and uninstall actions where supported.
 - Basic settings tailored to the selected model and separate advanced controls.
@@ -143,11 +143,11 @@ setup, tools, lifecycle, and security details.
 
 <p align="center">
   <a href="https://youtu.be/Z2wRrs9Q9pU">
-    <img src="https://img.youtube.com/vi/Z2wRrs9Q9pU/maxresdefault.jpg" alt="Meet2Notes presentation and demo" width="800">
+    <img src="https://img.youtube.com/vi/Z2wRrs9Q9pU/maxresdefault.jpg" alt="Oundnote presentation and demo" width="800">
   </a>
 </p>
 
-<p align="center"><a href="https://youtu.be/Z2wRrs9Q9pU">Watch the Meet2Notes presentation and demo on YouTube</a></p>
+<p align="center"><a href="https://youtu.be/Z2wRrs9Q9pU">Watch the Oundnote presentation and demo on YouTube</a></p>
 
 <a id="installation"></a>
 
@@ -155,54 +155,54 @@ setup, tools, lifecycle, and security details.
 
 ### Windows: download and run one file
 
-1. Download [`install-update.bat`](https://github.com/estebanstifli/Meet2Notes/raw/main/install-update.bat).
+1. Download [`install-update.bat`](https://github.com/Aravindh-dev12/oundnote/raw/main/install-update.bat).
 2. Double-click the downloaded file.
-3. Wait for setup to finish, then open the new `Meet2Notes` folder and
+3. Wait for setup to finish, then open the new `Oundnote` folder and
    double-click `start.bat`.
 4. Open `http://127.0.0.1:8765` in your browser.
 
 The bootstrap installer checks for Git and Python 3.11 or newer, installs
-missing prerequisites for the current Windows user, clones Meet2Notes, and
+missing prerequisites for the current Windows user, clones Oundnote, and
 runs the normal isolated-environment installer. On an existing installation it
 delegates to the safe stable-Release updater. It does not install Python
 packages globally.
 
 The installation folder is deterministic: the installer creates a
-`Meet2Notes` folder beside the downloaded `.bat`. For example, a file saved as
+`Oundnote` folder beside the downloaded `.bat`. For example, a file saved as
 `C:\Users\Name\Downloads\install-update.bat` installs the application in
-`C:\Users\Name\Downloads\Meet2Notes`. Move the `.bat` to another writable
+`C:\Users\Name\Downloads\Oundnote`. Move the `.bat` to another writable
 folder before running it if you want the application installed elsewhere.
 Re-running the same file checks for a newer stable Release. `update.bat` can be
 run directly for the same purpose.
 
 > Windows may show a SmartScreen warning because this open-source batch file is
 > not code-signed. Review its contents before running it and download it only
-> from the official Meet2Notes repository or [meet2notes.eu](https://meet2notes.eu).
+> from the official Oundnote repository or [oundnote.eu](https://oundnote.eu).
 
 ### Pinokio: one-click local installation
 
-Meet2Notes can also be installed through [Pinokio](https://pinokio.computer),
+Oundnote can also be installed through [Pinokio](https://pinokio.computer),
 which keeps the application, Python runtime, FFmpeg, dependencies, and
 recommended local models in its isolated application environment.
 
 1. In Pinokio, choose the option to install an app from a Git repository.
-2. Enter `https://github.com/estebanstifli/Meet2Notes.git`.
-3. Select **Install Meet2Notes**, wait for the model downloads to finish, then
-   select **Start Meet2Notes**.
-4. Use **Open Meet2Notes** in Pinokio to open the local web interface.
+2. Enter `https://github.com/Aravindh-dev12/oundnote.git`.
+3. Select **Install Oundnote**, wait for the model downloads to finish, then
+   select **Start Oundnote**.
+4. Use **Open Oundnote** in Pinokio to open the local web interface.
 
 The Pinokio menu also provides **Update** and **Repair installation**. Repair
 recreates only Pinokio's private runtime; meeting data and downloaded models
-remain managed by Meet2Notes and are not removed automatically.
+remain managed by Oundnote and are not removed automatically.
 
 ### macOS and Linux
 
 ```bash
-git clone https://github.com/estebanstifli/Meet2Notes.git
-cd Meet2Notes
+git clone https://github.com/Aravindh-dev12/oundnote.git
+cd Oundnote
 chmod +x install.sh
 ./install.sh --ai-backend cpu
-.venv/bin/meet2notes --no-browser
+.venv/bin/oundnote --no-browser
 ```
 
 Python 3.11 or newer must already be installed on macOS and Linux. For CUDA,
@@ -293,7 +293,7 @@ Pyannote, or `diarize` produces the speaker turns.
 
 Pyannote Community-1 requires accepting the conditions on its
 [Hugging Face model page](https://huggingface.co/pyannote/speaker-diarization-community-1).
-Create a read token, add it to `.env`, restart Meet2Notes, and install the model
+Create a read token, add it to `.env`, restart Oundnote, and install the model
 from Settings:
 
 ```dotenv
@@ -375,7 +375,7 @@ summary metadata. **Rebuild AI notes** creates a new version from the active
 transcript, asks for a Note Format with the Settings default preselected, and
 keeps prior successful, failed, or manually edited versions in local history.
 The compact header actions also copy the complete report and save edits without
-adding another toolbar row. Meet2Notes warns before unsaved edits are discarded
+adding another toolbar row. Oundnote warns before unsaved edits are discarded
 when changing sections, following an internal link, refreshing, or closing the
 page.
 
@@ -411,25 +411,25 @@ Prompt page remains available for compatibility.
 
 ## Desktop AI clients through MCP
 
-Meet2Notes includes a read-only local MCP server for Claude Desktop, ChatGPT
+Oundnote includes a read-only local MCP server for Claude Desktop, ChatGPT
 Desktop, Codex, VS Code, Cursor, and other clients that support `stdio`. Each
-client launches the Python module from the existing Meet2Notes virtual
+client launches the Python module from the existing Oundnote virtual
 environment; no separate executable is distributed. The lightweight MCP
-processes all connect to the one running Meet2Notes instance, which remains the
+processes all connect to the one running Oundnote instance, which remains the
 owner of the database, RAG index, and AI models.
 
 Available tools list meetings, read bounded transcript pages and completed AI
 notes, perform fast keyword search, and retrieve existing hybrid RAG evidence.
 Every result remains tied to its meeting and source context. The MCP integration
 never starts indexing or exposes capture, audio, settings, edits, or deletion
-operations. Meet2Notes also generates the exact Claude Desktop JSON and
+operations. Oundnote also generates the exact Claude Desktop JSON and
 Codex/ChatGPT Desktop TOML snippets from Settings, including the correct local
 Python path. See [Local MCP server](docs/mcp.md) for Windows, Linux, and macOS
 configuration examples.
 
-## Help translate Meet2Notes
+## Help translate Oundnote
 
-Meet2Notes welcomes community-maintained UI localizations. The source catalogue
+Oundnote welcomes community-maintained UI localizations. The source catalogue
 is [`src/local_meeting_ai/web/static/locales/en.json`](src/local_meeting_ai/web/static/locales/en.json);
 each language has a matching JSON catalogue in the same folder and is listed in
 [`index.json`](src/local_meeting_ai/web/static/locales/index.json).
@@ -451,7 +451,7 @@ Before submitting a localization, run:
 ```
 
 The check verifies catalogue completeness and preserves product and technical
-terms such as Meet2Notes, RAG, Faster Whisper, Word, and Markdown.
+terms such as Oundnote, RAG, Faster Whisper, Word, and Markdown.
 
 ## Community plugins
 
@@ -465,19 +465,19 @@ also accepts transcription, diarization, summary, and embedding engines, models
 for an existing engine, declarative settings, and composite ASR results containing
 speaker turns.
 
-Plugins are discovered through the standard `meet2notes.plugins` package entry
+Plugins are discovered through the standard `oundnote.plugins` package entry
 point and managed from Settings -> Plugins. Hook executions have priorities,
 timeouts, failure policies, and a privacy-preserving provenance ledger. The
 canonical recording and transcript are never overwritten by a filter.
 
 Each community plugin is developed and released from its author's own
-repository. Authors do not need to merge plugin code into Meet2Notes: when it is
+repository. Authors do not need to merge plugin code into Oundnote: when it is
 ready, they may open a **Community plugin listing** issue with its public URL,
 installation source, compatibility, permissions, and test results. Maintainers
 may then add it to [community-plugins.json](community-plugins.json). Listing is
 discretionary and is not a security audit or endorsement.
 
-The catalog is currently an informational JSON file; Meet2Notes does not fetch
+The catalog is currently an informational JSON file; Oundnote does not fetch
 or install entries automatically. A user chooses a listed plugin, reviews its
 repository, and installs it explicitly into the private environment, for
 example:
@@ -493,7 +493,7 @@ permissions, and enable it. See the [Plugin API and installation guide](docs/plu
 
 ## Advanced installation from source
 
-The installers create an isolated `.venv` inside the repository. Meet2Notes
+The installers create an isolated `.venv` inside the repository. Oundnote
 does not install packages into the global Python environment. Python 3.11 or
 newer is required; Python 3.12 is recommended for the broadest CUDA wheel
 compatibility. FFmpeg is installed automatically when the platform package
@@ -502,8 +502,8 @@ manager permits it.
 Clone the repository first:
 
 ```powershell
-git clone https://github.com/estebanstifli/Meet2Notes.git
-cd Meet2Notes
+git clone https://github.com/Aravindh-dev12/oundnote.git
+cd Oundnote
 ```
 
 ### CPU-only installation
@@ -521,7 +521,7 @@ macOS or Linux:
 ```bash
 chmod +x install.sh
 ./install.sh --ai-backend cpu
-.venv/bin/meet2notes --no-browser
+.venv/bin/oundnote --no-browser
 ```
 
 ### NVIDIA CUDA installation
@@ -542,10 +542,10 @@ Linux:
 
 ```bash
 ./install.sh --ai-backend cuda
-.venv/bin/meet2notes --no-browser
+.venv/bin/oundnote --no-browser
 ```
 
-If Meet2Notes was initially installed in CPU mode and the user later selects a
+If Oundnote was initially installed in CPU mode and the user later selects a
 CUDA-only configuration, Settings detects the mismatch. A confirmation dialog
 explains the change and a progress dialog streams the package installation log
 while the CUDA PyTorch runtime is installed into `.venv`. Restart the
@@ -561,7 +561,7 @@ Useful installer options:
 .\install.ps1 -Dev -Models none
 
 # Keep large model files on another disk
-.\install.ps1 -ModelsDirectory "D:\Meet2Notes\Models"
+.\install.ps1 -ModelsDirectory "D:\Oundnote\Models"
 ```
 
 Equivalent Unix options are `--no-models`, `--dev`, and
@@ -588,10 +588,10 @@ Direct launch and diagnostics:
 
 ```powershell
 .\.venv\Scripts\python.exe -m local_meeting_ai --no-browser
-.\.venv\Scripts\meet2notes.exe --help
+.\.venv\Scripts\oundnote.exe --help
 ```
 
-Meet2Notes binds to `127.0.0.1` by default and is not exposed to the network
+Oundnote binds to `127.0.0.1` by default and is not exposed to the network
 unless the host setting is changed explicitly. A single-instance lock prevents
 accidentally starting two servers against the same data directory.
 
@@ -622,12 +622,12 @@ The Settings tables are the preferred management interface. Command-line model
 setup is also available:
 
 ```powershell
-.\.venv\Scripts\meet2notes-models.exe --models all
-.\.venv\Scripts\meet2notes-models.exe --models whisper --whisper-model medium
-.\.venv\Scripts\meet2notes-models.exe --models diarization summary
-.\.venv\Scripts\meet2notes-models.exe --models embeddings
-.\.venv\Scripts\meet2notes-models.exe --models nvidia-parakeet
-.\.venv\Scripts\meet2notes-models.exe --models nvidia-nemotron
+.\.venv\Scripts\oundnote-models.exe --models all
+.\.venv\Scripts\oundnote-models.exe --models whisper --whisper-model medium
+.\.venv\Scripts\oundnote-models.exe --models diarization summary
+.\.venv\Scripts\oundnote-models.exe --models embeddings
+.\.venv\Scripts\oundnote-models.exe --models nvidia-parakeet
+.\.venv\Scripts\oundnote-models.exe --models nvidia-nemotron
 ```
 
 Application data defaults to `data/` and model weights to `models/` inside the
@@ -638,7 +638,7 @@ start. They can also be overridden with `M2N_DATA_DIR`, `M2N_MODELS_DIR`,
 
 ## Recording and post-processing
 
-After stopping a recording or importing a media file, Meet2Notes presents the
+After stopping a recording or importing a media file, Oundnote presents the
 processing choices before starting expensive work:
 
 1. Run or skip speaker diarization.
@@ -753,4 +753,4 @@ Start with the [documentation index](docs/README.md). Read
 
 ## License
 
-Meet2Notes is released under the [MIT License](LICENSE).
+Oundnote is released under the [MIT License](LICENSE).

@@ -8,13 +8,13 @@
   let currentThemePreference = document.documentElement.dataset.themePreference || "system";
   let lastSidebarSystemState = null;
   let sidebarSystemTimer = null;
-  const themeStorageKey = "meet2notes-ui-theme";
-  const sidebarStorageKey = "meet2notes-sidebar-collapsed";
+  const themeStorageKey = "oundnote-ui-theme";
+  const sidebarStorageKey = "oundnote-sidebar-collapsed";
   const performanceLogThresholdMs = 250;
 
   function timingLog(event, details = {}) {
     const timestamp = new Date().toISOString();
-    console.info(`[Meet2Notes][${timestamp}] ${event}`, details);
+    console.info(`[Oundnote][${timestamp}] ${event}`, details);
   }
 
   timingLog("page navigation started", {
@@ -309,7 +309,7 @@
         collapseToggle.setAttribute("aria-label", collapseToggle.title);
       }
       if (brand) {
-        brand.title = collapsedOnDesktop ? "Expand sidebar" : "Meet2Notes home";
+        brand.title = collapsedOnDesktop ? "Expand sidebar" : "Oundnote home";
         brand.setAttribute("aria-label", brand.title);
       }
     };
@@ -447,7 +447,7 @@
     } catch (_error) {
       // API persistence remains authoritative when browser storage is unavailable.
     }
-    document.dispatchEvent(new CustomEvent("meet2notes:themechange", {
+    document.dispatchEvent(new CustomEvent("oundnote:themechange", {
       detail: { preference: currentThemePreference, theme: resolved },
     }));
   }
@@ -759,7 +759,7 @@
   });
   loadGlobalEngineState();
 
-  window.Meet2Notes = {
+  window.Oundnote = {
     api,
     escapeHTML,
     formatDate,

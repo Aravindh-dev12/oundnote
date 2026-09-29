@@ -21,12 +21,12 @@ from local_meeting_ai.infrastructure.database.migrations import MigrationRunner
 from local_meeting_ai.instance_lock import AlreadyRunningError, InstanceLock
 from local_meeting_ai.paths import AppPaths, installation_directory
 
-REPOSITORY = "estebanstifli/Meet2Notes"
+REPOSITORY = "Aravindh-dev12/oundnote"
 RELEASES_API = f"https://api.github.com/repos/{REPOSITORY}/releases/latest"
 CACHE_TTL = timedelta(hours=24)
 RELEASE_TAG = re.compile(r"^v?(\d+)\.(\d+)\.(\d+)$")
-CACHE_FILE = ".meet2notes-update-cache.json"
-REQUEST_FILE = ".meet2notes-update-request.json"
+CACHE_FILE = ".oundnote-update-cache.json"
+REQUEST_FILE = ".oundnote-update-request.json"
 
 
 class UpdateError(RuntimeError):
@@ -58,7 +58,7 @@ def fetch_latest_release(*, timeout: float = 3.0) -> ReleaseInfo | None:
         os.environ.get("M2N_UPDATE_RELEASES_API", RELEASES_API),
         headers={
             "Accept": "application/vnd.github+json",
-            "User-Agent": f"Meet2Notes/{__version__}",
+            "User-Agent": f"Oundnote/{__version__}",
             "X-GitHub-Api-Version": "2022-11-28",
         },
     )
@@ -207,13 +207,13 @@ def backup_database(request_path: Path) -> Path | None:
         return None
 
     lock = InstanceLock(
-        data_directory / "meet2notes.instance.lock",
+        data_directory / "oundnote.instance.lock",
         {"pid": os.getpid(), "purpose": "update-backup"},
     )
     try:
         lock.acquire()
     except AlreadyRunningError as error:
-        raise UpdateError("Meet2Notes must be stopped before updating") from error
+        raise UpdateError("Oundnote must be stopped before updating") from error
 
     timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     backup_directory = data_directory / "backups"
@@ -263,7 +263,7 @@ def validate_migrations(request_path: Path) -> None:
 
 def _confirm(release: ReleaseInfo) -> bool:
     print()
-    print(f"Meet2Notes {release.version} is available (installed: {__version__}).")
+    print(f"Oundnote {release.version} is available (installed: {__version__}).")
     print(release.url)
     answer = input("Update now? [y/N]: ").strip().lower()
     return answer in {"y", "yes", "s", "si", "sí"}
@@ -280,7 +280,7 @@ def _check_command(arguments: argparse.Namespace, *, manual: bool) -> int:
         return 0
     if release is None or not is_newer_version(release.version):
         if manual:
-            print(f"Meet2Notes {__version__} is up to date.")
+            print(f"Oundnote {__version__} is up to date.")
         return 0
     if arguments.interactive and not _confirm(release):
         if not manual:
@@ -291,7 +291,7 @@ def _check_command(arguments: argparse.Namespace, *, manual: bool) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Meet2Notes safe release updater")
+    parser = argparse.ArgumentParser(description="Oundnote safe release updater")
     commands = parser.add_subparsers(dest="command", required=True)
     for command in ("check", "prepare"):
         action = commands.add_parser(command)

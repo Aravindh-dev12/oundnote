@@ -1,12 +1,12 @@
 # Safe updates
 
-Meet2Notes checks GitHub once every 24 hours for a newer stable Release. The check
+Oundnote checks GitHub once every 24 hours for a newer stable Release. The check
 runs before the local server starts, has a short timeout, sends no meeting data,
 and is silently skipped when GitHub is unavailable. Declining an update defers
 the same notification for another 24 hours.
 
 Only stable tags in the form `vX.Y.Z` from
-`https://github.com/estebanstifli/Meet2Notes.git` are accepted. Development
+`https://github.com/Aravindh-dev12/oundnote.git` are accepted. Development
 commits from `main`, drafts, and prereleases are never offered to users.
 
 ## What is preserved
@@ -23,7 +23,7 @@ forward-only numbered migration; an applied migration must never be edited.
 
 ## Update transaction
 
-`update.bat` refuses to continue while Meet2Notes is running, when tracked or
+`update.bat` refuses to continue while Oundnote is running, when tracked or
 untracked source changes exist, when the remote is not the official repository,
 or when the release is not a fast-forward from the installed revision.
 

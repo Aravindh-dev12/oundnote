@@ -77,7 +77,7 @@ class AppPaths:
 
 
 def installation_directory() -> Path:
-    """Return the stable folder that owns the Meet2Notes installation."""
+    """Return the stable folder that owns the Oundnote installation."""
     if getattr(sys, "frozen", False):
         return Path(sys.executable).resolve().parent
 
@@ -91,7 +91,7 @@ def installation_directory() -> Path:
     prefix = Path(sys.prefix).resolve()
     if prefix.name.lower() in {".venv", "venv", "env"}:
         return prefix.parent
-    return prefix / ("Meet2Notes" if sys.platform == "win32" else "share/meet2notes")
+    return prefix / ("Oundnote" if sys.platform == "win32" else "share/oundnote")
 
 
 def default_models_directory() -> Path:
@@ -103,7 +103,7 @@ def default_data_directory() -> Path:
 
 
 def data_location_file() -> Path:
-    return installation_directory() / ".meet2notes-data-location.json"
+    return installation_directory() / ".oundnote-data-location.json"
 
 
 def schedule_data_directory_move(source: Path, target: Path) -> None:
@@ -139,10 +139,10 @@ def _resolve_portable_data_directory() -> Path:
                 )
             return target
         except (OSError, ValueError, KeyError, json.JSONDecodeError):
-            # A malformed marker must never prevent Meet2Notes from starting.
+            # A malformed marker must never prevent Oundnote from starting.
             pass
 
-    current = user_data_path("Meet2Notes", appauthor=False).resolve()
+    current = user_data_path("Oundnote", appauthor=False).resolve()
     return current if current.exists() else default_data_directory()
 
 

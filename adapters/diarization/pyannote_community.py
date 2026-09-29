@@ -208,7 +208,7 @@ class PyannoteCommunityDiarizationEngine:
             raise CapabilityUnavailableError(
                 "Pyannote Community-1 requires a Hugging Face access token for "
                 "the first download. Accept the model conditions, then set "
-                "M2N_PYANNOTE_TOKEN in .env and restart Meet2Notes."
+                "M2N_PYANNOTE_TOKEN in .env and restart Oundnote."
             )
         hub = importlib.import_module("huggingface_hub")
         self.model_dir.mkdir(parents=True, exist_ok=True)
@@ -286,7 +286,7 @@ class PyannoteCommunityDiarizationEngine:
         )
 
     def _marker_path(self) -> Path:
-        return self.model_dir / ".meet2notes-installed"
+        return self.model_dir / ".oundnote-installed"
 
     def _cache_dir(self) -> Path:
         return self.model_dir / "hf-cache"

@@ -315,7 +315,7 @@ class HookBus:
 
 
 class PluginManager:
-    ENTRY_POINT_GROUP = "meet2notes.plugins"
+    ENTRY_POINT_GROUP = "oundnote.plugins"
 
     def __init__(
         self,
@@ -457,7 +457,7 @@ class PluginManager:
                     "description": "The plugin could not be discovered.",
                     "author": "Unknown",
                     "plugin_api": "unknown",
-                    "requires_meet2notes": None,
+                    "requires_oundnote": None,
                     "permissions": [],
                     "homepage": None,
                     "default_enabled": False,
@@ -482,7 +482,7 @@ class PluginManager:
         if plugin.manifest.plugin_api != PLUGIN_API_VERSION:
             raise ValidationError(
                 f"Plugin API {plugin.manifest.plugin_api} is incompatible with "
-                f"Meet2Notes Plugin API {PLUGIN_API_VERSION}"
+                f"Oundnote Plugin API {PLUGIN_API_VERSION}"
             )
         if not enabled and self._provider_in_use(plugin_id):
             raise ValidationError(
@@ -540,7 +540,7 @@ class PluginManager:
     def api_info(self) -> dict[str, str]:
         return {
             "plugin_api": PLUGIN_API_VERSION,
-            "meet2notes": __version__,
+            "oundnote": __version__,
             "entry_point_group": self.ENTRY_POINT_GROUP,
         }
 

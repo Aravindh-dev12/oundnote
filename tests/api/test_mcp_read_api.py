@@ -124,7 +124,7 @@ def test_mcp_configuration_and_enabled_preference(client: TestClient) -> None:
     payload = configuration.json()
     assert payload["enabled"] is True
     assert '"-m"' in payload["claude_desktop"]["content"]
-    assert "[mcp_servers.meet2notes]" in payload["codex_chatgpt"]["content"]
+    assert "[mcp_servers.oundnote]" in payload["codex_chatgpt"]["content"]
     assert client.get("/api/mcp/status").json() == {"enabled": True}
 
     updated = client.put("/api/settings", json={"mcp": {"enabled": False}})

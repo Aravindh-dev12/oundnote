@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tool-dev-oundnote"
+version = "0.1.2"
+description = "Executa for the oundnote Anna App"
+requires-python = ">=3.11"
+dependencies = ["httpx>=0.28,<1", "pydantic>=2.12,<3", "pydantic-settings>=2.7,<3", "platformdirs>=4.3,<5"]
+
+[project.scripts]
+"tool-dev-oundnote" = "oundnote_plugin:main"
+
+[tool.setuptools]
+py-modules = ["oundnote_plugin"]

@@ -181,7 +181,7 @@ def test_diagnostic_report_continues_and_is_shareable(client: TestClient) -> Non
 
     assert response.status_code == 200
     payload = response.json()
-    assert payload["filename"].startswith("meet2notes-diagnostics-")
+    assert payload["filename"].startswith("oundnote-diagnostics-")
     assert "== Hardware ==" in payload["report"]
     assert "== Non-blocking component checks ==" in payload["report"]
     assert "== Recent application log" in payload["report"]

@@ -10,7 +10,7 @@ def test_plugin_catalog_and_final_pipeline_are_exposed(client: TestClient) -> No
     cleanup = next(
         item
         for item in catalog.json()["plugins"]
-        if item["id"] == "meet2notes.analysis-cleanup"
+        if item["id"] == "oundnote.analysis-cleanup"
     )
     assert cleanup["enabled"] is True
     assert cleanup["permissions"] == [
@@ -42,7 +42,7 @@ def test_plugin_catalog_and_final_pipeline_are_exposed(client: TestClient) -> No
 
 
 def test_plugin_can_be_disabled_enabled_and_rescanned(client: TestClient) -> None:
-    plugin_id = "meet2notes.analysis-cleanup"
+    plugin_id = "oundnote.analysis-cleanup"
     disabled = client.put(f"/api/plugins/{plugin_id}/state", json={"enabled": False})
     assert disabled.status_code == 200
     assert disabled.json()["enabled"] is False

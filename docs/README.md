@@ -32,6 +32,6 @@ and future plans do not become mixed together.
 - [AI engine research](ai-engine-research.md): model/runtime evaluation notes;
   not a user guide or stable API.
 
-The root [product specification](../Meet2Notes.md) records the original product
+The root [product specification](../Oundnote.md) records the original product
 brief. When it differs from the application or current documentation, the
 README, source code, and the public contracts above are authoritative.

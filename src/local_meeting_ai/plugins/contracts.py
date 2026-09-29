@@ -32,7 +32,7 @@ class PluginManifest(BaseModel):
     description: str = Field(min_length=1, max_length=500)
     author: str = Field(default="Unknown", min_length=1, max_length=120)
     plugin_api: str = Field(default=PLUGIN_API_VERSION, min_length=1, max_length=20)
-    requires_meet2notes: str | None = Field(default=None, max_length=80)
+    requires_oundnote: str | None = Field(default=None, max_length=80)
     permissions: tuple[str, ...] = ()
     homepage: str | None = Field(default=None, max_length=500)
     default_enabled: bool = False

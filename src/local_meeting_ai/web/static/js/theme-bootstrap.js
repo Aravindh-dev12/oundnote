@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const storageKey = "meet2notes-ui-theme";
+  const storageKey = "oundnote-ui-theme";
   let preference = "system";
   try {
     const saved = window.localStorage.getItem(storageKey);
@@ -15,7 +15,7 @@
   document.documentElement.dataset.themePreference = preference;
   document.documentElement.dataset.theme = resolved;
   try {
-    if (window.localStorage.getItem("meet2notes-sidebar-collapsed") === "true"
+    if (window.localStorage.getItem("oundnote-sidebar-collapsed") === "true"
         && window.matchMedia("(min-width: 821px)").matches) {
       document.documentElement.classList.add("sidebar-collapsed");
     }

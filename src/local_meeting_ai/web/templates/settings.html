@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Settings · Meet2Notes{% endblock %}
+{% block title %}Settings · Oundnote{% endblock %}
 {% block content %}
 <div class="page settings-page">
   <header class="meetings-page-header">
@@ -60,11 +60,11 @@
           <section class="general-card model-storage-card storage-locations-card">
             <div class="general-card-heading">
               <span class="settings-icon engine-blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M5 8l2-4h10l2 4M6 8v12h12V8M10 12h4"/></svg></span>
-              <div><strong>Data storage locations</strong><small>Choose where Meet2Notes keeps your meetings, recordings and downloaded local models.</small></div>
+              <div><strong>Data storage locations</strong><small>Choose where Oundnote keeps your meetings, recordings and downloaded local models.</small></div>
             </div>
             <div class="storage-location-row"><div><strong>Meeting data</strong><small id="storage-data-directory">Loading local folder…</small></div><button class="button secondary" type="button" data-select-folder="data">Choose folder</button></div>
             <div class="storage-location-row"><div><strong>AI models</strong><small id="storage-models-directory">Loading model folder…</small><input id="models-directory" type="hidden"></div><button class="button secondary" type="button" data-select-folder="models">Choose folder</button></div>
-            <div class="engine-compatibility-note model-directory-note" id="models-directory-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg><span>Changing this folder moves existing downloaded models safely. Meet2Notes must restart after the move so each AI worker uses the new location.</span></div>
+            <div class="engine-compatibility-note model-directory-note" id="models-directory-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg><span>Changing this folder moves existing downloaded models safely. Oundnote must restart after the move so each AI worker uses the new location.</span></div>
           </section>
           <section class="general-card">
             <div class="general-card-heading">
@@ -81,7 +81,7 @@
             <div><strong id="mcp-clients-title" data-i18n="mcp.title">MCP desktop clients</strong><small data-i18n="mcp.description">Use the generated local stdio configuration to let Claude Desktop, Codex or ChatGPT Desktop read your meetings, transcripts, AI notes and RAG results.</small></div>
           </div>
           <label class="mcp-enabled-row">
-            <span><strong data-i18n="mcp.enable">Enable desktop MCP access</strong><small data-i18n="mcp.enable_help">When disabled, configured desktop clients cannot read Meet2Notes data. Their configuration files are kept unchanged.</small></span>
+            <span><strong data-i18n="mcp.enable">Enable desktop MCP access</strong><small data-i18n="mcp.enable_help">When disabled, configured desktop clients cannot read Oundnote data. Their configuration files are kept unchanged.</small></span>
             <span class="switch"><input id="mcp-enabled" type="checkbox"><i></i></span>
           </label>
           <p class="mcp-status" id="mcp-status" aria-live="polite" data-i18n="mcp.loading">Loading MCP configuration…</p>
@@ -316,7 +316,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
           <span>Plugins can register post-processing hooks, AI providers, model profiles and RAG vector stores. Filters receive temporary artifacts and providers receive isolated data/model directories. Only enable packages you trust.</span>
         </div>
-        <section class="engine-catalog" aria-label="Installed Meet2Notes plugins">
+        <section class="engine-catalog" aria-label="Installed Oundnote plugins">
           <div class="model-table-wrap"><table class="model-table plugin-table"><thead><tr><th>Plugin</th><th>Hooks</th><th>Permissions</th><th>Status</th><th>Actions</th></tr></thead><tbody id="plugin-list"><tr><td><strong>Loading plugins...</strong></td><td></td><td></td><td></td><td></td></tr></tbody></table></div>
         </section>
         <section class="general-card plugin-settings-card" id="plugin-settings-editor" hidden>
@@ -332,7 +332,7 @@
             <span class="settings-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9 4 12l4 3M16 9l4 3-4 3M14 5l-4 14"/></svg></span>
             <div><strong>Community extension API</strong><small id="plugin-api-summary">Loading extension API...</small></div>
           </div>
-          <p class="modal-note">Python packages register through the <code>meet2notes.plugins</code> entry-point group. Execution history records status, duration and content hashes, never transcript text.</p>
+          <p class="modal-note">Python packages register through the <code>oundnote.plugins</code> entry-point group. Execution history records status, duration and content hashes, never transcript text.</p>
         </section>
       </section>
 
@@ -489,7 +489,7 @@
                   <input id="ai-custom-gguf-path" type="text" readonly placeholder="Choose an existing .gguf file">
                   <button class="button" id="ai-custom-gguf-browse" type="button">Browse...</button>
                 </div>
-                <small>The file stays in its current location. It must be compatible with the installed llama.cpp runtime, and Meet2Notes will never delete it.</small>
+                <small>The file stays in its current location. It must be compatible with the installed llama.cpp runtime, and Oundnote will never delete it.</small>
               </label>
               <div class="engine-toggle-grid wide">
                 <label class="engine-toggle"><span><strong>Load in memory at startup</strong><small>Starts ready for the first summary. Enabled by default.</small></span><span class="switch"><input id="ai-custom-preload-on-start" type="checkbox"><i></i></span></label>
@@ -553,7 +553,7 @@
               </label>
               <label class="engine-field" hidden>
                 <span>API key environment variable</span>
-                <input id="ai-key-env" type="text" value="MEET2NOTES_AI_API_KEY">
+                <input id="ai-key-env" type="text" value="OUNDNOTE_AI_API_KEY">
                 <small>The secret itself is never saved.</small>
               </label>
               <label class="engine-field compact">
@@ -689,7 +689,7 @@
           <input id="rag-profile-id" type="hidden" value="bge-m3">
           <div class="engine-compatibility-note">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
-            <span><strong>Recommended default:</strong> BGE-M3 runs directly in Meet2Notes with FastEmbed and ONNX Runtime. It does not require Ollama or PyTorch and provides multilingual 1024-dimensional embeddings with an 8K context.</span>
+            <span><strong>Recommended default:</strong> BGE-M3 runs directly in Oundnote with FastEmbed and ONNX Runtime. It does not require Ollama or PyTorch and provides multilingual 1024-dimensional embeddings with an 8K context.</span>
           </div>
           <section class="engine-catalog" aria-label="Embedding models">
             <div class="model-table-wrap"><table class="model-table"><thead><tr><th aria-label="Selected"></th><th>Embedding model</th><th>Installation</th><th>Actions</th></tr></thead><tbody id="rag-model-list"><tr><td></td><td><strong>Loading embedding models...</strong></td><td></td><td></td></tr></tbody></table></div>
@@ -786,7 +786,7 @@
           <div class="engine-config-heading"><div><strong id="webhook-editor-title">Add webhook endpoint</strong><small>A signing secret is shown once when a destination is created or rotated.</small></div><button class="icon-button" id="webhook-editor-close" type="button" aria-label="Close editor">×</button></div>
           <div class="engine-field-grid">
             <label class="engine-field"><span>Name</span><input id="webhook-name" maxlength="120" required placeholder="Meeting assistant"></label>
-            <label class="engine-field wide"><span>Destination URL</span><input id="webhook-url" type="url" maxlength="2000" required placeholder="https://automation.example.com/meet2notes"></label>
+            <label class="engine-field wide"><span>Destination URL</span><input id="webhook-url" type="url" maxlength="2000" required placeholder="https://automation.example.com/oundnote"></label>
             <label class="engine-field"><span>Endpoint mode</span><select id="webhook-mode"><option value="notification">Notification · ignore response</option><option value="live_agent">Live agent · capture suggestions</option></select></label>
             <label class="engine-field"><span>Content level</span><select id="webhook-content-level"><option value="metadata">Metadata only</option><option value="segments">Transcript segments</option><option value="full">Full content, including notes</option></select></label>
             <label class="engine-field"><span>Timeout · seconds</span><input id="webhook-timeout" type="number" min="1" max="30" step="0.5"></label>
@@ -843,20 +843,20 @@
   <div class="modal-panel model-move-modal">
     <div class="modal-header"><div><span class="eyebrow">Local storage</span><h2 id="models-move-title">Moving your AI models</h2><p id="models-move-message">Preparing the model files…</p></div></div>
     <div class="progress-track indeterminate"><span></span></div>
-    <p class="modal-note">The AI workers are unloaded first. Restart Meet2Notes when this finishes to use the new folder.</p>
+    <p class="modal-note">The AI workers are unloaded first. Restart Oundnote when this finishes to use the new folder.</p>
   </div>
 </dialog>
 <dialog class="modal compact-modal" id="models-overwrite-dialog" aria-labelledby="models-overwrite-title">
   <form method="dialog" class="modal-panel model-move-modal">
     <div class="modal-header"><div><span class="eyebrow">Confirmation required</span><h2 id="models-overwrite-title">Existing models found</h2><p id="models-overwrite-message">This folder already contains model files.</p></div></div>
-    <p class="modal-note">Files with the same model name will be replaced by your current Meet2Notes models. Other files in the selected folder will be kept.</p>
+    <p class="modal-note">Files with the same model name will be replaced by your current Oundnote models. Other files in the selected folder will be kept.</p>
     <div class="modal-actions"><button class="button secondary" value="cancel" type="submit">Cancel</button><button class="button danger" value="overwrite" type="submit">Overwrite and move</button></div>
   </form>
 </dialog>
 <dialog class="modal compact-modal" id="pytorch-cuda-dialog" aria-labelledby="pytorch-cuda-title">
   <form method="dialog" class="modal-panel model-move-modal">
     <div class="modal-header"><div><span class="eyebrow">GPU acceleration</span><h2 id="pytorch-cuda-title">Install CUDA PyTorch?</h2><p id="pytorch-cuda-message">This model needs CUDA PyTorch before it can use the NVIDIA GPU.</p></div></div>
-    <p class="modal-note">Only packages inside Meet2Notes' <code>.venv</code> will change. Your system Python and existing recordings are not modified.</p>
+    <p class="modal-note">Only packages inside Oundnote' <code>.venv</code> will change. Your system Python and existing recordings are not modified.</p>
     <div class="modal-actions"><button class="button secondary" value="cancel" type="submit">Keep CPU setup</button><button class="button primary" value="install" type="submit">Download CUDA packages</button></div>
   </form>
 </dialog>
@@ -888,7 +888,7 @@
 </dialog>
 <dialog class="modal" id="diagnostics-dialog" aria-labelledby="diagnostics-title">
   <div class="modal-panel diagnostics-modal">
-    <div class="modal-header"><div><span class="eyebrow">Support report</span><h2 id="diagnostics-title">System diagnostics</h2><p id="diagnostics-status">Collecting hardware, software and Meet2Notes configuration…</p></div><button class="icon-button close-button" id="diagnostics-close" type="button" aria-label="Close">×</button></div>
+    <div class="modal-header"><div><span class="eyebrow">Support report</span><h2 id="diagnostics-title">System diagnostics</h2><p id="diagnostics-status">Collecting hardware, software and Oundnote configuration…</p></div><button class="icon-button close-button" id="diagnostics-close" type="button" aria-label="Close">×</button></div>
     <div class="progress-track indeterminate" id="diagnostics-progress"><span></span></div>
     <textarea id="diagnostics-report" class="diagnostics-report" readonly spellcheck="false" aria-label="Diagnostic report"></textarea>
     <div class="modal-actions"><button class="button secondary" id="copy-diagnostics" type="button">Copy report</button><button class="button primary" id="download-diagnostics" type="button">Download report</button></div>

@@ -10,7 +10,7 @@
     renderJobCard,
     subscribeJobs,
     toast,
-  } = window.Meet2Notes;
+  } = window.Oundnote;
 
   const page = document.querySelector(".meeting-page");
   const meetingId = page.dataset.meetingId;
@@ -42,7 +42,7 @@
     const badge = document.querySelector(".meeting-kicker .status-badge");
     badge.className = `status-badge status-${item.status}`;
     badge.textContent = item.status;
-    document.title = `${item.title} · Meet2Notes`;
+    document.title = `${item.title} · Oundnote`;
   }
 
   function renderRecordings(items) {

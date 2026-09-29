@@ -61,7 +61,7 @@ class LlamaCppEmbeddingProvider:
 
     async def uninstall(self, profile_id: str, config: dict[str, Any]) -> None:
         del profile_id, config
-        raise ValidationError("Custom GGUF files are not managed or deleted by Meet2Notes")
+        raise ValidationError("Custom GGUF files are not managed or deleted by Oundnote")
 
     async def unload(self, profile_id: str | None = None) -> None:
         del profile_id

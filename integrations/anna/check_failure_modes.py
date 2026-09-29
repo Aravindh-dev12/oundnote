@@ -92,7 +92,7 @@ finally:
     thread.join()
 out = call({"action": "status"})
 assert out["success"] and not out["data"]["connected"]
-assert out["data"]["error_code"] == "meet2notes_not_running"
+assert out["data"]["error_code"] == "oundnote_not_running"
 out = call({"action": "list"})
 assert not out["success"] and "not reachable" in out["error"]
 print("PASS: disconnected backend gives actionable status and read errors")

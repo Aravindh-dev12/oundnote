@@ -6,8 +6,8 @@ param(
 $ErrorActionPreference = "Stop"
 $RepositoryRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Python = Join-Path $RepositoryRoot ".venv\Scripts\python.exe"
-$RequestFile = Join-Path $RepositoryRoot ".meet2notes-update-request.json"
-$ExpectedRemote = "https://github.com/estebanstifli/Meet2Notes.git"
+$RequestFile = Join-Path $RepositoryRoot ".oundnote-update-request.json"
+$ExpectedRemote = "https://github.com/Aravindh-dev12/oundnote.git"
 $InstallExtras = ".[capture,transcription,diarization,nvidia-asr,pyannote-diarization]"
 
 function Invoke-Checked {
@@ -28,14 +28,14 @@ function Quote-ProcessArgument {
 
 Set-Location -LiteralPath $RepositoryRoot
 if (-not (Test-Path -LiteralPath $Python)) {
-    throw "Meet2Notes is not installed. Run install-update.bat first."
+    throw "Oundnote is not installed. Run install-update.bat first."
 }
 if (-not (Test-Path -LiteralPath $RequestFile)) {
     throw "No prepared update was found. Run update.bat first."
 }
 
 $Request = Get-Content -LiteralPath $RequestFile -Raw | ConvertFrom-Json
-if ($Request.repository -ne "estebanstifli/Meet2Notes") {
+if ($Request.repository -ne "Aravindh-dev12/oundnote") {
     throw "The update request targets an unexpected repository."
 }
 if ($Request.tag -notmatch '^v?\d+\.\d+\.\d+$') {
@@ -55,7 +55,7 @@ if ($Changes) {
 }
 
 Write-Host ""
-Write-Host "Backing up Meet2Notes data..." -ForegroundColor Cyan
+Write-Host "Backing up Oundnote data..." -ForegroundColor Cyan
 Invoke-Checked $Python @("-m", "local_meeting_ai.updater", "backup", "--request-file", $RequestFile)
 $Request = Get-Content -LiteralPath $RequestFile -Raw | ConvertFrom-Json
 $BackupPath = $Request.database_backup
@@ -97,7 +97,7 @@ try {
 
 Remove-Item -LiteralPath $RequestFile -Force
 Write-Host ""
-Write-Host "Meet2Notes was updated to $($Request.target_version)." -ForegroundColor Green
+Write-Host "Oundnote was updated to $($Request.target_version)." -ForegroundColor Green
 if ($BackupPath) {
     Write-Host "Pre-update database backup: $BackupPath"
 }

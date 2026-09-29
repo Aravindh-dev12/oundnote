@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const { api, toast, applyTheme, escapeHTML, t } = window.Meet2Notes;
+  const { api, toast, applyTheme, escapeHTML, t } = window.Oundnote;
   const $ = (selector) => document.querySelector(selector);
 
   const computeTypes = [
@@ -208,7 +208,7 @@
   function appendInstallLog(message) {
     const log = $("#model-install-log");
     if (!log) return;
-    const timestamp = new Date().toLocaleTimeString(Meet2Notes.currentLanguage);
+    const timestamp = new Date().toLocaleTimeString(Oundnote.currentLanguage);
     log.value += `${log.value ? "\n" : ""}[${timestamp}] ${message}`;
     log.scrollTop = log.scrollHeight;
   }
@@ -272,7 +272,7 @@
   function appendRagReindexLog(message) {
     const log = $("#rag-reindex-log");
     if (!log || !message) return;
-    const timestamp = new Date().toLocaleTimeString(Meet2Notes.currentLanguage);
+    const timestamp = new Date().toLocaleTimeString(Oundnote.currentLanguage);
     log.value += `${log.value ? "\n" : ""}[${timestamp}] ${message}`;
     log.scrollTop = log.scrollHeight;
   }
@@ -710,7 +710,7 @@
     $("#ai-base-url").value = config.base_url || "";
     $("#ai-litellm-model").value = provider === "litellm" ? (config.model || "") : "";
     $("#ai-litellm-base-url").value = config.base_url || "";
-    $("#ai-key-env").value = config.api_key_env || "MEET2NOTES_AI_API_KEY";
+    $("#ai-key-env").value = config.api_key_env || "OUNDNOTE_AI_API_KEY";
     $("#ai-context-length").value = config.context_length ?? 16384;
     $("#ai-batch-size").value = config.batch_size ?? 512;
     $("#ai-micro-batch").value = config.micro_batch_size ?? 128;
@@ -1145,7 +1145,7 @@
 
   function renderSystem(info, capabilities) {
     const address = $("#port-restart-note");
-    if (address) address.textContent = `Current address: ${info.listen_address}. Save, then restart Meet2Notes to apply a new port.`;
+    if (address) address.textContent = `Current address: ${info.listen_address}. Save, then restart Oundnote to apply a new port.`;
     $("#data-directory").textContent = info.data_directory;
     const storageDataDirectory = $("#storage-data-directory");
     if (storageDataDirectory) storageDataDirectory.textContent = info.data_directory;
@@ -1174,7 +1174,7 @@
     pluginCatalog = catalog.plugins || [];
     const apiSummary = $("#plugin-api-summary");
     if (apiSummary) {
-      apiSummary.textContent = `Plugin API ${catalog.plugin_api} · Meet2Notes ${catalog.meet2notes} · ${catalog.entry_point_group}`;
+      apiSummary.textContent = `Plugin API ${catalog.plugin_api} · Oundnote ${catalog.oundnote} · ${catalog.entry_point_group}`;
     }
     const body = $("#plugin-list");
     if (!body) return;
@@ -1807,9 +1807,9 @@
           });
           $("#storage-data-directory").textContent = result.directory;
           $("#models-move-message").textContent = result.restart_required
-            ? "Ready. Meet2Notes will move the database, meetings and audio safely during the next restart."
+            ? "Ready. Oundnote will move the database, meetings and audio safely during the next restart."
             : "This folder is already active.";
-          toast(result.restart_required ? "Data folder selected. Restart Meet2Notes to complete the move." : "This data folder is already active.");
+          toast(result.restart_required ? "Data folder selected. Restart Oundnote to complete the move." : "This data folder is already active.");
           window.setTimeout(() => dialog?.close(), 1400);
         }
       } catch (error) {
@@ -1840,7 +1840,7 @@
       : "No NVIDIA GPU driver was detected.";
     $("#pytorch-cuda-message").textContent =
       `${profile.display_name} uses CUDA PyTorch for GPU acceleration. ${gpuLabel} `
-      + "This downloads several GB of PyTorch CUDA packages into Meet2Notes' private .venv. "
+      + "This downloads several GB of PyTorch CUDA packages into Oundnote' private .venv. "
       + "A restart is required before the model can use the GPU.";
     dialog.returnValue = "";
     return new Promise((resolve) => {
@@ -1864,7 +1864,7 @@
     if (runtime.cuda_available) return true;
     if (runtime.restart_required) {
       toast(
-        "CUDA PyTorch is already installed. Use Apagar, then start Meet2Notes again to activate the GPU. The model was not changed.",
+        "CUDA PyTorch is already installed. Use Apagar, then start Oundnote again to activate the GPU. The model was not changed.",
         "error",
       );
       return false;
@@ -1872,7 +1872,7 @@
     if (!runtime.can_install) {
       throw new Error(
         runtime.message
-          || "CUDA PyTorch is not active and Meet2Notes could not detect an NVIDIA GPU driver. "
+          || "CUDA PyTorch is not active and Oundnote could not detect an NVIDIA GPU driver. "
             + "Use the CPU engine or install a compatible NVIDIA driver first.",
       );
     }
@@ -1884,8 +1884,8 @@
     await beginInstallModal("Installing CUDA PyTorch for GPU transcription");
     try {
       const result = await api("/api/runtimes/pytorch-cuda/install", { method: "POST" });
-      await finishInstallModal(null, result.message || "CUDA PyTorch installed. Restart Meet2Notes.");
-      toast("CUDA PyTorch installed in .venv. Restart Meet2Notes before using this GPU model.");
+      await finishInstallModal(null, result.message || "CUDA PyTorch installed. Restart Oundnote.");
+      toast("CUDA PyTorch installed in .venv. Restart Oundnote before using this GPU model.");
     } catch (error) {
       await finishInstallModal(error);
       throw error;
@@ -1921,7 +1921,7 @@
       $("#models-directory").value = preferences.models_directory;
       $("#storage-models-directory").textContent = preferences.models_directory;
       message.textContent = "The model files are ready in their new folder.";
-      toast("Models moved. Restart Meet2Notes to use the new location.");
+      toast("Models moved. Restart Oundnote to use the new location.");
       return preferences;
     } finally {
       window.setTimeout(() => dialog?.close(), 650);
@@ -1944,7 +1944,7 @@
     }
   });
 
-  let diagnosticsFilename = "meet2notes-diagnostics.txt";
+  let diagnosticsFilename = "oundnote-diagnostics.txt";
 
   $("#run-diagnostics")?.addEventListener("click", async (event) => {
     const dialog = $("#diagnostics-dialog");
@@ -1963,7 +1963,7 @@
       report.scrollTop = 0;
       status.textContent = "Diagnostics completed. Copy or download this report when opening an issue.";
     } catch (error) {
-      report.value = `Meet2Notes could not generate the diagnostic report.\n\n${error.message}`;
+      report.value = `Oundnote could not generate the diagnostic report.\n\n${error.message}`;
       status.textContent = "The report endpoint failed; this message can still be copied.";
     } finally {
       progress.hidden = true;
@@ -2119,7 +2119,7 @@
         model_file: remote ? "not-managed.gguf" : selected.model_file,
         model_path: null,
         base_url: remote ? ($("#live-assistant-base-url").value.trim() || null) : null,
-        api_key_env: "MEET2NOTES_LIVE_ASSISTANT_API_KEY",
+        api_key_env: "OUNDNOTE_LIVE_ASSISTANT_API_KEY",
         context_length: Number($("#live-assistant-context-length").value),
         max_output_tokens: Number($("#live-assistant-max-output").value),
         temperature: Number($("#live-assistant-temperature").value),

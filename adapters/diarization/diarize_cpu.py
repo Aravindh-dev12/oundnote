@@ -1,4 +1,4 @@
-"""CPU-only ``diarize`` adapter isolated from Meet2Notes' PyTorch runtime.
+"""CPU-only ``diarize`` adapter isolated from Oundnote' PyTorch runtime.
 
 The upstream package currently caps Torch below 2.9, while the application
 uses newer CUDA-capable Torch for ASR and Pyannote.  A private child virtual
@@ -309,7 +309,7 @@ class DiarizeCpuEngine:
         )
 
     def _marker_path(self) -> Path:
-        return self.runtime_dir / ".meet2notes-installed"
+        return self.runtime_dir / ".oundnote-installed"
 
     def _installed(self) -> bool:
         return self._runtime_python().is_file() and self._marker_path().is_file()

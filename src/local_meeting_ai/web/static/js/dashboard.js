@@ -9,7 +9,7 @@
     renderJobCard,
     subscribeJobs,
     toast,
-  } = window.Meet2Notes;
+  } = window.Oundnote;
 
   let meetings = [];
   let jobs = [];

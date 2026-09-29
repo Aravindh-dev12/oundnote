@@ -16,7 +16,7 @@ class AppSettings(BaseSettings):
         case_sensitive=False,
     )
 
-    app_name: str = "Meet2Notes"
+    app_name: str = "Oundnote"
     host: str = "127.0.0.1"
     port: int = Field(default=8765, ge=1, le=65535)
     data_dir: Path | None = None

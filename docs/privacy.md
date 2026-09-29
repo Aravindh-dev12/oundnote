@@ -24,7 +24,7 @@
   HTTPS and signing secrets live in the operating-system credential vault. See
   [the webhook security and delivery contract](webhooks.md).
 - Model installers connect only to the official model hosts when the user runs
-  the installer, invokes `meet2notes-models`, or confirms installation in
+  the installer, invokes `oundnote-models`, or confirms installation in
   Settings. Meeting content is never part of those requests.
 
 Anyone recording a conversation is responsible for obtaining the consent required

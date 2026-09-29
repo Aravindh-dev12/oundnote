@@ -250,7 +250,7 @@ class VibeVoiceAsrEngine:
             repo_id=VIBEVOICE_ASR_REPOSITORY,
             local_dir=str(self.model_dir),
         )
-        (self.model_dir / ".meet2notes-installed").write_text(
+        (self.model_dir / ".oundnote-installed").write_text(
             VIBEVOICE_ASR_REPOSITORY,
             encoding="utf-8",
         )
@@ -295,7 +295,7 @@ class VibeVoiceAsrEngine:
             return self._model, self._processor
 
     def _installed(self) -> bool:
-        return (self.model_dir / ".meet2notes-installed").is_file() or (
+        return (self.model_dir / ".oundnote-installed").is_file() or (
             (self.model_dir / "config.json").is_file()
             and (self.model_dir / "model.safetensors.index.json").is_file()
         )

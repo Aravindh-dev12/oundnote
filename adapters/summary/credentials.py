@@ -6,7 +6,7 @@ from typing import Any, cast
 
 from local_meeting_ai.domain.errors import CapabilityUnavailableError
 
-SERVICE_NAME = "Meet2Notes"
+SERVICE_NAME = "Oundnote"
 LITELLM_ACCOUNT = "summary/litellm-api-key"
 
 

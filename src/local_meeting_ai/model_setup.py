@@ -50,9 +50,9 @@ MODEL_CHOICES = (
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="meet2notes-models",
+        prog="oundnote-models",
         description=(
-            "Download and verify Meet2Notes local AI models. Downloads are "
+            "Download and verify Oundnote local AI models. Downloads are "
             "stored in the installation models directory by default."
         ),
     )
@@ -77,7 +77,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--models-dir",
         type=Path,
-        help="Model directory (default: <Meet2Notes installation>/models)",
+        help="Model directory (default: <Oundnote installation>/models)",
     )
     return parser
 
@@ -102,8 +102,8 @@ async def install_models(
         database = Database(paths.database)
         MigrationRunner(database).apply()
         SettingsRepository(database).update({"models_directory": str(paths.models)})
-        print("Saved this model directory as the Meet2Notes runtime default.")
-    print(f"Meet2Notes model directory: {paths.models}")
+        print("Saved this model directory as the Oundnote runtime default.")
+    print(f"Oundnote model directory: {paths.models}")
 
     if "whisper" in requested:
         print(f"[1/4] Downloading and verifying Faster Whisper '{whisper_model}'...")
@@ -150,7 +150,7 @@ async def install_models(
         await _install_nvidia_engine(paths, "nemotron")
         print("      NVIDIA Nemotron is ready for live and final transcription.")
 
-    print("Meet2Notes model setup completed successfully.")
+    print("Oundnote model setup completed successfully.")
 
 
 async def _install_whisper(paths: AppPaths, model: str) -> None:

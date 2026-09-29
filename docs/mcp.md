@@ -1,12 +1,12 @@
 # Local MCP server
 
-Meet2Notes includes a read-only Model Context Protocol server for desktop AI
+Oundnote includes a read-only Model Context Protocol server for desktop AI
 clients. Each client starts its own lightweight `stdio` process. That process
 does not open the database or load AI models; it discovers the running
-Meet2Notes instance and uses its loopback HTTP API.
+Oundnote instance and uses its loopback HTTP API.
 
-Meet2Notes must be running when a tool is called. The MCP process can start
-while the app is closed: `meet2notes_status` reports the disconnected state and
+Oundnote must be running when a tool is called. The MCP process can start
+while the app is closed: `oundnote_status` reports the disconnected state and
 the other tools return a retryable, user-readable error.
 
 ## Client configuration
@@ -14,9 +14,9 @@ the other tools return a retryable, user-readable error.
 For Anna, follow the separate [Anna setup and reviewer guide](../integrations/anna/REVIEW.md).
 The optional Windows x86_64 Executa uses the same read-only gateway and explicit
 MCP access setting. Install the integration through Anna; the stdio configuration
-below is for other desktop MCP clients. Anna is not needed for normal Meet2Notes use.
+below is for other desktop MCP clients. Anna is not needed for normal Oundnote use.
 
-Use the Python interpreter from the Meet2Notes virtual environment. There is no
+Use the Python interpreter from the Oundnote virtual environment. There is no
 separate MCP executable to sign or distribute.
 
 Claude Desktop on Windows:
@@ -24,8 +24,8 @@ Claude Desktop on Windows:
 ```json
 {
   "mcpServers": {
-    "meet2notes": {
-      "command": "C:\\path\\to\\Meet2Notes\\.venv\\Scripts\\python.exe",
+    "oundnote": {
+      "command": "C:\\path\\to\\Oundnote\\.venv\\Scripts\\python.exe",
       "args": ["-m", "local_meeting_ai.mcp.server"]
     }
   }
@@ -37,8 +37,8 @@ Claude Desktop on Linux or macOS:
 ```json
 {
   "mcpServers": {
-    "meet2notes": {
-      "command": "/path/to/Meet2Notes/.venv/bin/python",
+    "oundnote": {
+      "command": "/path/to/Oundnote/.venv/bin/python",
       "args": ["-m", "local_meeting_ai.mcp.server"]
     }
   }
@@ -48,12 +48,12 @@ Claude Desktop on Linux or macOS:
 Clients whose schema requires a transport field can add `"type": "stdio"`.
 Restart or reload the client after changing its configuration.
 
-When Meet2Notes uses a custom data directory, pass the same override:
+When Oundnote uses a custom data directory, pass the same override:
 
 ```json
 {
   "env": {
-    "M2N_DATA_DIR": "/absolute/path/to/Meet2NotesData"
+    "M2N_DATA_DIR": "/absolute/path/to/OundnoteData"
   }
 }
 ```
@@ -63,7 +63,7 @@ Non-loopback URLs are rejected unless `M2N_MCP_ALLOW_REMOTE=1` is also set.
 
 ## Read-only tools
 
-- `meet2notes_status`: app, database, queue, and RAG availability.
+- `oundnote_status`: app, database, queue, and RAG availability.
 - `list_meetings`: text, ISO-date, and result-limit filters.
 - `get_meeting`: meeting metadata, transcript versions, and AI-note versions.
 - `get_transcript`: bounded pages of the active completed transcript with
@@ -75,7 +75,7 @@ Non-loopback URLs are rejected unless `M2N_MCP_ALLOW_REMOTE=1` is also set.
 
 `search_meetings` never builds or refreshes the index. It fails clearly when
 RAG is disabled or the index is empty; indexing remains an explicit action in
-Meet2Notes. The tool may load the configured embedding model to encode the
+Oundnote. The tool may load the configured embedding model to encode the
 query, but every model remains owned by the single running app process.
 
 The server exposes no recording control, imports, audio files, settings,
@@ -85,14 +85,14 @@ filesystem paths, model management, indexing, edits, or deletion tools.
 
 The AI client owns the MCP subprocess and normally stops it by closing its
 standard input. Multiple clients may run separate MCP processes concurrently;
-all of them use the same Meet2Notes application instance.
+all of them use the same Oundnote application instance.
 
 Standard output is reserved for MCP protocol messages. Server diagnostics use
 standard error, so wrapper scripts that print banners or pause for input must
 not be used as the configured command.
 
-For a direct smoke test, start Meet2Notes and run the MCP Inspector against:
+For a direct smoke test, start Oundnote and run the MCP Inspector against:
 
 ```text
-<Meet2Notes Python> -m local_meeting_ai.mcp.server
+<Oundnote Python> -m local_meeting_ai.mcp.server
 ```

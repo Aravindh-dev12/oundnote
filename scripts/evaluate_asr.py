@@ -1,4 +1,4 @@
-"""Benchmark Meet2Notes ASR engines without using the web application's workers.
+"""Benchmark Oundnote ASR engines without using the web application's workers.
 
 Each benchmark is run by an orchestration thread in this separate Python
 process.  The runner unloads every local ASR model before and after each pass,
@@ -40,7 +40,7 @@ from local_meeting_ai.infrastructure.database.repositories import SettingsReposi
 from local_meeting_ai.infrastructure.ffmpeg import FFmpegClient
 from local_meeting_ai.paths import AppPaths
 
-logger = logging.getLogger("meet2notes.asr_evaluator")
+logger = logging.getLogger("oundnote.asr_evaluator")
 
 DEFAULT_PROFILE_IDS = (
     "default",
@@ -413,7 +413,7 @@ def build_parser() -> argparse.ArgumentParser:
             "available native ASR engine."
         ),
     )
-    parser.add_argument("--data-dir", type=Path, help="Meet2Notes data directory override.")
+    parser.add_argument("--data-dir", type=Path, help="Oundnote data directory override.")
     parser.add_argument("--models-dir", type=Path, help="AI models directory override.")
     parser.add_argument(
         "--results-dir",
@@ -631,7 +631,7 @@ def _export_transcript_files(run: dict[str, Any], results_dir: Path) -> list[Pat
         destination = results_dir / "transcripts" / filename
         segments = result["segments"]
         lines = [
-            "Meet2Notes ASR evaluation transcript",
+            "Oundnote ASR evaluation transcript",
             f"Run: {run_id}",
             f"Source: {evaluation.get('source_path')}",
             f"Engine: {evaluation.get('engine')}",

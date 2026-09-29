@@ -83,12 +83,12 @@ function Install-Ffmpeg {
     & $Winget.Source install --id Gyan.FFmpeg --exact --source winget `
         --accept-package-agreements --accept-source-agreements
     if ($LASTEXITCODE -ne 0) {
-        Write-Warning "FFmpeg installation did not complete. Meet2Notes itself is installed."
+        Write-Warning "FFmpeg installation did not complete. Oundnote itself is installed."
     }
 }
 
 Set-Location -LiteralPath $InstallerRoot
-Write-Host "Meet2Notes installer" -ForegroundColor Blue
+Write-Host "Oundnote installer" -ForegroundColor Blue
 Write-Host "Private local transcription, diarization, and meeting summaries"
 
 if (-not (Test-Path -LiteralPath $EnvironmentPython)) {
@@ -105,16 +105,16 @@ if (-not (Test-Path -LiteralPath $EnvironmentPython)) {
 
 $PythonVersion = & $EnvironmentPython -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}')"
 if ($LASTEXITCODE -ne 0) {
-    throw "The Meet2Notes virtual environment is not usable."
+    throw "The Oundnote virtual environment is not usable."
 }
 $VersionParts = $PythonVersion.Trim().Split(".")
 if ([int]$VersionParts[0] -lt 3 -or (
     [int]$VersionParts[0] -eq 3 -and [int]$VersionParts[1] -lt 11
 )) {
-    throw "Meet2Notes requires Python 3.11 or newer."
+    throw "Oundnote requires Python 3.11 or newer."
 }
 
-Write-Step "Installing Meet2Notes and native audio/AI runtimes"
+Write-Step "Installing Oundnote and native audio/AI runtimes"
 Invoke-Checked $EnvironmentPython @("-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel")
 
 $ResolvedBackend = $AiBackend
@@ -212,9 +212,9 @@ Invoke-Checked $EnvironmentPython @("-m", "pip", "check")
 Invoke-Checked $EnvironmentPython @("scripts/check_environment.py")
 
 Write-Host ""
-Write-Host "Meet2Notes is ready." -ForegroundColor Green
+Write-Host "Oundnote is ready." -ForegroundColor Green
 Write-Host "Run: .\start.bat"
 
 if ($Start) {
-    & (Join-Path $EnvironmentRoot "Scripts\meet2notes.exe")
+    & (Join-Path $EnvironmentRoot "Scripts\oundnote.exe")
 }
