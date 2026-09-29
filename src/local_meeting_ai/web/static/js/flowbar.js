@@ -27,7 +27,7 @@ function start(){
     return api('/api/capture/sessions',{method:'POST',body:JSON.stringify({
       source_id:mic.id,profile_id:'default',language:null,task:'transcribe',allow_model_download:false
     })});
-  }).then(function(s){renderSession(s)})
+  }).then(function(s){renderSession(s);return openMain(s.meeting_id)})
     .catch(function(e){setState(null,'Not ready',e.message);throw e})
     .finally(function(){state.busy=false});
 }
@@ -39,6 +39,12 @@ function stop(){
   }).then(function(){renderSession(null)})
     .catch(function(e){setState('live','Listening','Could not stop: '+e.message)})
     .finally(function(){state.busy=false});
+}
+function openMain(meetingId){
+  if(window.pywebview&&window.pywebview.api&&window.pywebview.api.open_main){
+    return window.pywebview.api.open_main(meetingId||null);
+  }
+  return Promise.resolve();
 }
 function pause(){
   if(!state.session||state.busy)return;
@@ -53,7 +59,7 @@ window.__oundnoteHotkey=function(){
 document.addEventListener('DOMContentLoaded',function(){
   $('#record-button').addEventListener('click',window.__oundnoteHotkey);
   $('#pause-button').addEventListener('click',pause);
-  $('#brand-chip').addEventListener('click',function(){window.location.href='/'});
+  $('#brand-chip').addEventListener('click',function(){if(window.pywebview&&window.pywebview.api&&window.pywebview.api.open_home){window.pywebview.api.open_home()}else{window.location.href='/'}});
   refresh();
   setInterval(refresh,900);
 });
