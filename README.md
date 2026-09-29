@@ -170,9 +170,13 @@ remain managed by Oundnote and are not removed automatically.
 
 ### macOS and Linux
 
+The commands below are for a macOS or Linux terminal only. Do not run `chmod`,
+`install.sh`, or `.venv/bin/oundnote` in Windows PowerShell; those paths and
+commands are Unix-specific.
+
 ```bash
 git clone https://github.com/Aravindh-dev12/oundnote.git
-cd Oundnote
+cd oundnote
 chmod +x install.sh
 ./install.sh --ai-backend cpu
 .venv/bin/oundnote --no-browser
@@ -181,6 +185,26 @@ chmod +x install.sh
 Python 3.11 or newer must already be installed on macOS and Linux. For CUDA,
 custom model storage, and backend-specific setup, continue to the
 [advanced installation options](#advanced-installation-from-source).
+
+### Windows PowerShell: install from source
+
+If you cloned Oundnote manually on Windows, use the PowerShell installer instead
+of `install.sh`:
+
+```powershell
+git clone https://github.com/Aravindh-dev12/oundnote.git
+Set-Location .\oundnote
+Set-ExecutionPolicy -Scope Process Bypass
+.\install.ps1 -AiBackend cpu
+.\.venv\Scripts\oundnote.exe --no-browser
+```
+
+The Windows virtual environment uses `.venv\Scripts`, not `.venv/bin`. You can
+also start an existing installation with `Set-Location .\oundnote` followed by
+`Set-Location .\venv\Scripts; .\oundnote.exe --no-browser`. If PowerShell
+blocks a script, run `Set-ExecutionPolicy -Scope Process Bypass` in the same
+PowerShell window and try again. For the simplest Windows setup, use the
+`install-update.bat` download above and then double-click `start.bat`.
 
 ## Modular processing pipeline
 
