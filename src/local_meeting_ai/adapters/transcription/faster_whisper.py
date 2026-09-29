@@ -366,16 +366,38 @@ class FasterWhisperEngine:
                 compute_type,
                 self.models_dir,
             )
-            model_instance = model_class(
-                model,
-                device=device,
-                device_index=device_index,
-                compute_type=compute_type,
-                cpu_threads=cpu_threads,
-                num_workers=num_workers,
-                download_root=str(self.models_dir),
-                local_files_only=not allow_model_download,
-            )
+            try:
+                model_instance = model_class(
+                    model,
+                    device=device,
+                    device_index=device_index,
+                    compute_type=compute_type,
+                    cpu_threads=cpu_threads,
+                    num_workers=num_workers,
+                    download_root=str(self.models_dir),
+                    local_files_only=not allow_model_download,
+                )
+            except (OSError, RuntimeError) as error:
+                # Windows CTranslate2 wheels can report CUDA as available while
+                # missing a cuBLAS DLL. Auto mode must remain usable instead of
+                # failing every live transcription window.
+                cuda_library_error = "cublas" in str(error).lower() or "cudnn" in str(error).lower()
+                if device != "auto" or not cuda_library_error:
+                    raise
+                logger.warning(
+                    "CUDA runtime is incomplete (%s); retrying Faster Whisper on CPU",
+                    error,
+                )
+                model_instance = model_class(
+                    model,
+                    device="cpu",
+                    device_index=0,
+                    compute_type="int8",
+                    cpu_threads=cpu_threads,
+                    num_workers=num_workers,
+                    download_root=str(self.models_dir),
+                    local_files_only=not allow_model_download,
+                )
             self._models[key] = model_instance
             self._model_slots[key] = threading.BoundedSemaphore(num_workers)
             self._resident_models = (model,)
