@@ -200,11 +200,19 @@ Set-ExecutionPolicy -Scope Process Bypass
 ```
 
 The Windows virtual environment uses `.venv\Scripts`, not `.venv/bin`. You can
-also start an existing installation with `Set-Location .\oundnote` followed by
-`Set-Location .\venv\Scripts; .\oundnote.exe --no-browser`. If PowerShell
-blocks a script, run `Set-ExecutionPolicy -Scope Process Bypass` in the same
-PowerShell window and try again. For the simplest Windows setup, use the
-`install-update.bat` download above and then double-click `start.bat`.
+also start an existing installation with `Set-Location .\venv\Scripts; .\oundnote.exe --no-browser`.
+Do not run `Set-Location .\oundnote` a second time after you are already inside the
+cloned `oundnote` folder. If PowerShell blocks a script, run
+`Set-ExecutionPolicy -Scope Process Bypass` in the same PowerShell window and try
+again. For the simplest Windows setup, use the `install-update.bat` download above
+and then double-click `start.bat`.
+
+If installation stops while pip is downloading a package, the failure is usually a
+transient network, antivirus, or package-index interruption. Close other Python
+installers, reconnect to the internet, and run the same installer command again from
+the repository folder; it safely reuses the existing `.venv` and resumes setup. The
+PowerShell commands should be run exactly as shown above, from the folder that
+contains `install.ps1`.
 
 ## Modular processing pipeline
 
