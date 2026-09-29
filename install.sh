@@ -7,6 +7,7 @@ MODELS="all"
 WHISPER_MODEL="small"
 MODELS_DIRECTORY=""
 DEV="false"
+DESKTOP="false"
 START="false"
 AI_BACKEND="auto"
 
@@ -30,6 +31,7 @@ while [[ $# -gt 0 ]]; do
       fi
       ;;
     --dev) DEV="true" ;;
+    --desktop) DESKTOP="true" ;;
     --start) START="true" ;;
     *)
       echo "Unknown option: $1" >&2
@@ -106,6 +108,10 @@ step "Installing PyTorch ${RESOLVED_BACKEND} runtime inside .venv"
   --index-url "${TORCH_INDEX}"
 
 "${PYTHON}" -m pip install -e ".[capture,transcription,diarization,nvidia-asr,pyannote-diarization]"
+if [[ "${DESKTOP}" == "true" ]]; then
+  step "Installing native desktop shell"
+  "${PYTHON}" -m pip install -e ".[desktop]"
+fi
 "${PYTHON}" -m pip install "huggingface-hub>=0.27,<2"
 
 LLAMA_BACKEND="cpu"
