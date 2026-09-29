@@ -106,7 +106,7 @@ def run(argv: list[str] | None = None) -> int:
     if not arguments.no_flowbar:
         flowbar = webview.create_window(
             "Oundnote Flow Bar", f"{base_url}/flowbar", width=360, height=82,
-            min_size=(300, 72), resizable=False, frameless=True, easy_drag=True,
+            min_size=(300, 72), resizable=False, frameless=True, easy_drag=False,
             on_top=True, shadow=True, background_color="#15171d", x=20, y=20,
             js_api=bridge,
         )
