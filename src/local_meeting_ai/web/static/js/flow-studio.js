@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 var $=function(s,r){return (r||document).querySelector(s)}, $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
-var st={meetingId:Number(($('body').dataset.meetingId||0))||null,cursor:-1,segments:[],capture:null,youtube:null,agent:false,timers:[],loading:false};
+var st={meetingId:Number(($('#studio-page').dataset.meetingId||0))||null,cursor:-1,segments:[],capture:null,youtube:null,agent:false,timers:[],loading:false};
 function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function api(path,opt){opt=opt||{};opt.headers=Object.assign({Accept:'application/json'},opt.body instanceof FormData?{}:{'Content-Type':'application/json'},opt.headers||{});return fetch(path,opt).then(function(r){if(!r.ok)return r.json().catch(function(){return{}}).then(function(x){throw Error(x.detail||'Request failed')});return r.status===204?null:r.json()})}
 function fmt(ms){var s=Math.max(0,Math.floor(Number(ms||0)/1000)),m=Math.floor(s/60),h=Math.floor(m/60);m%=60;var x=s%60;return h?String(h)+':'+String(m).padStart(2,'0')+':'+String(x).padStart(2,'0'):String(m)+':'+String(x).padStart(2,'0')}
