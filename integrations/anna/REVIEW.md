@@ -45,11 +45,4 @@ Retrieved text and metadata travel through Anna and may be processed by its AI
 provider in chat. Audio and the full database are not uploaded by this integration.
 This app does not save retrieved transcripts to Anna Storage.
 
-## Listing screenshots
-
-The user supplied captures of the installed English UI showing the “New product
-launch” meeting: screenshots/01-ai-notes.png (primary) and
-screenshots/02-transcript.png (secondary). They show search results, existing AI
-notes and timestamped, speaker-labelled transcript content.
-
 Support: https://github.com/Aravindh-dev12/oundnote/issues
