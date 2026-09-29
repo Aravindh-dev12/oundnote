@@ -217,7 +217,19 @@ def build_container(
     if settings.models_dir is None and isinstance(configured_models_directory, str):
         clean_models_directory = configured_models_directory.strip()
         if clean_models_directory:
-            paths = paths.with_models_directory(Path(clean_models_directory))
+            configured_path = Path(clean_models_directory).expanduser()
+            # A previous installation may have stored a model path on a drive
+            # that is not mounted on this machine. Fall back to Oundnote's
+            # portable model directory instead of failing during startup.
+            drive_root = Path(configured_path.anchor) if configured_path.anchor else None
+            if drive_root is None or drive_root.exists():
+                paths = paths.with_models_directory(configured_path)
+            else:
+                logging.getLogger(__name__).warning(
+                    "Ignoring unavailable models directory %s; using %s",
+                    configured_path,
+                    paths.models,
+                )
     paths.models.mkdir(parents=True, exist_ok=True)
     transcriptions = TranscriptionRepository(database)
     summaries = SummaryRepository(database)
