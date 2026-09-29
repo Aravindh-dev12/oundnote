@@ -134,6 +134,13 @@ setup, tools, lifecycle, and security details.
    double-click `start.bat`.
 4. Open `http://127.0.0.1:8765` in your browser.
 
+To use the native desktop experience, install the optional desktop runtime with
+`install.ps1 -Desktop`, then launch **start-desktop.bat**. On macOS/Linux use
+`./install.sh --desktop` followed by **./start-desktop.sh**. The desktop shell
+opens the same Hub inside a native WebView and adds an always-on-top frameless
+Flow Bar with a global Ctrl+Alt+Space shortcut. Change it with **--hotkey**.
+The browser launcher remains available as a fallback.
+
 The bootstrap installer checks for Git and Python 3.11 or newer, installs
 missing prerequisites for the current Windows user, clones Oundnote, and
 runs the normal isolated-environment installer. On an existing installation it
