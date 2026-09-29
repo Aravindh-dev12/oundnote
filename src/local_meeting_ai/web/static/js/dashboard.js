@@ -129,6 +129,31 @@
     renderMeetings(filtered);
   });
 
+  document.querySelector("#archive-prompt-form")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const input = document.querySelector("#archive-prompt");
+    const answer = document.querySelector("#archive-answer");
+    const submit = event.submitter;
+    const question = input.value.trim();
+    if (!question) {
+      input.focus();
+      return;
+    }
+    submit.disabled = true;
+    answer.textContent = "Searching your private meeting archive…";
+    try {
+      const result = await api("/api/prompt", {
+        method: "POST",
+        body: JSON.stringify({ question, meeting_id: null, use_rag: true }),
+      });
+      answer.textContent = result.answer || result.response || result.text || "No grounded answer was returned.";
+    } catch (error) {
+      answer.textContent = `The copilot could not answer yet: ${error.message}`;
+    } finally {
+      submit.disabled = false;
+    }
+  });
+
   const meetingDialog = document.querySelector("#meeting-dialog");
   document.querySelector("#new-meeting-button")?.addEventListener("click", () => meetingDialog.showModal());
   document.querySelectorAll("[data-close-meeting]").forEach((button) =>

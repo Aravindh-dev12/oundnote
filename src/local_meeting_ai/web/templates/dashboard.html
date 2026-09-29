@@ -1,16 +1,47 @@
 {% extends "base.html" %}
 {% block title %}Transcription · Oundnote{% endblock %}
 {% block content %}
-<div class="page workspace-page empty-workspace">
-  <header class="workspace-header">
+<div class="page workspace-page intelligence-page">
+  <header class="workspace-header intelligence-header">
     <div class="workspace-heading">
-      <span class="workspace-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3Z"/><path d="M5 11v1a7 7 0 0 0 14 0v-1M12 19v3M8 22h8"/></svg>
-      </span>
-      <div>
-        <h1 data-i18n="workspace.title">Transcription</h1>
-        <p data-i18n="workspace.subtitle">Import a conversation and turn it into clear, editable text.</p>
+      <div class="live-kicker"><span class="live-dot"></span> OUNDNOTE INTELLIGENCE</div>
+      <h1>Your meetings, understood.</h1>
+      <p>Capture the signal. Keep the decisions. Let your private AI workspace handle the rest.</p>
+    </div>
+    <div class="workspace-controls">
+      <button class="button primary" data-open-import><span>Import recording</span><span aria-hidden="true">↗</span></button>
+    </div>
+  </header>
+
+  <section class="intelligence-grid" aria-label="Oundnote workspace">
+    <div class="intelligence-main">
+      <div class="signal-card">
+        <div class="signal-card-header"><div><span class="eyebrow">WORKSPACE OVERVIEW</span><h2>Your conversation memory</h2></div><span class="privacy-pill">Private by design</span></div>
+        <div class="metric-grid">
+          <article class="metric-tile"><span>Meetings</span><strong id="metric-meetings">—</strong><small id="metric-meetings-note">Loading your library</small></article>
+          <article class="metric-tile"><span>Hours understood</span><strong id="metric-hours">—</strong><small>Across your local archive</small></article>
+          <article class="metric-tile"><span>AI tasks</span><strong id="metric-jobs">—</strong><small id="metric-jobs-note">Checking the queue</small></article>
+        </div>
       </div>
+
+      <div class="library-card panel">
+        <div class="section-heading"><div><span class="eyebrow">RECENT CONVERSATIONS</span><h2>Meeting library</h2></div><label class="search-field"><span class="sr-only">Search meetings</span><input id="meeting-search" type="search" placeholder="Search meetings"></label></div>
+        <div id="meeting-list" class="meeting-library"><div class="loading-state">Loading your private library…</div></div>
+      </div>
+    </div>
+
+    <aside class="intelligence-rail">
+      <section class="copilot-card">
+        <div class="copilot-top"><span class="copilot-mark">O</span><div><span class="eyebrow">OUNNOTE COPILOT</span><h2>Ask your archive</h2></div><span class="status-badge status-completed">READY</span></div>
+        <p>Ask across your meetings. Get grounded answers with the source context kept close.</p>
+        <form id="archive-prompt-form" class="copilot-form"><label for="archive-prompt">What should I find?</label><textarea id="archive-prompt" rows="3" placeholder="What decisions are waiting on me?"></textarea><button class="button primary" type="submit">Ask Oundnote <span aria-hidden="true">→</span></button></form>
+        <div id="archive-answer" class="copilot-answer" aria-live="polite"><span class="answer-placeholder">Your answer will appear here with meeting context.</span></div>
+      </section>
+      <section class="activity-card panel"><div class="section-heading compact"><div><span class="eyebrow">LIVE ACTIVITY</span><h2>AI pipeline</h2></div><span class="pulse-orbit"><i></i></span></div><div id="job-list" class="activity-list"><div class="activity-empty"><strong>Everything is quiet</strong><p>Imports and AI tasks will appear here.</p></div></div></section>
+      <section class="capabilities-card panel"><span class="eyebrow">LOCAL RUNTIME</span><div id="ffmpeg-status" class="capability-row"><span class="capability-indicator"></span><div><strong>Media engine</strong><span>Checking capability</span></div></div><div id="transcription-status" class="capability-row"><span class="capability-indicator"></span><div><strong>Transcription engine</strong><span>Checking capability</span></div></div></section>
+    </aside>
+  </section>
+</div>
     </div>
     <div class="workspace-controls">
       <label class="language-control">
