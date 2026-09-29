@@ -16,6 +16,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from local_meeting_ai import __version__
 from local_meeting_ai.api.live_assistant_routes import router as live_assistant_router
 from local_meeting_ai.api.routes import router as api_router
+from local_meeting_ai.api.studio_routes import router as studio_router
 from local_meeting_ai.api.webhook_routes import router as webhook_router
 from local_meeting_ai.bootstrap import Container, build_container
 from local_meeting_ai.config import AppSettings
@@ -201,6 +202,7 @@ def create_app(
 
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
     app.include_router(api_router)
+    app.include_router(studio_router)
     app.include_router(live_assistant_router)
     app.include_router(webhook_router)
     _register_web_routes(app, templates, container)
@@ -229,11 +231,12 @@ def _register_web_routes(
             selected_meeting = meetings[0]
         return templates.TemplateResponse(
             request=request,
-            name="transcript.html",
+            name="studio.html",
             context={
                 "version": __version__,
-                "page": "dashboard" if new_meeting else "meetings",
+                "page": "dashboard",
                 "meeting": selected_meeting,
+                "meetings": meetings,
                 "root_workspace": True,
                 "default_title": container.transcriptions.next_default_title(),
             },
@@ -244,7 +247,7 @@ def _register_web_routes(
         saved_meetings = [
             meeting
             for meeting in container.meeting_service.list(limit=250)
-            if meeting.recording_count > 0 or meeting.audio_deleted_at is not None
+            if meeting.recording_count > 0 or meeting.audio_deleted_at is not None or getattr(meeting.source_type, "value", None) == "imported"
         ]
         return templates.TemplateResponse(
             request=request,
@@ -253,6 +256,28 @@ def _register_web_routes(
                 "version": __version__,
                 "page": "meetings",
                 "meetings": saved_meetings,
+            },
+        )
+
+    @app.get("/legacy/meetings/{meeting_id}", include_in_schema=False)
+    async def legacy_meeting(request: Request, meeting_id: int) -> object:
+        meeting = container.meetings.get(meeting_id)
+        if not meeting:
+            return templates.TemplateResponse(
+                request=request,
+                name="not_found.html",
+                context={"version": __version__, "page": "meetings"},
+                status_code=404,
+            )
+        return templates.TemplateResponse(
+            request=request,
+            name="transcript.html",
+            context={
+                "version": __version__,
+                "page": "meetings",
+                "meeting": meeting,
+                "root_workspace": False,
+                "default_title": container.transcriptions.next_default_title(),
             },
         )
 

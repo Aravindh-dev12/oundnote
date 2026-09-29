@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="/static/css/ui-refresh.css?v={{ asset_version }}">
   {% block head %}{% endblock %}
   <link rel="stylesheet" href="/static/css/themes.css?v={{ asset_version }}">
+  <link rel="stylesheet" href="/static/css/flow-theme.css?v={{ asset_version }}">
 </head>
 <body data-page="{{ page }}">
   <div class="app-shell">
@@ -20,7 +21,7 @@
         <img class="brand-mark" src="/static/icons/mark.svg" alt="">
         <span>
           <strong>Oundnote</strong>
-          <small data-i18n="brand.subtitle">Private meeting workspace</small>
+          <small data-i18n="brand.subtitle">Personal AI memory workspace</small>
         </span>
       </a>
       <button class="sidebar-collapse-toggle" id="sidebar-collapse-toggle" type="button" aria-label="Minimize sidebar" aria-expanded="true" title="Minimize sidebar" data-i18n-aria-label="nav.minimize_sidebar" data-i18n-title="nav.minimize_sidebar">
@@ -30,7 +31,7 @@
       <nav class="primary-nav" aria-label="Main navigation" data-i18n-aria-label="nav.main">
         <a href="/?new=1" class="sidebar-new-meeting" title="New meeting" data-i18n-title="nav.new_meeting">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
-          <span data-i18n="nav.new_meeting">New meeting</span>
+          <span data-i18n="nav.new_meeting">Capture</span>
         </a>
         <a href="/meetings" class="{{ 'active' if page == 'meetings' else '' }}" title="Meetings" data-i18n-title="nav.meetings">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3M17 3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/></svg>

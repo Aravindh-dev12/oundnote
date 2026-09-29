@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "oundnote"
-version = "0.6.2"
-description = "Private local AI meeting transcription, speaker diarization, and summaries."
+version = "0.7.0"
+description = "Private local AI memory capture, live notes, transcription, and summaries."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
@@ -19,6 +19,7 @@ keywords = [
     "speaker-diarization",
     "faster-whisper",
     "local-ai",
+    "youtube-note-taker",
     "privacy",
     "fastapi",
 ]
@@ -47,6 +48,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+youtube = [
+    "yt-dlp[default]>=2026.8.19,<2027",
+    "youtube-transcript-api>=1.2.4,<2",
+]
 transcription = [
     "faster-whisper>=1.1.0,<2",
 ]
