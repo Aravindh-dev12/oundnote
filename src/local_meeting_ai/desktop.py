@@ -12,6 +12,24 @@ DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8765
 DEFAULT_HOTKEY = "<ctrl>+<alt>+space"
 
+
+class DesktopBridge:
+    def __init__(self, base_url: str) -> None:
+        self.base_url = base_url
+        self.main_window = None
+
+    def open_main(self, meeting_id: int | None = None) -> None:
+        if self.main_window is None:
+            return
+        self.main_window.show()
+        if meeting_id:
+            self.main_window.load_url(f"{self.base_url}/capture?meeting={meeting_id}")
+
+    def open_home(self) -> None:
+        self.open_main()
+        if self.main_window is not None:
+            self.main_window.load_url(f"{self.base_url}/")
+
 def _request(url: str, method: str = "GET", body: bytes | None = None) -> tuple[int, bytes]:
     request = Request(url, data=body, method=method, headers={"Accept": "application/json"})
     with urlopen(request, timeout=3) as response:
@@ -78,16 +96,19 @@ def run(argv: list[str] | None = None) -> int:
         if not _wait_for_server(base_url, 30.0):
             raise SystemExit(f"Oundnote did not become ready at {base_url}. Check the local startup log.")
 
+    bridge = DesktopBridge(base_url)
     main_window = webview.create_window(
         "Oundnote", f"{base_url}/", width=1240, height=820, min_size=(960, 640),
         resizable=True, background_color="#f7f8fb",
     )
+    bridge.main_window = main_window
     flowbar = None
     if not arguments.no_flowbar:
         flowbar = webview.create_window(
             "Oundnote Flow Bar", f"{base_url}/flowbar", width=360, height=82,
             min_size=(300, 72), resizable=False, frameless=True, easy_drag=True,
             on_top=True, shadow=True, background_color="#15171d", x=20, y=20,
+            js_api=bridge,
         )
 
     hotkey_listener = None
