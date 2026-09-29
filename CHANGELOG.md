@@ -1,0 +1,139 @@
+# Changelog
+
+## Unreleased
+
+## 0.6.2 - 2026-09-28
+
+- Added the optional Anna integration source, Windows Executa build tooling,
+  setup instructions, reviewer guide, and acceptance checks to the public repository.
+- Anna integration v0.1.3 provides read-only meeting search, timestamped transcripts,
+  and existing AI notes through the existing local MCP gateway; its bundled
+  Executa uses the independent version v0.1.2.
+- Added an English Anna UI with formatted notes, speaker-grouped transcripts,
+  readable dates, and paginated content. The Anna app is pending Marketplace review.
+- Added adapter tests for protocol registration, argument validation, read-only
+  boundaries, disconnected status, and pinned note pagination.
+- Kept Anna optional: no new desktop dependencies, startup services, database
+  migrations, or changes to recording, transcription, diarization, or note generation.
+
+
+## 0.6.1 - 2026-09-10
+
+- Added simultaneous microphone and system-audio capture so video calls can
+  record both sides of the conversation into one private local meeting.
+- Added a clock-aligned 48 kHz mono mixer with per-input resampling, equal-gain
+  headroom, gap preservation, and the same mixed frames for live transcription
+  and the final WAV recording.
+- Redesigned the New transcription source picker with independent microphone
+  and system selections, persistent device choices, platform guidance, source
+  availability checks, and separate live level meters.
+- Preserved the single-source capture API while adding a bounded `source_ids`
+  request for exactly one microphone/interface plus one system source.
+- Improved capture failure handling for disconnected devices, silent Windows
+  loopback outputs, pause/resume, partial stream startup, and cleanup on retry.
+- Added cross-platform combined-capture and mixer tests plus detailed Windows,
+  macOS, and Linux setup and troubleshooting documentation.
+
+## 0.6.0 - 2026-08-24
+
+- Added a local read-only MCP server for Claude Desktop, ChatGPT Desktop,
+  Codex, and compatible `stdio` clients, turning the private meeting archive
+  into a directly queryable AI knowledge source.
+- Added bounded MCP tools for meeting discovery, metadata, transcript pages,
+  completed AI notes, exact FTS5 keyword search, and existing hybrid RAG
+  evidence with meeting, speaker, timestamp, and source provenance.
+- Added generated Claude Desktop JSON and Codex/ChatGPT Desktop TOML
+  configuration in Settings, an explicit MCP access switch, local endpoint
+  discovery, loopback enforcement, and a read-only security boundary.
+- Added the post-meeting Meeting Assistant with meeting/all-history scope,
+  hybrid dense and BM25 retrieval, raw transcript and AI-note attachments,
+  context budgeting, and the dedicated assistant avatar.
+- Added the configurable Live AI Assistant behavior modes, priority direct
+  questions, deterministic question/trigger detection, conversation context,
+  and the redesigned movable, resizable, and minimizable widget.
+- Added safe stable updates from official GitHub Releases, including user
+  confirmation, SQLite backups, migration dry-runs, clean fast-forward checks,
+  dependency validation, rollback, and preservation of existing settings and
+  data directories.
+- Added compact rebuild, copy, Markdown edit, and save controls to meeting AI
+  Notes, including Note Format selection, version preservation, manual-edit
+  provenance, and navigation protection for unsaved changes.
+- Added automatic hierarchical AI notes for transcripts that exceed the model
+  context, including block estimation, grounded evidence extraction, recursive
+  consolidation, and a final Note Format pass.
+- Added confirmation, persistent background progress, and per-meeting logging
+  when rebuilding the historical RAG index.
+- Defined the independent community-plugin workflow, added a public JSON
+  listing and issue template, and coordinated the user, contributor, developer,
+  and roadmap documentation around that single flow.
+
+## 0.5.0 - 2026-08-13
+
+- Replaced implicit final post-processing callbacks with an observable pipeline
+  for final ASR, diarization, saved-voice matching, filters, and AI analysis.
+- Added Plugin API v1 with typed artifacts, actions, filters, deterministic
+  priorities, timeouts, failure policies, and Python entry-point discovery.
+- Added a lazy shared provider registry for plugin transcription, diarization,
+  summary, and embedding engines, model-only extensions, scoped directories,
+  declarative settings, and hot registry refresh.
+- Added composite transcription results with speaker turns so end-to-end models
+  can bypass the separate diarization stage safely.
+- Added local plugin management in Settings and a privacy-preserving execution
+  ledger containing timings, statuses, and content digests.
+- Added a built-in analysis-cleanup filter, a community plugin example, and
+  contribution and roadmap documentation.
+- Kept the existing Live transcription path and settings unchanged.
+
+## 0.4.0 - 2026-07-26
+
+- Renamed the application and all public entry points to Meet2Notes.
+- Added one-command Windows, macOS, and Linux installation with platform-aware
+  llama.cpp acceleration and safe CPU fallback.
+- Added `meet2notes-models` for automatic download and verification of Faster
+  Whisper, sherpa-onnx, and LFM2.5 models.
+- Preserved existing LocalMeet2Resume data directories to avoid breaking stored
+  recording paths during the rename.
+- Rebuilt the README as a product-quality installation, privacy, architecture,
+  and platform guide.
+- Added a resident sherpa-onnx speaker-diarization worker with model management,
+  configurable clustering, and transcript speaker assignment.
+- Added a resident llama.cpp summary worker and the official LFM2.5 1.2B
+  Q4_K_M managed preset.
+- Added independent install, load, unload, status, memory, runtime, and
+  generation controls to Settings.
+- Added cancellable diarization and summary jobs plus summary persistence.
+
+## 0.3.0 - 2026-07-25
+
+- Rebuilt the transcription workspace as a single minimal editor.
+- Added editable, persistent transcription names with automatic numbering.
+- Added native audio-source discovery and live capture controls.
+- Added Windows WASAPI loopback through PyAudioWPatch.
+- Added portable PortAudio adapters for CoreAudio and PipeWire/Pulse/ALSA inputs.
+- Added pause, resume, stop, level metering, and automatic final-quality refinement.
+- Added true real-time transcription with overlapping low-latency audio windows.
+- Added provisional live segments and an automatic full-quality refinement after Stop.
+- Added an extensible transcription-engine settings card with runtime-aware device
+  and compute-type choices, 100 Whisper languages, decoding controls, and live
+  chunk/overlap tuning.
+- Isolated Faster Whisper in a dedicated executor and kept the configured model
+  resident in memory between transcriptions by default.
+
+## 0.2.0 - 2026-07-25
+
+- Added FFmpeg audio normalization for transcription.
+- Added an optional, lazy Faster Whisper adapter with CPU `int8` and CUDA `float16`.
+- Added fast, balanced, accurate, and very accurate model profiles.
+- Added explicit confirmation before any Whisper model download.
+- Added persistent transcription versions and progressive timestamped segments.
+- Added segment editing, activation, find and replace, and retranscription.
+- Added secure local media playback and a responsive transcript editor.
+
+## 0.1.0 - 2026-07-24
+
+- Added the FastAPI application and local responsive web interface.
+- Added versioned SQLite migrations and repositories.
+- Added safe media storage, FFmpeg capability detection, and media probing.
+- Added a persistent asynchronous job queue with progress and cancellation.
+- Added meeting, recording, settings, job, capability, and event APIs.
+- Added automated tests and cross-platform continuous integration.
