@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Home · Oundnote{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/css/hub.css?v={{ asset_version }}">{% endblock %}
+{% block content %}
+<div class="flow-hub page" id="flow-hub">
+  <header class="hub-header">
+    <div><span class="eyebrow">Personal AI memory</span><h1>What do you want to remember?</h1><p>Speak naturally. Oundnote captures the conversation, structures the useful parts, and keeps the memory searchable.</p></div>
+    <div class="hub-header-actions"><a class="button secondary" href="/meetings">View all meetings</a><a class="button primary" href="/capture"><span class="record-dot"></span> New capture</a></div>
+  </header>
+  <section class="hub-command panel">
+    <div class="command-copy"><div class="command-orb">✦</div><div><strong>Start speaking</strong><span>Live notes, YouTube, or recordings — all become one memory.</span></div></div>
+    <div class="command-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><input id="hub-search" type="search" placeholder="Search your memories…"><span class="shortcut">⌘ K</span></div>
+  </section>
+  <section class="metric-grid">
+    <article class="metric-card"><span class="metric-icon green">◷</span><div><strong>{{ capture_count }}</strong><span>captures</span></div><small>Total saved conversations and imported memories</small></article>
+    <article class="metric-card"><span class="metric-icon sand">◒</span><div><strong>{{ hours_captured }}</strong><span>hours</span></div><small>Recorded time currently in your library</small></article>
+    <article class="metric-card"><span class="metric-icon sky">✦</span><div><strong>{{ "On" if live_agent_enabled else "Off" }}</strong><span>living agent</span></div><small>Watches live transcripts for useful moments</small></article>
+    <article class="metric-card"><span class="metric-icon violet">⌕</span><div><strong>Local</strong><span>memory</span></div><small>Transcript, source, notes, and speakers stay connected</small></article>
+  </section>
+  <section class="hub-grid">
+    <main class="history-panel panel">
+      <header class="section-heading"><div><span class="eyebrow">Home</span><h2>Recent memory</h2></div><span class="muted">{{ capture_count }} saved</span></header>
+      <div class="history-list" id="history-list">
+      {% for meeting in meetings %}
+        <a class="history-row" href="/meetings/{{ meeting.id }}" data-title="{{ meeting.title|lower }}" data-description="{{ (meeting.description or '')|lower }}">
+          <span class="history-icon {{ 'youtube' if meeting.description and meeting.description.startswith('YouTube source') else 'voice' }}">{{ '▶' if meeting.description and meeting.description.startswith('YouTube source') else '◎' }}</span>
+          <span class="history-copy"><strong>{{ meeting.title }}</strong><small>{{ meeting.created_at[:10] }} · {{ meeting.recording_count }} source{{ '' if meeting.recording_count == 1 else 's' }}</small></span>
+          <span class="history-status">{{ meeting.status.value }}</span><span class="history-arrow">↗</span>
+        </a>
+      {% else %}
+        <div class="history-empty"><span class="empty-glyph">✦</span><strong>Your memory is empty.</strong><p>Start with a live capture, paste a YouTube link, or import an audio/video recording.</p><a class="button primary" href="/capture">Create your first capture</a></div>
+      {% endfor %}
+      </div><div class="search-empty hidden" id="search-empty">No memories match that search.</div>
+    </main>
+    <aside class="hub-rail">
+      <article class="panel rail-card"><header><div><span class="eyebrow">Flow-style control</span><strong>Living agent</strong></div><span class="status-dot {{ 'live' if live_agent_enabled else '' }}"></span></header><p>Keep the agent quiet until context is useful, then let it surface decisions, questions, risks, and follow-ups.</p><a class="rail-action" href="/capture">Open capture workspace <span>→</span></a></article>
+      <article class="panel rail-card"><header><div><span class="eyebrow">Sources</span><strong>Remember from anywhere</strong></div></header><div class="source-mini-list"><a href="/capture"><span>◎</span><div><strong>Live</strong><small>Mic + system audio</small></div></a><a href="/capture"><span>▶</span><div><strong>YouTube</strong><small>Captions or local audio</small></div></a><a href="/capture"><span>↥</span><div><strong>File</strong><small>Audio and video uploads</small></div></a></div></article>
+      <article class="panel rail-card privacy-rail"><span class="eyebrow">Privacy</span><strong>Local-first by default.</strong><p>Capture, transcription, summaries, and search stay in the local runtime unless you explicitly configure an external provider.</p></article>
+    </aside>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/js/hub.js?v={{ asset_version }}" defer></script>{% endblock %}
