@@ -73,7 +73,7 @@ from local_meeting_ai.infrastructure.webhook_secrets import (
     MemoryWebhookSecretStore,
 )
 from local_meeting_ai.logging_config import ActivityLog, configure_logging
-from local_meeting_ai.paths import AppPaths
+from local_meeting_ai.paths import AppPaths, default_models_directory
 from local_meeting_ai.plugins.contracts import ProviderRuntimeContext
 from local_meeting_ai.plugins.core_providers import register_core_providers
 from local_meeting_ai.plugins.manager import PluginManager
