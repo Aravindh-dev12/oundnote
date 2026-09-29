@@ -227,8 +227,6 @@ def _register_web_routes(
                 (meeting for meeting in meetings if meeting.id == requested_id),
                 None,
             )
-        if selected_meeting is None and meetings and not new_meeting:
-            selected_meeting = meetings[0]
         return templates.TemplateResponse(
             request=request,
             name="studio.html",
