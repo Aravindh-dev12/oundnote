@@ -102,8 +102,8 @@ oundnote-models = "local_meeting_ai.model_setup:main"
 
 [project.urls]
 Homepage = "https://oundnote.eu"
-Repository = "https://github.com/estebanstifli/Oundnote"
-Issues = "https://github.com/estebanstifli/Oundnote/issues"
+Repository = "https://github.com/Aravindh-dev12/oundnote"
+Issues = "https://github.com/Aravindh-dev12/oundnote/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/local_meeting_ai"]

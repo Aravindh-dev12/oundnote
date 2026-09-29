@@ -6,7 +6,7 @@ and is silently skipped when GitHub is unavailable. Declining an update defers
 the same notification for another 24 hours.
 
 Only stable tags in the form `vX.Y.Z` from
-`https://github.com/estebanstifli/Oundnote.git` are accepted. Development
+`https://github.com/Aravindh-dev12/oundnote.git` are accepted. Development
 commits from `main`, drafts, and prereleases are never offered to users.
 
 ## What is preserved

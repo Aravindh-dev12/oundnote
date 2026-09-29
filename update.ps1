@@ -7,7 +7,7 @@ $ErrorActionPreference = "Stop"
 $RepositoryRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Python = Join-Path $RepositoryRoot ".venv\Scripts\python.exe"
 $RequestFile = Join-Path $RepositoryRoot ".oundnote-update-request.json"
-$ExpectedRemote = "https://github.com/estebanstifli/Oundnote.git"
+$ExpectedRemote = "https://github.com/Aravindh-dev12/oundnote.git"
 $InstallExtras = ".[capture,transcription,diarization,nvidia-asr,pyannote-diarization]"
 
 function Invoke-Checked {
@@ -35,7 +35,7 @@ if (-not (Test-Path -LiteralPath $RequestFile)) {
 }
 
 $Request = Get-Content -LiteralPath $RequestFile -Raw | ConvertFrom-Json
-if ($Request.repository -ne "estebanstifli/Oundnote") {
+if ($Request.repository -ne "Aravindh-dev12/oundnote") {
     throw "The update request targets an unexpected repository."
 }
 if ($Request.tag -notmatch '^v?\d+\.\d+\.\d+$') {

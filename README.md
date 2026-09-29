@@ -8,7 +8,7 @@
     <a href="https://oundnote.eu"><strong>Website</strong></a> ·
     <a href="#installation">Install</a> ·
     <a href="docs/README.md">Documentation</a> ·
-    <a href="https://github.com/estebanstifli/Oundnote/issues">Support</a>
+    <a href="https://github.com/Aravindh-dev12/oundnote/issues">Support</a>
   </p>
 
   <p>
@@ -155,7 +155,7 @@ setup, tools, lifecycle, and security details.
 
 ### Windows: download and run one file
 
-1. Download [`install-update.bat`](https://github.com/estebanstifli/Oundnote/raw/main/install-update.bat).
+1. Download [`install-update.bat`](https://github.com/Aravindh-dev12/oundnote/raw/main/install-update.bat).
 2. Double-click the downloaded file.
 3. Wait for setup to finish, then open the new `Oundnote` folder and
    double-click `start.bat`.
@@ -186,7 +186,7 @@ which keeps the application, Python runtime, FFmpeg, dependencies, and
 recommended local models in its isolated application environment.
 
 1. In Pinokio, choose the option to install an app from a Git repository.
-2. Enter `https://github.com/estebanstifli/Oundnote.git`.
+2. Enter `https://github.com/Aravindh-dev12/oundnote.git`.
 3. Select **Install Oundnote**, wait for the model downloads to finish, then
    select **Start Oundnote**.
 4. Use **Open Oundnote** in Pinokio to open the local web interface.
@@ -198,7 +198,7 @@ remain managed by Oundnote and are not removed automatically.
 ### macOS and Linux
 
 ```bash
-git clone https://github.com/estebanstifli/Oundnote.git
+git clone https://github.com/Aravindh-dev12/oundnote.git
 cd Oundnote
 chmod +x install.sh
 ./install.sh --ai-backend cpu
@@ -502,7 +502,7 @@ manager permits it.
 Clone the repository first:
 
 ```powershell
-git clone https://github.com/estebanstifli/Oundnote.git
+git clone https://github.com/Aravindh-dev12/oundnote.git
 cd Oundnote
 ```
 

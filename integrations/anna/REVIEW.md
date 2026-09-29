@@ -52,4 +52,4 @@ launch” meeting: screenshots/01-ai-notes.png (primary) and
 screenshots/02-transcript.png (secondary). They show search results, existing AI
 notes and timestamped, speaker-labelled transcript content.
 
-Support: https://github.com/estebanstifli/Oundnote/issues
+Support: https://github.com/Aravindh-dev12/oundnote/issues

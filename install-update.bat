@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 
-set "REPO_URL=https://github.com/estebanstifli/Oundnote.git"
+set "REPO_URL=https://github.com/Aravindh-dev12/oundnote.git"
 set "REPO_DIR=Oundnote"
 set "INSTALL_ROOT=%~dp0"
 set "GIT_INSTALLER=%TEMP%\oundnote-git-installer.exe"

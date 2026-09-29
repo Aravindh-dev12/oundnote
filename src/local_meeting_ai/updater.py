@@ -21,7 +21,7 @@ from local_meeting_ai.infrastructure.database.migrations import MigrationRunner
 from local_meeting_ai.instance_lock import AlreadyRunningError, InstanceLock
 from local_meeting_ai.paths import AppPaths, installation_directory
 
-REPOSITORY = "estebanstifli/Oundnote"
+REPOSITORY = "Aravindh-dev12/oundnote"
 RELEASES_API = f"https://api.github.com/repos/{REPOSITORY}/releases/latest"
 CACHE_TTL = timedelta(hours=24)
 RELEASE_TAG = re.compile(r"^v?(\d+)\.(\d+)\.(\d+)$")
