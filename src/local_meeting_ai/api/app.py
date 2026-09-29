@@ -289,7 +289,16 @@ def _register_web_routes(
                 context={"version": __version__, "page": "meetings"},
                 status_code=404,
             )
-        return RedirectResponse(url=f"/?meeting={meeting.id}", status_code=307)
+        return templates.TemplateResponse(
+            request=request,
+            name="meeting-note.html",
+            context={
+                "version": __version__,
+                "page": "meetings",
+                "meeting": meeting,
+                "root_workspace": False,
+            },
+        )
 
     @app.get("/settings", include_in_schema=False)
     async def settings_page(request: Request) -> object:
