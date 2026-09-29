@@ -1,0 +1,52 @@
+[
+  {
+    "check": "installed_protocol",
+    "status": "PASS",
+    "detail": "0.1.2"
+  },
+  {
+    "check": "live_connection",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "check": "meeting_list",
+    "status": "PASS",
+    "detail": "25 entries"
+  },
+  {
+    "check": "invalid_and_write_operations_rejected",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "check": "live_transcript_and_timestamps",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "check": "live_transcript_second_page",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "check": "live_ai_notes",
+    "status": "PASS",
+    "detail": ""
+  },
+  {
+    "check": "live_notes_second_page",
+    "status": "SKIP",
+    "detail": "Selected notes fit one page"
+  },
+  {
+    "check": "live_keyword_search",
+    "status": "PASS",
+    "detail": "Found term taken from the transcript"
+  },
+  {
+    "check": "live_semantic_search",
+    "status": "PASS",
+    "detail": "8 results with provenance"
+  }
+]

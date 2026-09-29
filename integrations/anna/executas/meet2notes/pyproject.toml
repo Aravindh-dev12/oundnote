@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tool-dev-meet2notes"
+version = "0.1.2"
+description = "Executa for the meet2notes Anna App"
+requires-python = ">=3.11"
+dependencies = ["httpx>=0.28,<1", "pydantic>=2.12,<3", "pydantic-settings>=2.7,<3", "platformdirs>=4.3,<5"]
+
+[project.scripts]
+"tool-dev-meet2notes" = "meet2notes_plugin:main"
+
+[tool.setuptools]
+py-modules = ["meet2notes_plugin"]
