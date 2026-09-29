@@ -262,6 +262,14 @@ def _register_web_routes(
             },
         )
 
+    @app.get("/flowbar", include_in_schema=False)
+    async def flowbar(request: Request) -> object:
+        return templates.TemplateResponse(
+            request=request,
+            name="flowbar.html",
+            context={"version": __version__, "page": "flowbar"},
+        )
+
     @app.get("/meetings", include_in_schema=False)
     async def meetings_library(request: Request) -> object:
         saved_meetings = [
