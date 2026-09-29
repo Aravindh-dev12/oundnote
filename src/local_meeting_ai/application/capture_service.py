@@ -116,6 +116,7 @@ class LiveCaptureService:
         task: str | None,
         allow_model_download: bool,
         source_ids: list[str] | None = None,
+        meeting_id: int | None = None,
     ) -> LiveCaptureSession:
         with self._lock:
             if self._session is not None:
@@ -126,7 +127,6 @@ class LiveCaptureService:
             if not 1 <= len(selected_ids) <= 2 or len(set(selected_ids)) != len(selected_ids):
                 raise ValidationError("Choose one input, or a microphone and a system source")
             clean_title = title.strip() if title and title.strip() else None
-            resolved_title = clean_title or self.transcriptions.next_default_title()
             preference_values = self.preferences.get_all()
             engine_config = faster_whisper_config(preference_values)
             configured_language = engine_config.get("language")
@@ -146,11 +146,20 @@ class LiveCaptureService:
                 if task in {"transcribe", "translate"}
                 else str(engine_config.get("task", "transcribe"))
             )
-            meeting = self.meetings.create(
-                title=resolved_title,
-                source_type=SourceType.MANUAL,
-                language=clean_language,
-            )
+            if meeting_id is not None:
+                meeting = self.meetings.get(meeting_id)
+                if meeting is None:
+                    raise NotFoundError("Meeting not found")
+                created_meeting = False
+                resolved_title = clean_title or meeting.title
+            else:
+                resolved_title = clean_title or self.transcriptions.next_default_title()
+                meeting = self.meetings.create(
+                    title=resolved_title,
+                    source_type=SourceType.MANUAL,
+                    language=clean_language,
+                )
+                created_meeting = True
             try:
                 transcription, profile = self.transcription_service.begin_realtime(
                     meeting.id,
@@ -172,7 +181,8 @@ class LiveCaptureService:
                     **capture_options,
                 )
             except Exception:
-                self.meetings.delete(meeting.id)
+                if created_meeting:
+                    self.meetings.delete(meeting.id)
                 raise
             self._reset_realtime_state()
             started_at = datetime.now(UTC).isoformat(timespec="milliseconds")
