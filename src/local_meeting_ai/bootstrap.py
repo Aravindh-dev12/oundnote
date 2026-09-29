@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import ntpath
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -221,8 +222,12 @@ def build_container(
             # A previous installation may have stored a model path on a drive
             # that is not mounted on this machine. Fall back to Oundnote's
             # portable model directory instead of failing during startup.
+            windows_drive, _ = ntpath.splitdrive(clean_models_directory)
             drive_root = Path(configured_path.anchor) if configured_path.anchor else None
-            if drive_root is None or drive_root.exists():
+            configured_drive_available = not windows_drive or Path(
+                f"{windows_drive}\\"
+            ).exists()
+            if (drive_root is None or drive_root.exists()) and configured_drive_available:
                 paths = paths.with_models_directory(configured_path)
             else:
                 logging.getLogger(__name__).warning(
