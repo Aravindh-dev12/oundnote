@@ -97,7 +97,7 @@ class FakeEntryPoint:
 
 class FakeEntryPoints(list[FakeEntryPoint]):
     def select(self, **params: str) -> FakeEntryPoints:
-        return self if params.get("group") == "meet2notes.plugins" else FakeEntryPoints()
+        return self if params.get("group") == "oundnote.plugins" else FakeEntryPoints()
 
 
 @pytest.fixture
@@ -116,7 +116,7 @@ def provider_services(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):  # type:
 
     registry = ProviderRegistry(
         ProviderRuntimeContext(
-            plugin_id="meet2notes.core",
+            plugin_id="oundnote.core",
             data_dir=tmp_path / "data",
             models_dir=tmp_path / "models",
             _settings_provider=settings_for,
@@ -168,7 +168,7 @@ def test_plugin_provider_is_lazy_configurable_and_hot_removable(provider_service
 def test_model_extension_can_target_an_existing_provider(tmp_path: Path) -> None:
     registry = ProviderRegistry(
         ProviderRuntimeContext(
-            plugin_id="meet2notes.core",
+            plugin_id="oundnote.core",
             data_dir=tmp_path / "data",
             models_dir=tmp_path / "models",
             _settings_provider=lambda _plugin_id: {},

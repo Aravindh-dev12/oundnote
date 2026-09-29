@@ -39,7 +39,7 @@ class LiteLLMEmbeddingProvider:
 
     async def uninstall(self, profile_id: str, config: dict[str, Any]) -> None:
         del profile_id, config
-        raise CapabilityUnavailableError("LiteLLM providers are not managed by Meet2Notes")
+        raise CapabilityUnavailableError("LiteLLM providers are not managed by Oundnote")
 
     async def unload(self, profile_id: str | None = None) -> None:
         del profile_id

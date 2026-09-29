@@ -39,9 +39,9 @@ landing/
 *.webm
 *.mov
 .tmp-*/
-.meet2notes-data-location.json
-.meet2notes-update-cache.json
-.meet2notes-update-request.json
-.meet2notes.instance.lock*
+.oundnote-data-location.json
+.oundnote-update-cache.json
+.oundnote-update-request.json
+.oundnote.instance.lock*
 .DS_Store
 Thumbs.db

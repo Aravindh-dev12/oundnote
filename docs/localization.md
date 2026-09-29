@@ -8,7 +8,7 @@ The UI catalogues live in `src/local_meeting_ai/web/static/locales/`.
   and its native language name there to enable a new language.
 - The application falls back to English when a catalogue cannot be loaded.
 
-Use named keys through `Meet2Notes.t("area.label")` for messages with values
+Use named keys through `Oundnote.t("area.label")` for messages with values
 or plural forms. Static UI text and accessible labels are translated by the
 shared UI layer, including content inserted by a screen after it has loaded.
 

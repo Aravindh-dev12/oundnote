@@ -8,8 +8,8 @@ from unittest.mock import AsyncMock
 
 from local_meeting_ai.mcp.schemas import StatusResult, SummaryResult
 
-path = Path(__file__).parents[2] / "integrations/anna/executas/meet2notes/meet2notes_plugin.py"
-spec = importlib.util.spec_from_file_location("anna_meet2notes", path)
+path = Path(__file__).parents[2] / "integrations/anna/executas/oundnote/oundnote_plugin.py"
+spec = importlib.util.spec_from_file_location("anna_oundnote", path)
 plugin = importlib.util.module_from_spec(spec)
 sys.modules[spec.name] = plugin
 spec.loader.exec_module(plugin)
@@ -28,7 +28,7 @@ def test_describe_uses_anna_parameter_list_for_chat_registration():
     import json
 
     manifest = plugin.handle('{"jsonrpc":"2.0","id":1,"method":"describe"}')["result"]
-    assert manifest["name"] == "meet2notes-library"
+    assert manifest["name"] == "oundnote-library"
     parameters = manifest["tools"][0]["parameters"]
     assert isinstance(parameters, list)
     # Anna's chat registration iterates descriptors and reads dict fields.
@@ -54,7 +54,7 @@ def test_no_mutation_or_arbitrary_url_can_be_dispatched():
 
 def test_disconnected_status_is_useful_payload():
     gateway = AsyncMock()
-    gateway.status.return_value = StatusResult(connected=False, message="Open Meet2Notes")
+    gateway.status.return_value = StatusResult(connected=False, message="Open Oundnote")
     result = asyncio.run(plugin.invoke({"action": "status"}, gateway))
     assert result["success"]
     assert result["data"]["connected"] is False

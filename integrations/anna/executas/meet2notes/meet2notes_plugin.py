@@ -13,7 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field
 # Source development reuses this checkout; PyInstaller bundles the same modules.
 if not getattr(sys, "frozen", False):
     sys.path.insert(0, str(Path(__file__).resolve().parents[4] / "src"))
-from local_meeting_ai.mcp.gateway import Meet2NotesGateway
+from local_meeting_ai.mcp.gateway import OundnoteGateway
 
 
 class Arguments(BaseModel):
@@ -26,10 +26,10 @@ class Arguments(BaseModel):
 
 
 MANIFEST = {
-    "name": "meet2notes-library",
-    "display_name": "Meet2Notes Local Library",
+    "name": "oundnote-library",
+    "display_name": "Oundnote Local Library",
     "version": "0.1.2",
-    "description": "Read meetings from Meet2Notes on the same computer as Anna Local Agent.",
+    "description": "Read meetings from Oundnote on the same computer as Anna Local Agent.",
     "tools": [
         {
             "name": "library",
@@ -90,7 +90,7 @@ async def invoke(raw, gateway=None):
     try:
         args = Arguments.model_validate(raw)
         if gateway is None:
-            gateway = Meet2NotesGateway()
+            gateway = OundnoteGateway()
         if args.action == "status":
             result = await gateway.status()
         elif args.action == "list":
@@ -154,7 +154,7 @@ def handle(line):
     if method == "initialize":
         result = {
             "protocolVersion": "2.0",
-            "server_info": {"name": "meet2notes", "version": "0.1.2"},
+            "server_info": {"name": "oundnote", "version": "0.1.2"},
             "capabilities": {},
         }
     elif method == "describe":

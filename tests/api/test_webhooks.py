@@ -144,10 +144,10 @@ def test_dispatcher_signs_and_delivers_from_the_durable_outbox(
 
     assert deliveries[0]["status"] == "delivered"
     assert received["url"] == "http://127.0.0.1:9999/events"
-    timestamp = received["headers"]["X-Meet2Notes-Timestamp"]
+    timestamp = received["headers"]["X-Oundnote-Timestamp"]
     expected = hmac.new(
         created["signing_secret"].encode(),
         timestamp.encode() + b"." + received["body"],
         hashlib.sha256,
     ).hexdigest()
-    assert received["headers"]["X-Meet2Notes-Signature-256"] == f"sha256={expected}"
+    assert received["headers"]["X-Oundnote-Signature-256"] == f"sha256={expected}"

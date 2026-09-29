@@ -1,8 +1,8 @@
 {
-  "name": "meet2notes-library",
-  "display_name": "Meet2Notes Local Library",
+  "name": "oundnote-library",
+  "display_name": "Oundnote Local Library",
   "version": "0.1.2",
-  "description": "Read meetings from Meet2Notes on the same computer as Anna Local Agent.",
+  "description": "Read meetings from Oundnote on the same computer as Anna Local Agent.",
   "tools": [
     {
       "name": "library",

@@ -9,7 +9,7 @@
     subscribeJobs,
     t,
     toast,
-  } = window.Meet2Notes;
+  } = window.Oundnote;
 
   const page = document.querySelector(".minimal-transcript-page");
   const audio = document.querySelector("#meeting-audio");
@@ -39,7 +39,7 @@
   const liveAssistantQuestionInput = document.querySelector("#live-ai-assistant-question");
   const liveAssistantSend = document.querySelector("#live-ai-assistant-send");
   const newMeetingRequested = new URL(window.location.href).searchParams.get("new") === "1";
-  const liveAssistantWidgetStorageKey = "meet2notes.liveAssistantWidget.v3";
+  const liveAssistantWidgetStorageKey = "oundnote.liveAssistantWidget.v3";
 
   let meetingId = page.dataset.meetingId || null;
   let draftTitle = page.dataset.defaultTitle || "New Transcription";
@@ -103,14 +103,14 @@
   }
 
   function appendWorkflowMessage(source, message) {
-    const time = new Date().toLocaleTimeString(Meet2Notes.currentLanguage, { hour12: false });
+    const time = new Date().toLocaleTimeString(Oundnote.currentLanguage, { hour12: false });
     appendPostprocessLog(`[${time}] INFO    ${source} · ${message}`);
   }
 
   function resetPostprocessLog(message) {
     postprocessLogLines.length = 0;
     postprocessJobSnapshots.clear();
-    const time = new Date().toLocaleTimeString(Meet2Notes.currentLanguage, { hour12: false });
+    const time = new Date().toLocaleTimeString(Oundnote.currentLanguage, { hour12: false });
     appendPostprocessLog(`[${time}] INFO    workflow · ${message}`);
   }
 
@@ -122,8 +122,8 @@
       const timestamp = new Date(entry.timestamp);
       const time = Number.isNaN(timestamp.getTime())
         ? "--:--:--"
-        : timestamp.toLocaleTimeString(Meet2Notes.currentLanguage, { hour12: false });
-      const source = String(entry.source || "meet2notes").split(".").pop();
+        : timestamp.toLocaleTimeString(Oundnote.currentLanguage, { hour12: false });
+      const source = String(entry.source || "oundnote").split(".").pop();
       const line = `[${time}] ${String(entry.level || "info").toUpperCase().padEnd(7)} ${source} · ${entry.message}`;
       activityLines.push(line);
       if (workflowVisible) appendPostprocessLog(line);
@@ -144,7 +144,7 @@
     activityResizer.setAttribute("aria-valuenow", String(height));
     activityResizer.setAttribute("aria-valuemax", String(maximum));
     try {
-      window.localStorage.setItem("meet2notes-activity-log-height", String(height));
+      window.localStorage.setItem("oundnote-activity-log-height", String(height));
     } catch (_error) {
       // Resizing remains available when browser storage is disabled.
     }
@@ -153,7 +153,7 @@
   function bindActivityLog() {
     let storedHeight = window.matchMedia("(max-width: 600px)").matches ? 150 : 180;
     try {
-      storedHeight = Number(window.localStorage.getItem("meet2notes-activity-log-height"))
+      storedHeight = Number(window.localStorage.getItem("oundnote-activity-log-height"))
         || storedHeight;
     } catch (_error) {
       // Keep the friendly default height.
@@ -643,7 +643,7 @@
     setTitle(transcription.title);
     renderMeetingResults(detail);
     document.querySelector("#editor-meta").textContent =
-      `${transcription.model} · ${transcription.language || Meet2Notes.t("transcript.detecting_language")} · ${segments.length} ${Meet2Notes.t("transcript.shown")} / ${detail.segments.length} ${Meet2Notes.t("transcript.segments")}${captureSession ? ` · ${Meet2Notes.t("transcript.live")}` : ""}`;
+      `${transcription.model} · ${transcription.language || Oundnote.t("transcript.detecting_language")} · ${segments.length} ${Oundnote.t("transcript.shown")} / ${detail.segments.length} ${Oundnote.t("transcript.segments")}${captureSession ? ` · ${Oundnote.t("transcript.live")}` : ""}`;
     if (!detail.segments.length) {
       if (["running", "queued"].includes(transcription.status)) {
         segmentContainer.innerHTML = `
@@ -1498,7 +1498,7 @@
 
   function openPostprocessDialog({
     initialLabel = "Stopping capture…",
-    description = "Meet2Notes is processing everything locally. You can continue in the background.",
+    description = "Oundnote is processing everything locally. You can continue in the background.",
   } = {}) {
     const continuingVisibleWorkflow = workflowVisible
       && postprocessDialog.open
@@ -1567,8 +1567,8 @@
     const inputBudget = Math.max(256, contextTokens - outputTokens - Math.max(128, Math.floor(contextTokens / 20)));
     const blocks = Math.max(1, Math.ceil(estimatedTokens / inputBudget));
     output.textContent = blocks > 1
-      ? Meet2Notes.t("postprocess.estimated_chunked", { tokens: estimatedTokens.toLocaleString(Meet2Notes.currentLanguage), blocks })
-      : Meet2Notes.t("postprocess.estimated_single", { tokens: estimatedTokens.toLocaleString(Meet2Notes.currentLanguage) });
+      ? Oundnote.t("postprocess.estimated_chunked", { tokens: estimatedTokens.toLocaleString(Oundnote.currentLanguage), blocks })
+      : Oundnote.t("postprocess.estimated_single", { tokens: estimatedTokens.toLocaleString(Oundnote.currentLanguage) });
   }
 
   function populatePostprocessNoteFormats() {
@@ -1647,7 +1647,7 @@
     const snapshot = `${job.status}:${progressPercent}:${job.message || ""}:${job.error_text || ""}`;
     if (postprocessJobSnapshots.get(job.uuid) !== snapshot) {
       postprocessJobSnapshots.set(job.uuid, snapshot);
-      const time = new Date().toLocaleTimeString(Meet2Notes.currentLanguage, { hour12: false });
+      const time = new Date().toLocaleTimeString(Oundnote.currentLanguage, { hour12: false });
       const detail = job.error_text || job.message || job.status;
       appendPostprocessLog(
         `[${time}] ${job.status === "failed" ? "ERROR  " : "INFO   "} ${name} · ${progressPercent}% · ${detail}`,
@@ -1672,7 +1672,7 @@
   async function finishWorkflow(hasWarnings) {
     if (workflowCompleted) return;
     workflowCompleted = true;
-    const time = new Date().toLocaleTimeString(Meet2Notes.currentLanguage, { hour12: false });
+    const time = new Date().toLocaleTimeString(Oundnote.currentLanguage, { hour12: false });
     appendPostprocessLog(
       `[${time}] ${hasWarnings ? "WARNING" : "INFO   "} workflow · ${hasWarnings ? "Finished with warnings" : "All processing completed"}`,
     );
@@ -1884,7 +1884,7 @@
     window.history.replaceState({}, "", `/?meeting=${meetingId}`);
     openPostprocessDialog({
       initialLabel: "Preparing media…",
-      description: "Meet2Notes is transcribing the complete recording, identifying speakers and creating AI notes locally.",
+      description: "Oundnote is transcribing the complete recording, identifying speakers and creating AI notes locally.",
     });
     await loadMeetingWorkspace();
     toast("Media imported. The complete meeting analysis has started.");
@@ -2346,7 +2346,7 @@
       window.history.replaceState({}, "", `/?meeting=${meetingId}`);
       openPostprocessDialog({
         initialLabel: finalTranscription ? "Preparing final pass…" : "Saving live transcript…",
-        description: "Meet2Notes is processing the selected local steps.",
+        description: "Oundnote is processing the selected local steps.",
       });
       await loadMeetingWorkspace();
       await refreshLiveAssistant(true);

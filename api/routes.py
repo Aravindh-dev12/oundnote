@@ -304,14 +304,14 @@ def application_shutdown(request: Request) -> dict[str, str]:
     request_shutdown = getattr(request.app.state, "request_shutdown", None)
     if not callable(request_shutdown):
         raise CapabilityUnavailableError(
-            "This server was not started by Meet2Notes. Stop it with Ctrl+C in its terminal."
+            "This server was not started by Oundnote. Stop it with Ctrl+C in its terminal."
         )
     logger.info("Clean shutdown requested from the local interface")
     request.app.state.shutdown_requested = True
     request_shutdown()
     return {
         "status": "shutting_down",
-        "message": "Meet2Notes is stopping cleanly.",
+        "message": "Oundnote is stopping cleanly.",
     }
 
 
@@ -357,9 +357,9 @@ def select_storage_location(location: str, container: ContainerDependency) -> di
                 initialdir=str(target),
                 mustexist=True,
                 title=(
-                    "Choose the Meet2Notes data folder"
+                    "Choose the Oundnote data folder"
                     if location == "data"
-                    else "Choose the Meet2Notes AI models folder"
+                    else "Choose the Oundnote AI models folder"
                 ),
             )
         finally:
@@ -430,12 +430,12 @@ def schedule_data_directory(
         raise ValidationError("Choose an empty directory for the data transfer")
     try:
         target.mkdir(parents=True, exist_ok=True)
-        probe = target / ".meet2notes-write-test"
+        probe = target / ".oundnote-write-test"
         probe.write_text("ok", encoding="utf-8")
         probe.unlink()
         schedule_data_directory_move(source, target)
     except OSError as error:
-        raise ValidationError(f"Meet2Notes cannot use {target}: {error}") from error
+        raise ValidationError(f"Oundnote cannot use {target}: {error}") from error
     logger.info("Application data move scheduled from %s to %s", source, target)
     return {
         "directory": str(target),
@@ -447,7 +447,7 @@ def schedule_data_directory(
 @router.get("/diagnostics/report")
 def diagnostic_report(container: ContainerDependency) -> dict[str, str]:
     lines = [
-        "Meet2Notes diagnostic report",
+        "Oundnote diagnostic report",
         f"Generated: {datetime.now().astimezone().isoformat(timespec='seconds')}",
         "No test aborts the report; individual failures are shown as [ERROR].",
     ]
@@ -491,7 +491,7 @@ def diagnostic_report(container: ContainerDependency) -> dict[str, str]:
             "OS version": platform.version(),
             "Python": sys.version.replace("\n", " "),
             "Executable": sys.executable,
-            "Meet2Notes": __version__,
+            "Oundnote": __version__,
         }
 
     def dependencies() -> list[str]:
@@ -581,9 +581,9 @@ def diagnostic_report(container: ContainerDependency) -> dict[str, str]:
     section("Operating system & runtime", software)
     section("Installed components", dependencies)
     section("Non-blocking component checks", checks)
-    section("Meet2Notes configuration", configuration)
+    section("Oundnote configuration", configuration)
     section("Recent application log (last 200 lines)", recent_log)
-    filename = f"meet2notes-diagnostics-{datetime.now():%Y%m%d-%H%M%S}.txt"
+    filename = f"oundnote-diagnostics-{datetime.now():%Y%m%d-%H%M%S}.txt"
     return {"report": "\n".join(lines), "filename": filename}
 
 
@@ -985,7 +985,7 @@ def pytorch_cuda_runtime(container: ContainerDependency) -> dict[str, Any]:
 
 @router.post("/runtimes/pytorch-cuda/install")
 async def install_pytorch_cuda_runtime(container: ContainerDependency) -> dict[str, Any]:
-    """Replace CPU-only PyTorch with the CUDA wheel inside Meet2Notes' .venv."""
+    """Replace CPU-only PyTorch with the CUDA wheel inside Oundnote' .venv."""
     return await container.pytorch_cuda.install()
 
 
@@ -1758,7 +1758,7 @@ async def move_models_directory(
         updated = container.preferences.update({"models_directory": str(target)})
     except OSError as error:
         raise ValidationError(
-            f"Meet2Notes could not move the models to {target}: {error}"
+            f"Oundnote could not move the models to {target}: {error}"
         ) from error
     logger.info("Local AI models moved from %s to %s; restart required", source, target)
     return _preference_response(container, updated)
@@ -1818,11 +1818,11 @@ def _validate_models_directory(value: str | None) -> str:
     requested = candidate.resolve()
     try:
         requested.mkdir(parents=True, exist_ok=True)
-        with tempfile.NamedTemporaryFile(prefix=".meet2notes-write-test-", dir=requested):
+        with tempfile.NamedTemporaryFile(prefix=".oundnote-write-test-", dir=requested):
             pass
     except OSError as error:
         raise ValidationError(
-            f"Meet2Notes cannot write to the selected model directory: {requested}"
+            f"Oundnote cannot write to the selected model directory: {requested}"
         ) from error
     return str(requested)
 

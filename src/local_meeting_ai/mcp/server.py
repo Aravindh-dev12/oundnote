@@ -6,7 +6,7 @@ from mcp.server import MCPServer
 from mcp.types import ToolAnnotations
 from pydantic import Field
 
-from local_meeting_ai.mcp.gateway import Meet2NotesGateway
+from local_meeting_ai.mcp.gateway import OundnoteGateway
 from local_meeting_ai.mcp.schemas import (
     MeetingDetailResult,
     MeetingListResult,
@@ -25,21 +25,21 @@ READ_ONLY = ToolAnnotations(
 )
 
 mcp = MCPServer(
-    "Meet2Notes",
+    "Oundnote",
     instructions=(
         "Read private meeting metadata, active transcripts, completed AI notes, "
-        "and grounded search evidence from the user's local Meet2Notes application. "
+        "and grounded search evidence from the user's local Oundnote application. "
         "All tools are read-only. Use find_in_transcripts for exact terms and "
         "search_meetings for conceptual RAG retrieval."
     ),
     log_level="WARNING",
 )
-gateway = Meet2NotesGateway()
+gateway = OundnoteGateway()
 
 
 @mcp.tool(annotations=READ_ONLY)
-async def meet2notes_status() -> StatusResult:
-    """Check whether the local Meet2Notes app and historical RAG are available."""
+async def oundnote_status() -> StatusResult:
+    """Check whether the local Oundnote app and historical RAG are available."""
     return await gateway.status()
 
 

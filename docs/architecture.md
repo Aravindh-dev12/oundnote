@@ -1,6 +1,6 @@
 # Architecture
 
-Meet2Notes uses a layered, dependency-inward design:
+Oundnote uses a layered, dependency-inward design:
 
 1. `domain` defines entities, states, errors, and integration contracts.
 2. `application` coordinates use cases without knowing FastAPI or filesystem UI details.
@@ -132,7 +132,7 @@ persists them and the final pipeline skips a redundant diarization job. See
 
 Model download consent is stored in the job request. Faster Whisper runs with
 `local_files_only` unless the user explicitly allowed a download. The
-`meet2notes-models` setup command provides the same explicit, local-only model
+`oundnote-models` setup command provides the same explicit, local-only model
 management flow for unattended installation.
 
 ## Database

@@ -15,7 +15,7 @@ class AnalysisGlossaryPlugin:
         id="example.analysis-glossary",
         name="Analysis glossary example",
         version="1.0.0",
-        author="Meet2Notes contributors",
+        author="Oundnote contributors",
         description="Demonstrates a non-destructive terminology filter before AI.",
         permissions=("read_transcript", "write_derived_artifact"),
     )

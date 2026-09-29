@@ -1,6 +1,6 @@
 const $ = id => document.getElementById(id);
 let anna, busy = false, page = null, selectedId = null, notesText = '';
-const toolId = window.__ANNA_TOOL_IDS__?.['meet2notes-library'] || 'tool-dev-meet2notes';
+const toolId = window.__ANNA_TOOL_IDS__?.['oundnote-library'] || 'tool-dev-oundnote';
 const timestamp = ms => { const s = Math.floor(ms / 1000); return `${Math.floor(s/3600)}:${String(Math.floor(s/60)%60).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; };
 function node(tag, text, cls) { const el = document.createElement(tag); el.textContent = text; if(cls) el.className = cls; return el; }
 function button(text, action) { const el = node('button', text); el.type = 'button'; el.addEventListener('click', () => run(action)); return el; }
@@ -35,7 +35,7 @@ async function run(action) {
   if(busy || !anna) return;
   busy = true;
   document.querySelectorAll('button').forEach(el => el.disabled = true);
-  $('status').className = ''; $('status').textContent = 'Querying Meet2Notes…';
+  $('status').className = ''; $('status').textContent = 'Querying Oundnote…';
   try { await action(); } catch(error) { $('status').className = 'error'; $('status').textContent = error.message || String(error); }
   finally { busy = false; document.querySelectorAll('button').forEach(el => el.disabled = false); }
 }
@@ -48,8 +48,8 @@ async function call(args) {
 }
 async function connection() {
   const out = await call({action:'status'});
-  if(!out.connected || !out.enabled) throw new Error(out.message || 'Open Meet2Notes and enable MCP access in Settings. Run Anna Local Agent on the same computer.');
-  $('status').textContent = `Meet2Notes ${out.app_version || ''} connected. Ready to search.`;
+  if(!out.connected || !out.enabled) throw new Error(out.message || 'Open Oundnote and enable MCP access in Settings. Run Anna Local Agent on the same computer.');
+  $('status').textContent = `Oundnote ${out.app_version || ''} connected. Ready to search.`;
 }
 async function read(action, meetingId, cursor=-1, summaryId=null, append=false) {
   const out = await call({action, meeting_id:meetingId, cursor, summary_id:summaryId});

@@ -4,7 +4,7 @@
   const widget = document.querySelector("#post-meeting-assistant");
   if (!widget) return;
 
-  const { api, escapeHTML, t, toast } = window.Meet2Notes;
+  const { api, escapeHTML, t, toast } = window.Oundnote;
   const form = document.querySelector("#post-meeting-assistant-form");
   const question = document.querySelector("#post-meeting-assistant-question");
   const send = document.querySelector("#post-meeting-assistant-send");
@@ -24,7 +24,7 @@
   const embedded = widget.dataset.layout === "embedded" && Boolean(widget.closest(".prompt-assistant"));
   const history = [];
   const selectedAttachments = new Map();
-  const storageKey = "meet2notes.postMeetingAssistant.v2";
+  const storageKey = "oundnote.postMeetingAssistant.v2";
 
   function sourceTime(milliseconds) {
     const seconds = Math.max(0, Math.floor(Number(milliseconds || 0) / 1000));
@@ -153,7 +153,7 @@
     document.querySelector("#post-meeting-assistant-welcome")?.remove();
     const article = document.createElement("article");
     article.className = `post-meeting-assistant-message ${role}`;
-    const label = role === "assistant" ? "Meet2Notes AI" : "You";
+    const label = role === "assistant" ? "Oundnote AI" : "You";
     const body = role === "assistant"
       ? escapeHTML(content).replaceAll(/\n/g, "<br>")
       : escapeHTML(content);

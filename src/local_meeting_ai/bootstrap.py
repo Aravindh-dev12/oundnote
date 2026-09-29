@@ -256,7 +256,7 @@ def build_container(
     )
     provider_registry = ProviderRegistry(
         ProviderRuntimeContext(
-            plugin_id="meet2notes.core",
+            plugin_id="oundnote.core",
             data_dir=paths.root,
             models_dir=paths.models,
             _settings_provider=lambda plugin_id: _plugin_settings(

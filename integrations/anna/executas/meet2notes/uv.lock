@@ -229,7 +229,7 @@ wheels = [
 ]
 
 [[package]]
-name = "tool-dev-meet2notes"
+name = "tool-dev-oundnote"
 version = "0.1.2"
 source = { editable = "." }
 dependencies = [

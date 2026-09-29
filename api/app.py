@@ -65,7 +65,7 @@ def create_app(
 
     @asynccontextmanager
     async def lifespan(lifespan_app: FastAPI) -> AsyncIterator[None]:
-        logger.info("Starting Meet2Notes services")
+        logger.info("Starting Oundnote services")
         await container.queue.start()
         logger.info("Background job queue is ready")
         await container.webhook_service.start()
@@ -100,13 +100,13 @@ def create_app(
             # means the chosen local models have completed their startup load.
             await preload_engines()
             logger.info(
-                "Meet2Notes is ready at http://%s:%d",
+                "Oundnote is ready at http://%s:%d",
                 resolved_settings.host,
                 resolved_settings.port,
             )
             yield
         finally:
-            logger.info("Stopping Meet2Notes services")
+            logger.info("Stopping Oundnote services")
             await container.capture_service.shutdown()
             await container.live_assistant_service.shutdown()
             await container.queue.stop()
@@ -122,10 +122,10 @@ def create_app(
             embedding_shutdown = getattr(container.embedding_provider, "shutdown", None)
             if callable(embedding_shutdown):
                 embedding_shutdown()
-            logger.info("Meet2Notes stopped cleanly")
+            logger.info("Oundnote stopped cleanly")
 
     app = FastAPI(
-        title="Meet2Notes API",
+        title="Oundnote API",
         description="Private local AI meeting transcription and notes workspace",
         version=__version__,
         docs_url="/api/docs",

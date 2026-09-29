@@ -16,15 +16,15 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-EXECUTA = ROOT / "executas" / "meet2notes"
+EXECUTA = ROOT / "executas" / "oundnote"
 VERSION = "0.1.2"
-NAME = "meet2notes-anna"
+NAME = "oundnote-anna"
 
 
 def main():
     if sys.platform != "win32" or platform.machine().lower() not in {"amd64", "x86_64"}:
         raise SystemExit("Build on Windows x86_64; cross-compilation is not supported.")
-    with tempfile.TemporaryDirectory(prefix="meet2notes-anna-build-") as temporary:
+    with tempfile.TemporaryDirectory(prefix="oundnote-anna-build-") as temporary:
         work = Path(temporary)
         subprocess.run(
             [
@@ -44,12 +44,12 @@ def main():
                 str(work / "build"),
                 "--specpath",
                 str(work),
-                str(EXECUTA / "meet2notes_plugin.py"),
+                str(EXECUTA / "oundnote_plugin.py"),
             ],
             check=True,
         )
         package = work / "dist" / NAME
-        # Run outside the checkout: no source-path or installed Meet2Notes dependency.
+        # Run outside the checkout: no source-path or installed Oundnote dependency.
         messages = [
             {"jsonrpc": "2.0", "id": 1, "method": "initialize"},
             {"jsonrpc": "2.0", "id": 2, "method": "describe"},

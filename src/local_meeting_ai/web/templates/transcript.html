@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Transcription · Meet2Notes{% endblock %}
+{% block title %}Transcription · Oundnote{% endblock %}
 {% block head %}
 <link rel="stylesheet" href="/static/css/transcription.css?v={{ asset_version }}">
 <link rel="stylesheet" href="/static/css/post-meeting-assistant.css?v={{ asset_version }}">
@@ -302,7 +302,7 @@
       class="activity-log-output"
       readonly
       spellcheck="false"
-      aria-label="Meet2Notes activity events"
+      aria-label="Oundnote activity events"
       placeholder="Waiting for application events…"
     ></textarea>
   </section>
@@ -415,7 +415,7 @@
       <div>
         <span class="eyebrow">Finishing your meeting</span>
         <h2 id="postprocess-title">Turning the conversation into useful notes</h2>
-        <p id="postprocess-description">Meet2Notes is processing everything locally. You can continue in the background.</p>
+        <p id="postprocess-description">Oundnote is processing everything locally. You can continue in the background.</p>
       </div>
     </div>
     <section class="postprocess-options hidden" id="postprocess-options" aria-labelledby="postprocess-options-title">
@@ -619,7 +619,7 @@
 <dialog class="modal compact-modal" id="remember-voice-dialog" aria-labelledby="remember-voice-title">
   <div class="modal-panel remember-voice-modal-panel">
     <div class="modal-header">
-      <div><span class="eyebrow">Saved voice</span><h2 id="remember-voice-title">Remember this voice?</h2><p id="remember-voice-description">Meet2Notes can use this meeting's voice sample to recognize this person in future meetings.</p></div>
+      <div><span class="eyebrow">Saved voice</span><h2 id="remember-voice-title">Remember this voice?</h2><p id="remember-voice-description">Oundnote can use this meeting's voice sample to recognize this person in future meetings.</p></div>
       <button type="button" class="icon-button close-button" data-close-remember-voice aria-label="Close">×</button>
     </div>
     <div class="modal-actions">

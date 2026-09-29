@@ -3,13 +3,13 @@ requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
-name = "meet2notes"
+name = "oundnote"
 version = "0.6.2"
 description = "Private local AI meeting transcription, speaker diarization, and summaries."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
-authors = [{ name = "Meet2Notes contributors" }]
+authors = [{ name = "Oundnote contributors" }]
 keywords = [
     "ai-meeting-assistant",
     "offline-transcription",
@@ -97,13 +97,13 @@ dev = [
 ]
 
 [project.scripts]
-meet2notes = "local_meeting_ai.cli:main"
-meet2notes-models = "local_meeting_ai.model_setup:main"
+oundnote = "local_meeting_ai.cli:main"
+oundnote-models = "local_meeting_ai.model_setup:main"
 
 [project.urls]
-Homepage = "https://meet2notes.eu"
-Repository = "https://github.com/estebanstifli/Meet2Notes"
-Issues = "https://github.com/estebanstifli/Meet2Notes/issues"
+Homepage = "https://oundnote.eu"
+Repository = "https://github.com/estebanstifli/Oundnote"
+Issues = "https://github.com/estebanstifli/Oundnote/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/local_meeting_ai"]

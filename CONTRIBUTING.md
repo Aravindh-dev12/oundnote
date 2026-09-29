@@ -25,7 +25,7 @@ for every registered hook, provider, and model lifecycle.
 
 ## Core changes and independent plugins
 
-Keep community plugin code in its own public repository. A fork of Meet2Notes is
+Keep community plugin code in its own public repository. A fork of Oundnote is
 useful for integration testing, but a core pull request is not required when the
 existing public API is sufficient.
 

@@ -497,7 +497,7 @@ def test_live_capture_pause_stop_and_transcribe(tmp_path: Path) -> None:
         assert invalid_rebuild.status_code == 422
         plugin_runs = client.get("/api/plugins/executions").json()
         assert any(
-            run["plugin_id"] == "meet2notes.analysis-cleanup"
+            run["plugin_id"] == "oundnote.analysis-cleanup"
             and run["hook"] == "analysis.before"
             and run["status"] == "completed"
             for run in plugin_runs

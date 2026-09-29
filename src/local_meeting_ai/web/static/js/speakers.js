@@ -1,5 +1,5 @@
 (() => {
-  const api = (...args) => window.Meet2Notes.api(...args);
+  const api = (...args) => window.Oundnote.api(...args);
   const list = document.querySelector("#speaker-profile-list"), options = document.querySelector("#speaker-filter-options"), results = document.querySelector("#speaker-meeting-results"), dialog = document.querySelector("#speaker-profile-dialog");
   let profiles = [];
   const voiceAudio = new Audio();

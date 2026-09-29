@@ -27,7 +27,7 @@ class GatewayError(RuntimeError):
         self.code = code
 
 
-class Meet2NotesGateway:
+class OundnoteGateway:
     def __init__(
         self,
         *,
@@ -69,7 +69,7 @@ class Meet2NotesGateway:
                 database=str(health.get("database") or "unknown"),
                 queue=str(health.get("queue") or "unknown"),
                 backend_url=base_url,
-                message="Desktop MCP access is disabled in Meet2Notes settings.",
+                message="Desktop MCP access is disabled in Oundnote settings.",
             )
         rag: dict[str, Any] | None
         try:
@@ -282,11 +282,11 @@ class Meet2NotesGateway:
         base_url = await self._ensure_enabled()
         status, base_url = await self._request("GET", "/api/rag/status", base_url=base_url)
         if not status.get("enabled"):
-            raise GatewayError("rag_disabled", "Historical RAG is disabled in Meet2Notes")
+            raise GatewayError("rag_disabled", "Historical RAG is disabled in Oundnote")
         if int(status.get("chunks") or 0) < 1:
             raise GatewayError(
                 "rag_index_not_ready",
-                "The historical RAG index is empty. Build it from Meet2Notes first.",
+                "The historical RAG index is empty. Build it from Oundnote first.",
             )
         payload, _ = await self._request(
             "POST",
@@ -307,7 +307,7 @@ class Meet2NotesGateway:
         if not bool(payload.get("enabled", True)):
             raise GatewayError(
                 "mcp_disabled",
-                "Desktop MCP access is disabled in Meet2Notes settings.",
+                "Desktop MCP access is disabled in Oundnote settings.",
             )
         return base_url
 
@@ -351,12 +351,12 @@ class Meet2NotesGateway:
             except ValueError as error:
                 raise GatewayError(
                     "invalid_backend_response",
-                    "Meet2Notes returned an invalid JSON response",
+                    "Oundnote returned an invalid JSON response",
                 ) from error
         detail = connection_errors[-1] if connection_errors else "no active instance was found"
         raise GatewayError(
-            "meet2notes_not_running",
-            f"Meet2Notes is not reachable ({detail}). Open Meet2Notes and retry.",
+            "oundnote_not_running",
+            f"Oundnote is not reachable ({detail}). Open Oundnote and retry.",
         )
 
     @staticmethod
@@ -369,5 +369,5 @@ class Meet2NotesGateway:
         code = payload.get("error") if isinstance(payload, dict) else None
         raise GatewayError(
             str(code or f"http_{response.status_code}").casefold(),
-            str(detail or f"Meet2Notes returned HTTP {response.status_code}"),
+            str(detail or f"Oundnote returned HTTP {response.status_code}"),
         )

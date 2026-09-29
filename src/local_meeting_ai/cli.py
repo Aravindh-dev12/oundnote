@@ -27,8 +27,8 @@ from local_meeting_ai.paths import AppPaths
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="meet2notes",
-        description="Run the private Meet2Notes local AI application.",
+        prog="oundnote",
+        description="Run the private Oundnote local AI application.",
     )
     parser.add_argument("--host", help="Listen address (default: 127.0.0.1)")
     parser.add_argument("--port", type=int, help="Listen port (default: 8765)")
@@ -40,7 +40,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--models-dir",
         type=Path,
-        help="AI model directory (default: <Meet2Notes installation>/models)",
+        help="AI model directory (default: <Oundnote installation>/models)",
     )
     parser.add_argument("--ffmpeg-path", type=Path, help="Path to the FFmpeg executable")
     parser.add_argument("--no-browser", action="store_true", help="Do not open a web browser")
@@ -79,7 +79,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     metadata = instance_metadata(host=settings.host, port=settings.port)
     url = str(metadata["url"])
     lock = InstanceLock(
-        paths.root / "meet2notes.instance.lock",
+        paths.root / "oundnote.instance.lock",
         metadata,
     )
     try:
@@ -87,7 +87,7 @@ def main(argv: Sequence[str] | None = None) -> None:
     except AlreadyRunningError as error:
         existing_url = str(error.metadata.get("url") or url)
         print(
-            f"Meet2Notes is already running at {existing_url}; no duplicate process was started.",
+            f"Oundnote is already running at {existing_url}; no duplicate process was started.",
             file=sys.stderr,
         )
         if settings.open_browser:
@@ -97,7 +97,7 @@ def main(argv: Sequence[str] | None = None) -> None:
 
     try:
         _ensure_port_available(settings.host, settings.port)
-        print(f"Meet2Notes is starting at {url}", flush=True)
+        print(f"Oundnote is starting at {url}", flush=True)
         if settings.open_browser:
             browser_timer = threading.Timer(
                 max(arguments.browser_delay, 1.0),
@@ -132,7 +132,7 @@ def _ensure_port_available(host: str, port: int) -> None:
         probe.bind((host, port))
     except OSError as error:
         raise SystemExit(
-            f"Cannot start Meet2Notes: {host}:{port} is already in use."
+            f"Cannot start Oundnote: {host}:{port} is already in use."
         ) from error
     finally:
         probe.close()

@@ -1,17 +1,17 @@
 {
-  "slug": "meet2notes",
-  "name": "Meet2Notes",
+  "slug": "oundnote",
+  "name": "Oundnote",
   "version": "0.1.3",
   "screenshots": ["./screenshots/01-ai-notes.png", "./screenshots/02-transcript.png"],
   "tagline": "Search your meeting history, read transcripts, and retrieve AI notes.",
-  "description": "Bring your Meet2Notes meeting library into Anna.\n\nFind meetings by title or description, search exact words in transcripts, or retrieve related excerpts through semantic search. Read transcripts with speaker labels and timestamps, view existing AI notes, and use retrieved evidence in Anna chat to explore decisions and follow-up tasks.\n\nRequirements: Windows 10 or later (x86_64), a separate Meet2Notes installation with MCP access enabled, and Anna Local Agent running on the same computer. Semantic search requires an existing Meet2Notes RAG index. Keep Meet2Notes open while using the app.\n\nThis integration provides read-only access. Recording, transcription, note generation, editing, and index management remain in the Meet2Notes desktop application.\n\nPrivacy: original recordings and the meeting library remain on your computer. Retrieved text and metadata pass through Anna and may be processed by its AI provider when used in chat. This integration does not upload audio or copy your entire database.",
+  "description": "Bring your Oundnote meeting library into Anna.\n\nFind meetings by title or description, search exact words in transcripts, or retrieve related excerpts through semantic search. Read transcripts with speaker labels and timestamps, view existing AI notes, and use retrieved evidence in Anna chat to explore decisions and follow-up tasks.\n\nRequirements: Windows 10 or later (x86_64), a separate Oundnote installation with MCP access enabled, and Anna Local Agent running on the same computer. Semantic search requires an existing Oundnote RAG index. Keep Oundnote open while using the app.\n\nThis integration provides read-only access. Recording, transcription, note generation, editing, and index management remain in the Oundnote desktop application.\n\nPrivacy: original recordings and the meeting library remain on your computer. Retrieved text and metadata pass through Anna and may be processed by its AI provider when used in chat. This integration does not upload audio or copy your entire database.",
   "category": "productivity",
-  "homepage_url": "https://meet2notes.eu",
+  "homepage_url": "https://oundnote.eu",
   "bundled_executas": {
-    "meet2notes-library": {
-      "path": "./executas/meet2notes"
+    "oundnote-library": {
+      "path": "./executas/oundnote"
     }
   },
-  "support_url": "https://github.com/estebanstifli/Meet2Notes/issues",
-  "logo_url": "https://meet2notes.eu/assets/meet2notes-logo.png"
+  "support_url": "https://github.com/estebanstifli/Oundnote/issues",
+  "logo_url": "https://oundnote.eu/assets/oundnote-logo.png"
 }

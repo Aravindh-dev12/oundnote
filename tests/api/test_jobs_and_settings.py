@@ -328,7 +328,7 @@ def test_summary_engine_settings_are_extensible_and_do_not_store_keys(
                 "local_runtime": "external-openai",
                 "model": "my-local-model",
                 "base_url": "http://127.0.0.1:8080/v1",
-                "api_key_env": "MEET2NOTES_AI_API_KEY",
+                "api_key_env": "OUNDNOTE_AI_API_KEY",
                 "context_length": 8192,
                 "batch_size": 256,
                 "micro_batch_size": 64,
@@ -346,7 +346,7 @@ def test_summary_engine_settings_are_extensible_and_do_not_store_keys(
     assert summary["provider"] == "openai-compatible"
     assert summary["batch_size"] == 256
     assert summary["flash_attention"] is False
-    assert summary["api_key_env"] == "MEET2NOTES_AI_API_KEY"
+    assert summary["api_key_env"] == "OUNDNOTE_AI_API_KEY"
     assert "api_key" not in summary
 
     invalid = client.put(

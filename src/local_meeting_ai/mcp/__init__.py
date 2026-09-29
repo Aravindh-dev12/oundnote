@@ -1,1 +1,1 @@
-"""Read-only Model Context Protocol integration for Meet2Notes."""
+"""Read-only Model Context Protocol integration for Oundnote."""

@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const { api, toast } = window.Meet2Notes;
+  const { api, toast } = window.Oundnote;
   const rows = [...document.querySelectorAll(".meeting-library-row")];
   const search = document.querySelector("#meeting-search");
   const empty = document.querySelector("#meetings-search-empty");
@@ -11,7 +11,7 @@
   document.querySelectorAll("[data-local-date]").forEach((element) => {
     const date = new Date(element.dataset.localDate);
     if (!Number.isNaN(date.getTime())) {
-      element.textContent = date.toLocaleDateString(Meet2Notes.currentLanguage, {
+      element.textContent = date.toLocaleDateString(Oundnote.currentLanguage, {
         year: "numeric",
         month: "short",
         day: "numeric",
@@ -22,7 +22,7 @@
   document.querySelectorAll("[data-local-time]").forEach((element) => {
     const date = new Date(element.dataset.localTime);
     if (!Number.isNaN(date.getTime())) {
-      element.textContent = date.toLocaleTimeString(Meet2Notes.currentLanguage, {
+      element.textContent = date.toLocaleTimeString(Oundnote.currentLanguage, {
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
@@ -42,7 +42,7 @@
   });
 
   function applySearch() {
-    const query = search.value.trim().toLocaleLowerCase(Meet2Notes.currentLanguage);
+    const query = search.value.trim().toLocaleLowerCase(Oundnote.currentLanguage);
     let visible = 0;
     rows.forEach((row) => {
       const match = !query || row.dataset.meetingSearch.includes(query);
@@ -50,7 +50,7 @@
       if (match) visible += 1;
     });
     count.textContent = String(visible);
-    countLabel.textContent = Meet2Notes.t("meetings.saved_count", { count: visible }, visible);
+    countLabel.textContent = Oundnote.t("meetings.saved_count", { count: visible }, visible);
     empty.classList.toggle("hidden", visible > 0 || rows.length === 0);
   }
 

@@ -73,7 +73,7 @@ def configure_logging(paths: AppPaths, level: str) -> ActivityLog:
     console.setFormatter(formatter)
 
     rotating_file = RotatingFileHandler(
-        paths.logs / "meet2notes.log",
+        paths.logs / "oundnote.log",
         maxBytes=5 * 1024 * 1024,
         backupCount=3,
         encoding="utf-8",
@@ -91,5 +91,5 @@ def configure_logging(paths: AppPaths, level: str) -> ActivityLog:
     root.addHandler(console)
     root.addHandler(rotating_file)
     root.addHandler(activity_handler)
-    logging.getLogger(__name__).info("Meet2Notes activity logging initialized")
+    logging.getLogger(__name__).info("Oundnote activity logging initialized")
     return activity_log

@@ -164,7 +164,7 @@ class FastEmbedBgeM3Provider:
                 local_files_only=not allow_model_download,
             )
             # Force lazy runtimes to validate the graph and external weights now.
-            list(model.embed(["Meet2Notes BGE-M3 warmup"], batch_size=1))
+            list(model.embed(["Oundnote BGE-M3 warmup"], batch_size=1))
         except Exception as error:
             self._set_error(error)
             raise CapabilityUnavailableError(

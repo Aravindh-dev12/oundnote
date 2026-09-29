@@ -1,21 +1,21 @@
 {
-  "slug": "meet2notes-library",
-  "name": "Meet2Notes Local Library",
+  "slug": "oundnote-library",
+  "name": "Oundnote Local Library",
   "version": "0.1.2",
   "executa_type": "tool",
-  "description": "Read-only search of Meet2Notes meetings, transcripts and AI notes. Requires Windows x86_64, Meet2Notes and Anna Local Agent on the same computer.",
-  "tool_id": "tool-esteban-meet2notes-library-tmze3cnf",
+  "description": "Read-only search of Oundnote meetings, transcripts and AI notes. Requires Windows x86_64, Oundnote and Anna Local Agent on the same computer.",
+  "tool_id": "tool-esteban-oundnote-library-tmze3cnf",
   "type": "python",
   "enabled": true,
   "manifest_file": "manifest.json",
   "distribution": {
     "type": "binary",
-    "executable_name": "meet2notes-anna",
+    "executable_name": "oundnote-anna",
     "supports_protocol": true,
     "binary_artifacts": {
       "windows-x86_64": {
-        "path": "dist/meet2notes-anna-{version}-windows-x86_64.zip",
-        "entrypoint": "meet2notes-anna.exe",
+        "path": "dist/oundnote-anna-{version}-windows-x86_64.zip",
+        "entrypoint": "oundnote-anna.exe",
         "format": "zip"
       }
     }

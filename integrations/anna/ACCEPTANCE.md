@@ -5,7 +5,7 @@ Tested against the Anna-installed Executa 0.1.2 on Windows x86_64.
 | Check | Result |
 |---|---|
 | Installed version and Anna parameter-list contract | Passed |
-| Real Meet2Notes connection and enabled MCP access | Passed |
+| Real Oundnote connection and enabled MCP access | Passed |
 | Real meeting listing | Passed: 25 entries |
 | Transcript, speaker labels and timestamp structure | Passed |
 | Second transcript page without duplicate segment indices | Passed |
@@ -19,10 +19,10 @@ Tested against the Anna-installed Executa 0.1.2 on Windows x86_64.
 | Unit and API tests with temporary data | 15 passed |
 
 The selected real notes fit one page; long-note pagination used synthetic data.
-Failure tests did not close Meet2Notes or change its settings. This report and
+Failure tests did not close Oundnote or change its settings. This report and
 acceptance-results.json contain no meeting titles, transcripts or notes.
 
-The tests cover the installed binary and its connection to Meet2Notes. They do
+The tests cover the installed binary and its connection to Oundnote. They do
 not automate the Anna model conversation or evaluate the quality of generated
 summaries. The user separately confirmed that Anna chat works.
 

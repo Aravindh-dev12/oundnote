@@ -73,7 +73,7 @@ async def test_builtin_filter_is_non_destructive_and_audited(plugin_services) ->
     assert filtered.segments[0].text == "Hola a todos."
     assert filtered.metadata["analysis_cleanup_segments"] == 1
     audit = executions.recent()
-    assert audit[0]["plugin_id"] == "meet2notes.analysis-cleanup"
+    assert audit[0]["plugin_id"] == "oundnote.analysis-cleanup"
     assert audit[0]["status"] == "completed"
     assert audit[0]["input_digest"] != audit[0]["output_digest"]
     assert "Hola" not in str(audit[0])
@@ -84,7 +84,7 @@ async def test_disabling_plugin_removes_its_hooks(plugin_services) -> None:  # t
     settings, executions = plugin_services
     manager = PluginManager(settings, executions)
 
-    disabled = manager.set_enabled("meet2notes.analysis-cleanup", False)
+    disabled = manager.set_enabled("oundnote.analysis-cleanup", False)
     result = await manager.hooks.apply_filters(
         "analysis.before",
         _document(),

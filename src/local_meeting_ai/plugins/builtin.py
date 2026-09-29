@@ -10,10 +10,10 @@ class AnalysisCleanupPlugin:
     """Harmless reference plugin used to exercise the public filter API."""
 
     manifest = PluginManifest(
-        id="meet2notes.analysis-cleanup",
+        id="oundnote.analysis-cleanup",
         name="Analysis transcript cleanup",
         version="1.0.0",
-        author="Meet2Notes contributors",
+        author="Oundnote contributors",
         description=(
             "Normalizes repeated whitespace in the temporary transcript sent "
             "to AI without changing the saved transcription."

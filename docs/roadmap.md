@@ -1,6 +1,6 @@
-# Meet2Notes roadmap
+# Oundnote roadmap
 
-Meet2Notes is being built as a private, extensible meeting-intelligence
+Oundnote is being built as a private, extensible meeting-intelligence
 workspace. The repository will become public when the application, extension
 API, upgrade path, and security defaults are mature enough for community use.
 
@@ -25,7 +25,7 @@ source tree; planned items are deliberately split into testable phases.
    explicitly selected remote provider.
 5. **Extensions use a stable API.** Community plugins register engines,
    actions, filters, processors, and exporters without monkey-patching core
-   modules or accessing the Meet2Notes database directly.
+   modules or accessing the Oundnote database directly.
 6. **Privacy is visible.** The UI must show where each stage runs and whether
    audio or text leaves the computer.
 
@@ -62,7 +62,7 @@ boundary.
 
 ## Extension model
 
-Meet2Notes exposes two WordPress-inspired hook families:
+Oundnote exposes two WordPress-inspired hook families:
 
 - **Actions** observe lifecycle events without replacing data. Examples include
   `final_transcription.completed`, `diarization.completed`,
@@ -78,10 +78,10 @@ plugin version. Optional failures are recorded and skipped; required failures
 stop the affected stage.
 
 Python packages advertise plugins through the standard
-`meet2notes.plugins` entry-point group. A plugin manifest declares:
+`oundnote.plugins` entry-point group. A plugin manifest declares:
 
 - Stable ID, name, author, version, and description.
-- Meet2Notes and plugin-API compatibility.
+- Oundnote and plugin-API compatibility.
 - Hooks and engine capabilities.
 - Permissions such as network, recording access, transcript access, or secret
   storage.
@@ -167,7 +167,7 @@ location are mandatory before remote mode is enabled outside localhost.
 
 ## Phase 3: processing nodes
 
-- [ ] Extract the final-stage executor into `meet2notes-processing-node` while
+- [ ] Extract the final-stage executor into `oundnote-processing-node` while
   retaining the all-in-one launcher.
 - [ ] Add node pairing, health, capabilities, model inventory, and queue limits.
 - [ ] Implement authenticated resumable upload and normalized artifact return.

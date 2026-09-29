@@ -1,4 +1,4 @@
-"""Public extension API for Meet2Notes plugins.
+"""Public extension API for Oundnote plugins.
 
 Community packages should import contracts from this module rather than from
 application or infrastructure internals. The API is versioned independently so

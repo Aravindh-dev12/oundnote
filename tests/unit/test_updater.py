@@ -41,8 +41,8 @@ def test_release_check_uses_semver_and_cache(
             json.dumps(
                 {
                     "tag_name": "v0.6.0",
-                    "name": "Meet2Notes 0.6.0",
-                    "html_url": "https://github.com/estebanstifli/Meet2Notes/releases/v0.6.0",
+                    "name": "Oundnote 0.6.0",
+                    "html_url": "https://github.com/estebanstifli/Oundnote/releases/v0.6.0",
                     "published_at": "2026-08-23T12:00:00Z",
                     "draft": False,
                     "prerelease": False,
@@ -131,8 +131,8 @@ def test_pre_update_backup_preserves_settings_meetings_and_rag(
         updater.ReleaseInfo(
             tag="v0.6.0",
             version="0.6.0",
-            name="Meet2Notes 0.6.0",
-            url="https://github.com/estebanstifli/Meet2Notes/releases/tag/v0.6.0",
+            name="Oundnote 0.6.0",
+            url="https://github.com/estebanstifli/Oundnote/releases/tag/v0.6.0",
         ),
         ["--data-dir", str(data), "--port", "8899"],
     )

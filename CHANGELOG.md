@@ -86,10 +86,10 @@
 
 ## 0.4.0 - 2026-07-26
 
-- Renamed the application and all public entry points to Meet2Notes.
+- Renamed the application and all public entry points to Oundnote.
 - Added one-command Windows, macOS, and Linux installation with platform-aware
   llama.cpp acceleration and safe CPU fallback.
-- Added `meet2notes-models` for automatic download and verification of Faster
+- Added `oundnote-models` for automatic download and verification of Faster
   Whisper, sherpa-onnx, and LFM2.5 models.
 - Preserved existing LocalMeet2Resume data directories to avoid breaking stored
   recording paths during the rename.

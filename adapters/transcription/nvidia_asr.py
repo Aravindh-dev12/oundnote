@@ -186,7 +186,7 @@ class NvidiaAsrEngine:
             self.model_dir,
         )
         hub.snapshot_download(repo_id=self.repository, local_dir=str(self.model_dir))
-        (self.model_dir / ".meet2notes-installed").write_text(
+        (self.model_dir / ".oundnote-installed").write_text(
             self.repository,
             encoding="utf-8",
         )
@@ -307,7 +307,7 @@ class NvidiaAsrEngine:
             raise
 
     def _installed(self) -> bool:
-        return (self.model_dir / ".meet2notes-installed").is_file() or (
+        return (self.model_dir / ".oundnote-installed").is_file() or (
             (self.model_dir / "config.json").is_file()
             and (self.model_dir / "model.safetensors").is_file()
         )

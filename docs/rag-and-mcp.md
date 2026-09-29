@@ -49,7 +49,7 @@ local SQLite FTS5 branch is used when SQLite is the selected store.
 
 The default BGE-M3 profile is selected but never downloaded merely by opening the
 application. Its Install action downloads the official BAAI ONNX graph into the
-Meet2Notes model directory. The dedicated FastEmbed worker uses ONNX Runtime on CPU
+Oundnote model directory. The dedicated FastEmbed worker uses ONNX Runtime on CPU
 without PyTorch or an external Ollama service. The upstream FP32 ONNX files occupy
 about 2.3 GB; bulk indexing is still expected to be slower than small-model inference.
 
@@ -67,7 +67,7 @@ selection rules, chunk invalidation, embedding configuration and job coordinatio
 
 Implemented tool surface:
 
-- `meet2notes_status()`
+- `oundnote_status()`
 - `list_meetings(query?, date_from?, date_to?, limit?)`
 - `get_meeting(meeting_id)`
 - `get_transcript(meeting_id, start_ms?, end_ms?, cursor?, segment_limit?)`
@@ -76,7 +76,7 @@ Implemented tool surface:
 - `search_meetings(query, meeting_id?, top_k?)`
 
 Future MCP resources could expose stable read-only URIs such as
-`meet2notes://meetings/{id}` and `meet2notes://meetings/{id}/transcript`. Search
+`oundnote://meetings/{id}` and `oundnote://meetings/{id}/transcript`. Search
 results should preserve the same meeting/chunk/timestamp provenance returned by the
 HTTP API so clients can cite evidence.
 
@@ -92,7 +92,7 @@ Security and lifecycle boundary:
 - Put response size and `top_k` caps on transcript/search tools.
 - Version the tool schemas independently from the internal Python classes.
 
-Only after the read-only server has proven useful should a broader Meet2Notes MCP be
+Only after the read-only server has proven useful should a broader Oundnote MCP be
 considered. That second phase should use separate capabilities for capture control,
 imports, transcription jobs, model management and destructive operations. Writes
 such as delete, rename or model download need explicit user confirmation, while

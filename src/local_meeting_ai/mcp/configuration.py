@@ -1,4 +1,4 @@
-"""Local desktop-client configuration for the Meet2Notes MCP server."""
+"""Local desktop-client configuration for the Oundnote MCP server."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 MCP_DEFAULTS = {"enabled": True}
-MCP_SERVER_NAME = "meet2notes"
+MCP_SERVER_NAME = "oundnote"
 
 
 @dataclass(frozen=True, slots=True)

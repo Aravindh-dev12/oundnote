@@ -1,11 +1,11 @@
 @echo off
 setlocal EnableExtensions EnableDelayedExpansion
 
-set "REPO_URL=https://github.com/estebanstifli/Meet2Notes.git"
-set "REPO_DIR=Meet2Notes"
+set "REPO_URL=https://github.com/estebanstifli/Oundnote.git"
+set "REPO_DIR=Oundnote"
 set "INSTALL_ROOT=%~dp0"
-set "GIT_INSTALLER=%TEMP%\meet2notes-git-installer.exe"
-set "PYTHON_INSTALLER=%TEMP%\meet2notes-python-installer.exe"
+set "GIT_INSTALLER=%TEMP%\oundnote-git-installer.exe"
+set "PYTHON_INSTALLER=%TEMP%\oundnote-python-installer.exe"
 set "PYTHON_INSTALLER_URL=https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe"
 
 if /I "%~1"=="--help" goto :help
@@ -16,7 +16,7 @@ if not "%~1"=="" (
 )
 
 echo =====================================================
-echo Meet2Notes - Windows installer and updater
+echo Oundnote - Windows installer and updater
 echo =====================================================
 echo.
 
@@ -37,17 +37,17 @@ if errorlevel 1 goto :failed
 
 if exist "%REPOSITORY_PATH%" (
     if not exist "%REPOSITORY_PATH%\.git" (
-        echo ERROR: The destination exists but is not a Meet2Notes Git repository.
+        echo ERROR: The destination exists but is not a Oundnote Git repository.
         echo Rename or remove this folder, then run the installer again:
         echo   %REPOSITORY_PATH%
         goto :failed
     )
     set "EXISTING_INSTALLATION=1"
 ) else (
-    echo Cloning Meet2Notes...
+    echo Cloning Oundnote...
     git clone "%REPO_URL%" "%REPOSITORY_PATH%"
     if errorlevel 1 (
-        echo ERROR: Meet2Notes could not be downloaded.
+        echo ERROR: Oundnote could not be downloaded.
         goto :failed
     )
 )
@@ -57,7 +57,7 @@ call :ensure_git
 if errorlevel 1 goto :failed
 
 if "%EXISTING_INSTALLATION%"=="1" if exist "%REPOSITORY_PATH%\update.bat" (
-    echo Existing Meet2Notes installation detected.
+    echo Existing Oundnote installation detected.
     echo Handing off to the safe release updater...
     call "%REPOSITORY_PATH%\update.bat"
     exit /b !ERRORLEVEL!
@@ -69,7 +69,7 @@ if errorlevel 1 (
     goto :failed
 )
 
-echo Updating Meet2Notes...
+echo Updating Oundnote...
 git pull --ff-only
 if errorlevel 1 (
     echo ERROR: The update could not be applied safely.
@@ -85,10 +85,10 @@ if errorlevel 1 (
 )
 
 echo.
-echo Installing Meet2Notes and its local AI environment...
+echo Installing Oundnote and its local AI environment...
 powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File ".\install.ps1"
 if errorlevel 1 (
-    echo ERROR: Meet2Notes setup did not finish successfully.
+    echo ERROR: Oundnote setup did not finish successfully.
     popd
     goto :failed
 )
@@ -96,7 +96,7 @@ if errorlevel 1 (
 popd
 echo.
 echo =====================================================
-echo Meet2Notes is ready
+echo Oundnote is ready
 echo =====================================================
 echo Installed in:
 echo   %REPOSITORY_PATH%
@@ -108,13 +108,13 @@ pause
 exit /b 0
 
 :help
-echo Meet2Notes Windows installer
+echo Oundnote Windows installer
 echo.
 echo Usage: install-update.bat
 echo.
-echo When downloaded separately, this file installs Meet2Notes in a
-echo "Meet2Notes" folder beside the installer. When run from inside an
-echo existing Meet2Notes repository, it delegates to the safe update.bat updater.
+echo When downloaded separately, this file installs Oundnote in a
+echo "Oundnote" folder beside the installer. When run from inside an
+echo existing Oundnote repository, it delegates to the safe update.bat updater.
 exit /b 0
 
 :ensure_git
@@ -136,7 +136,7 @@ if not errorlevel 1 exit /b 0
 
 echo Windows Package Manager was unavailable or did not complete. Trying the official Git release...
 powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -Command ^
-  "$ProgressPreference='SilentlyContinue'; [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $headers=@{'User-Agent'='Meet2Notes-Installer'}; try { $release=Invoke-RestMethod -Uri 'https://api.github.com/repos/git-for-windows/git/releases/latest' -Headers $headers; $asset=$release.assets ^| Where-Object { $_.name -match '64-bit\.exe$' -and $_.name -notmatch 'portable^|mingit' } ^| Select-Object -First 1; if (-not $asset) { throw 'No compatible Git installer was found.' }; Invoke-WebRequest -Uri $asset.browser_download_url -OutFile '%GIT_INSTALLER%' -UseBasicParsing; if ((Get-Item '%GIT_INSTALLER%').Length -lt 1MB) { throw 'The Git download is incomplete.' }; if ((Get-AuthenticodeSignature '%GIT_INSTALLER%').Status -ne 'Valid') { throw 'The Git installer signature is not valid.' } } catch { Write-Error $_.Exception.Message; exit 1 }"
+  "$ProgressPreference='SilentlyContinue'; [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; $headers=@{'User-Agent'='Oundnote-Installer'}; try { $release=Invoke-RestMethod -Uri 'https://api.github.com/repos/git-for-windows/git/releases/latest' -Headers $headers; $asset=$release.assets ^| Where-Object { $_.name -match '64-bit\.exe$' -and $_.name -notmatch 'portable^|mingit' } ^| Select-Object -First 1; if (-not $asset) { throw 'No compatible Git installer was found.' }; Invoke-WebRequest -Uri $asset.browser_download_url -OutFile '%GIT_INSTALLER%' -UseBasicParsing; if ((Get-Item '%GIT_INSTALLER%').Length -lt 1MB) { throw 'The Git download is incomplete.' }; if ((Get-AuthenticodeSignature '%GIT_INSTALLER%').Status -ne 'Valid') { throw 'The Git installer signature is not valid.' } } catch { Write-Error $_.Exception.Message; exit 1 }"
 if errorlevel 1 exit /b 1
 
 "%GIT_INSTALLER%" /VERYSILENT /NORESTART /NOCANCEL /SP-

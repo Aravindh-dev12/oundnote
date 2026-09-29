@@ -1,13 +1,13 @@
 # Webhooks
 
-This document is the authoritative contract for Meet2Notes outbound webhooks.
+This document is the authoritative contract for Oundnote outbound webhooks.
 It is written for operators, integration authors, and coding agents changing the
 application. Keep this file synchronized with the event catalog in
 `domain/webhooks.py` and the API in `api/webhook_routes.py`.
 
-## What a webhook is in Meet2Notes
+## What a webhook is in Oundnote
 
-Meet2Notes makes an **outbound** HTTP request to a configured destination. The
+Oundnote makes an **outbound** HTTP request to a configured destination. The
 local PC does not need a public hostname, an open inbound port, or a TLS
 certificate. Internet destinations must expose HTTPS with a valid certificate.
 Plain HTTP is allowed only for loopback, or for a private network explicitly
@@ -39,7 +39,7 @@ current conversation. Session-state events expire after 300 seconds. Delivery
 history is retained for the configured number of days.
 
 Delivery is **at least once**, not exactly once. Consumers must deduplicate by
-`X-Meet2Notes-Delivery` or the CloudEvent `id`. Ordering is not guaranteed across
+`X-Oundnote-Delivery` or the CloudEvent `id`. Ordering is not guaranteed across
 endpoints. A consumer that needs ordering should use `data.sequence` for Live
 batches and tolerate gaps caused by expiry.
 
@@ -57,8 +57,8 @@ uses CloudEvents structured mode:
 {
   "specversion": "1.0",
   "id": "event UUID",
-  "source": "meet2notes://local-instance",
-  "type": "com.meet2notes.live.segment.batch.v1",
+  "source": "oundnote://local-instance",
+  "type": "com.oundnote.live.segment.batch.v1",
   "time": "2026-08-13T12:34:56.000+00:00",
   "subject": "meeting/42",
   "datacontenttype": "application/json",
@@ -68,10 +68,10 @@ uses CloudEvents structured mode:
 
 Headers:
 
-- `X-Meet2Notes-Event`: unversioned event name.
-- `X-Meet2Notes-Delivery`: unique delivery ID; use it for idempotency.
-- `X-Meet2Notes-Timestamp`: Unix seconds used in the signature.
-- `X-Meet2Notes-Signature-256`: `sha256=<hex digest>`.
+- `X-Oundnote-Event`: unversioned event name.
+- `X-Oundnote-Delivery`: unique delivery ID; use it for idempotency.
+- `X-Oundnote-Timestamp`: Unix seconds used in the signature.
+- `X-Oundnote-Signature-256`: `sha256=<hex digest>`.
 
 The secret is shown once when an endpoint is created or rotated and is stored in
 the operating-system credential vault. Verify the signature over the exact raw
@@ -111,7 +111,7 @@ type version (`.v2`) while retaining the old contract for a documented period.
 ## Live agent mode
 
 An endpoint in `live_agent` mode may respond to `live.segment.batch` with up to
-ten suggestions. Meet2Notes stores them separately and shows them beside the
+ten suggestions. Oundnote stores them separately and shows them beside the
 meeting; it never silently edits the transcript or notes.
 
 ```json

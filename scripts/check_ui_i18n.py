@@ -13,20 +13,20 @@ ROOT = Path(__file__).resolve().parents[1]
 LOCALES = ROOT / "src" / "local_meeting_ai" / "web" / "static" / "locales"
 SCRIPTS = ROOT / "src" / "local_meeting_ai" / "web" / "static" / "js"
 TEMPLATES = ROOT / "src" / "local_meeting_ai" / "web" / "templates"
-KEY_USE = re.compile(r'(?:Meet2Notes\.)?\bt\("([^"]+)"')
+KEY_USE = re.compile(r'(?:Oundnote\.)?\bt\("([^"]+)"')
 TECHNICAL_LITERALS = {
     ".venv",
     "0%",
     "00:00",
     "404",
     "English",
-    "Meet2Notes",
+    "Oundnote",
     "\N{MULTIPLICATION SIGN}",
     "\N{EM DASH}",
     "\N{CHECK MARK}",
     "http://127.0.0.1:11434",
     "http://127.0.0.1:8080/v1",
-    "https://automation.example.com/meet2notes",
+    "https://automation.example.com/oundnote",
 }
 IMMUTABLE_UI_TERMS = {
     "RAG",

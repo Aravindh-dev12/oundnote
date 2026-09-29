@@ -12,7 +12,7 @@ from typing import Any, BinaryIO
 
 class AlreadyRunningError(RuntimeError):
     def __init__(self, metadata: dict[str, Any] | None = None) -> None:
-        super().__init__("Meet2Notes is already running")
+        super().__init__("Oundnote is already running")
         self.metadata = metadata or {}
 
 

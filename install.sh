@@ -57,7 +57,7 @@ find_python() {
 }
 
 cd "${INSTALLER_ROOT}"
-printf "\033[34mMeet2Notes installer\033[0m\n"
+printf "\033[34mOundnote installer\033[0m\n"
 echo "Private local transcription, diarization, and meeting summaries"
 
 if [[ ! -x "${ENVIRONMENT_ROOT}/bin/python" ]]; then
@@ -71,7 +71,7 @@ if [[ ! -x "${ENVIRONMENT_ROOT}/bin/python" ]]; then
 fi
 
 PYTHON="${ENVIRONMENT_ROOT}/bin/python"
-step "Installing Meet2Notes and native audio/AI runtimes"
+step "Installing Oundnote and native audio/AI runtimes"
 "${PYTHON}" -m pip install --upgrade pip setuptools wheel
 
 PYTHON_MINOR="$("${PYTHON}" -c 'import sys; print(sys.version_info.minor)')"
@@ -168,9 +168,9 @@ step "Verifying the installation"
 "${PYTHON}" -m pip check
 "${PYTHON}" scripts/check_environment.py
 
-printf "\n\033[32mMeet2Notes is ready.\033[0m\n"
-echo "Run: .venv/bin/meet2notes"
+printf "\n\033[32mOundnote is ready.\033[0m\n"
+echo "Run: .venv/bin/oundnote"
 
 if [[ "${START}" == "true" ]]; then
-  "${ENVIRONMENT_ROOT}/bin/meet2notes"
+  "${ENVIRONMENT_ROOT}/bin/oundnote"
 fi

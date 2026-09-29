@@ -1,6 +1,6 @@
 module.exports = {
   version: "8.0.0",
-  title: "Meet2Notes",
+  title: "Oundnote",
   description:
     "Private, local-first AI meeting assistant for recording, transcription, speaker diarization, searchable meeting history, and structured notes.",
   icon: "src/local_meeting_ai/web/static/icons/mark.svg",
@@ -9,7 +9,7 @@ module.exports = {
       return [
         {
           icon: "fa-solid fa-spinner",
-          text: "Preparing Meet2Notes...",
+          text: "Preparing Oundnote...",
           href: info.running("install.json") ? "install.json" : "update.json",
           default: true,
         },
@@ -20,7 +20,7 @@ module.exports = {
       return [
         {
           icon: "fa-solid fa-download",
-          text: "Install Meet2Notes",
+          text: "Install Oundnote",
           href: "install.json",
           default: true,
         },
@@ -39,7 +39,7 @@ module.exports = {
       if (memory && memory.url) {
         menu.unshift({
           icon: "fa-solid fa-arrow-up-right-from-square",
-          text: "Open Meet2Notes",
+          text: "Open Oundnote",
           href: memory.url,
           default: true,
         })
@@ -50,7 +50,7 @@ module.exports = {
     return [
       {
         icon: "fa-solid fa-play",
-        text: "Start Meet2Notes",
+        text: "Start Oundnote",
         href: "start.json",
         default: true,
       },
