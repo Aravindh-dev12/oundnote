@@ -235,6 +235,18 @@ def build_container(
                     configured_path,
                     paths.models,
                 )
+    # Validate the final model path as well. Environment configuration can
+    # provide an explicit path and bypass the persisted-preference check above.
+    # If its Windows drive is unavailable, use Oundnote's portable directory
+    # instead of failing with WinError 3 during startup.
+    model_drive, _ = ntpath.splitdrive(str(paths.models))
+    if model_drive and not Path(f"{model_drive}\\").exists():
+        logger.warning(
+            "Ignoring unavailable models drive %s; using %s",
+            model_drive,
+            default_models_directory(),
+        )
+        paths = paths.with_models_directory(default_models_directory())
     paths.models.mkdir(parents=True, exist_ok=True)
     transcriptions = TranscriptionRepository(database)
     summaries = SummaryRepository(database)
