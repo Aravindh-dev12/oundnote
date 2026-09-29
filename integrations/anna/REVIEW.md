@@ -12,7 +12,7 @@ AI notes, and ask Anna to work with the retrieved evidence.
 ## Setup
 
 1. Use Windows 10 or later, x86_64.
-2. Install Oundnote from https://oundnote.eu and open it.
+2. Install Oundnote and open it.
 3. Enable MCP access in Oundnote Settings.
 4. Connect Anna Local Agent on the same computer and select it as default.
 5. Install the candidate Oundnote app version. Verify that Oundnote Local

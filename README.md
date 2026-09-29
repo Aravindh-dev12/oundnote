@@ -1,24 +1,10 @@
-<div align="center">
-  <img src="src/local_meeting_ai/web/static/icons/mark.svg" alt="Oundnote logo" width="88">
-  <h1>Oundnote</h1>
-  <p><strong>Private AI meeting notes, local transcription, and speaker diarization.</strong></p>
-  <p>Record, transcribe, identify speakers, and create structured meeting summaries on your own computer.</p>
+# Oundnote
 
-  <p>
-    <a href="https://oundnote.eu"><strong>Website</strong></a> ·
-    <a href="#installation">Install</a> ·
-    <a href="docs/README.md">Documentation</a> ·
-    <a href="https://github.com/Aravindh-dev12/oundnote/issues">Support</a>
-  </p>
+**Private AI meeting notes, local transcription, and speaker diarization.**
 
-  <p>
-    <img alt="Python 3.11+" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
-    <img alt="Platforms" src="https://img.shields.io/badge/Windows%20%7C%20macOS%20%7C%20Linux-supported-176BFF">
-    <img alt="Local first" src="https://img.shields.io/badge/AI-local--first-16A085">
-    <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-111827">
-    <img alt="Status alpha" src="https://img.shields.io/badge/status-alpha-F59E0B">
-  </p>
-</div>
+Record, transcribe, identify speakers, and create structured meeting summaries on your own computer.
+
+<a id="installation"></a>
 
 Oundnote is an open-source, self-hosted AI meeting assistant for Windows,
 macOS, and Linux. It captures microphone and system audio, imports recordings,
@@ -36,8 +22,6 @@ assistants such as **Granola**, **Fireflies.ai**, **Fathom**, and **Otter.ai**.
 It is also an open-source alternative to **Meetily** for people and teams that
 want self-hosted meeting transcription, speaker diarization, and AI notes
 without surrendering control of their recordings.
-
-The official product website is [oundnote.eu](https://oundnote.eu).
 
 The processing pipeline is intentionally modular. Transcription, diarization,
 saved-voice matching, and analysis are independent stages with their own model
@@ -139,17 +123,6 @@ setup, tools, lifecycle, and security details.
 - Optional preload at startup. Models remain resident after use until they are
   unloaded, replaced, or the application shuts down.
 
-## Demo
-
-<p align="center">
-  <a href="https://youtu.be/Z2wRrs9Q9pU">
-    <img src="https://img.youtube.com/vi/Z2wRrs9Q9pU/maxresdefault.jpg" alt="Oundnote presentation and demo" width="800">
-  </a>
-</p>
-
-<p align="center"><a href="https://youtu.be/Z2wRrs9Q9pU">Watch the Oundnote presentation and demo on YouTube</a></p>
-
-<a id="installation"></a>
 
 ## Easy installation
 
@@ -177,7 +150,7 @@ run directly for the same purpose.
 
 > Windows may show a SmartScreen warning because this open-source batch file is
 > not code-signed. Review its contents before running it and download it only
-> from the official Oundnote repository or [oundnote.eu](https://oundnote.eu).
+> from the official Oundnote repository.
 
 ### Pinokio: one-click local installation
 

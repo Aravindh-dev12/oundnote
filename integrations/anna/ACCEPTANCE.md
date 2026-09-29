@@ -28,8 +28,7 @@ summaries. The user separately confirmed that Anna chat works.
 
 The English UI is a subsequent presentation-only update; see app.json for its
 version. The v0.1.3 UI was checked against the real library for search, notes
-formatting and speaker-grouped transcripts. The user also supplied screenshots
-of both views from the installed Anna app.
+formatting and speaker-grouped transcripts.
 
 ## Marketplace submission
 
@@ -39,6 +38,5 @@ to its version declaration; the optional integration adds no desktop dependencie
 or database migrations.
 
 Submitted September 28, 2026. Anna accepted the release precheck and confirmed
-status pending_review, candidate v0.1.3, app 348. Two user-provided screenshots
-were uploaded to the listing: AI notes first, transcript second. Public release
-has not been requested through the CLI. Reviewer instructions remain in REVIEW.md.
+status pending_review, candidate v0.1.3, app 348. Public release has not been
+requested through the CLI. Reviewer instructions remain in REVIEW.md.
