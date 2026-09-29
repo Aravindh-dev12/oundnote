@@ -24,6 +24,12 @@ class MeetingUpdate(BaseModel):
     language: str | None = Field(default=None, max_length=20)
 
 
+class MeetingNotesUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    personal_notes: str = Field(default="", max_length=20000)
+
+
 class MeetingResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
