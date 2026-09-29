@@ -1,0 +1,1 @@
+ALTER TABLE meetings ADD COLUMN personal_notes TEXT NOT NULL DEFAULT '';
