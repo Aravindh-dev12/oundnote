@@ -216,7 +216,7 @@ def test_transcription_pipeline_editor_and_versions(tmp_path: Path) -> None:
             "We approved the product launch.",
         ]
         assert all(segment["is_final"] for segment in detail.json()["segments"])
-        assert 'data-default-title="New Transcription 2"' in client.get("/").text
+        assert 'data-default-title="New Transcription 2"' in client.get(f"/meetings/{meeting['id']}/transcript").text
 
         renamed = client.patch(
             f"/api/transcriptions/{transcription_id}",
@@ -227,7 +227,7 @@ def test_transcription_pipeline_editor_and_versions(tmp_path: Path) -> None:
         assert client.get(f"/api/meetings/{meeting['id']}").json()["title"] == (
             "Product launch decision"
         )
-        assert 'data-default-title="New Transcription"' in client.get("/").text
+        assert 'data-default-title="New Transcription"' in client.get(f"/meetings/{meeting['id']}/transcript").text
 
         first_segment = detail.json()["segments"][0]
         edited = client.patch(
@@ -252,7 +252,7 @@ def test_transcription_pipeline_editor_and_versions(tmp_path: Path) -> None:
         assert versions.status_code == 200
         assert versions.json()[0]["segment_count"] == 2
 
-        workspace = client.get(f"/?meeting={meeting['id']}")
+        workspace = client.get(f"/meetings/{meeting['id']}/transcript")
         assert workspace.status_code == 200
         assert 'id="workspace-meeting-select"' not in workspace.text
         assert 'id="start-transcription"' in workspace.text
@@ -287,12 +287,10 @@ def test_transcription_pipeline_editor_and_versions(tmp_path: Path) -> None:
         assert "Product review" not in library.text
         assert f'href="/?meeting={meeting["id"]}"' in library.text
 
-        meeting_redirect = client.get(
-            f"/meetings/{meeting['id']}",
-            follow_redirects=False,
-        )
-        assert meeting_redirect.status_code == 307
-        assert meeting_redirect.headers["location"] == f"/?meeting={meeting['id']}"
+        meeting_detail = client.get(f"/meetings/{meeting['id']}")
+        assert meeting_detail.status_code == 200
+        assert "Product launch decision" in meeting_detail.text
+        assert "AI notes" in meeting_detail.text
 
 
 def test_meeting_audio_can_be_deleted_without_removing_transcript(tmp_path: Path) -> None:
