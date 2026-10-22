@@ -59,12 +59,11 @@ class CloudAccessMiddleware(BaseHTTPMiddleware):
         self.failed_logins: dict[str, list[float]] = {}
 
     async def dispatch(self, request: Request, call_next: object) -> Response:
-        if not self.password:
-            return await call_next(request)  # type: ignore[operator]
-
         path = request.url.path
         if path == "/healthz" and request.method == "GET":
             return JSONResponse({"status": "ok"})
+        if not self.password:
+            return await call_next(request)  # type: ignore[operator]
 
         if path == "/login":
             if request.method == "GET":
