@@ -368,3 +368,14 @@ def test_composite_asr_persists_integrated_speaker_turns(tmp_path: Path) -> None
             True,
             True,
         ]
+
+
+
+def test_primary_capture_page_exposes_browser_recording_controls(tmp_path: Path) -> None:
+    with _client(tmp_path) as client:
+        response = client.get("/capture")
+        assert response.status_code == 200
+        assert 'id="browser-capture-enabled"' in response.text
+        assert 'id="browser-mic-enabled"' in response.text
+        assert 'id="browser-tab-enabled"' in response.text
+        assert "flow-studio.js" in response.text
