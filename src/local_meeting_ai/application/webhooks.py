@@ -6,6 +6,7 @@ import hmac
 import ipaddress
 import json
 import logging
+from os import PathLike
 import secrets
 import socket
 import time
@@ -19,7 +20,11 @@ import httpx
 
 from local_meeting_ai.domain.entities import Job
 from local_meeting_ai.domain.enums import JobStatus, JobType
-from local_meeting_ai.domain.errors import CapabilityUnavailableError, NotFoundError, ValidationError
+from local_meeting_ai.domain.errors import (
+    CapabilityUnavailableError,
+    NotFoundError,
+    ValidationError,
+)
 from local_meeting_ai.domain.webhooks import (
     WEBHOOK_EVENT_CATALOG,
     WEBHOOK_EVENT_IDS,
@@ -139,7 +144,10 @@ def _sanitize_event_data(value: Any, content_level: str) -> Any:
                             for k, v in nested.items()
                             if k in {"id", "segment_count", "status", "language"}
                         }
-                        if "segment_count" not in result[name] and isinstance(nested.get("segments"), list):
+                        if (
+                            "segment_count" not in result[name]
+                            and isinstance(nested.get("segments"), list)
+                        ):
                             result[name]["segment_count"] = len(nested["segments"])
                     else:
                         result[name] = clean(nested, parent_key=name)
@@ -171,14 +179,6 @@ def _sanitize_event_data(value: Any, content_level: str) -> Any:
         return str(item)
 
     return clean(value)
-
-
-# pathlib.Path is not imported into the public schema types, so use the protocol
-# rather than converting every custom object to a string.
-try:
-    from os import PathLike
-except ImportError:  # pragma: no cover - present on all supported Python versions
-    PathLike = str  # type: ignore[misc,assignment]
 
 
 class WebhookService:
@@ -229,7 +229,10 @@ class WebhookService:
             "settings": self.settings(),
             "secure_storage_available": self.secrets_store.available(),
             "event_catalog": [dict(item) for item in WEBHOOK_EVENT_CATALOG],
-            "endpoints": [self.endpoint_payload(endpoint) for endpoint in self.repository.endpoints()],
+            "endpoints": [
+                self.endpoint_payload(endpoint)
+                for endpoint in self.repository.endpoints()
+            ],
         }
 
     def update_settings(self, values: dict[str, Any]) -> dict[str, Any]:
@@ -361,7 +364,10 @@ class WebhookService:
             if item is not None
         ]
         payload = {
-            "meeting": {"id": getattr(session, "meeting_id", None), "title": getattr(session, "title", None)},
+            "meeting": {
+                "id": getattr(session, "meeting_id", None),
+                "title": getattr(session, "title", None),
+            },
             "transcription": {"id": getattr(session, "transcription_id", None)},
             "session": {
                 "id": getattr(session, "session_id", None),
@@ -421,7 +427,11 @@ class WebhookService:
         elif job.job_type == JobType.TRANSCRIBE:
             event_type = f"transcription.final.{terminal}"
         elif job.job_type == JobType.DIARIZE:
-            event_type = "diarization.completed" if terminal == "completed" else f"diarization.{terminal}"
+            event_type = (
+                "diarization.completed"
+                if terminal == "completed"
+                else f"diarization.{terminal}"
+            )
         elif job.job_type == JobType.SUMMARIZE:
             event_type = "summary.completed" if terminal == "completed" else f"summary.{terminal}"
         if event_type not in WEBHOOK_EVENT_IDS:
@@ -512,7 +522,9 @@ class WebhookService:
         self._stopping = False
         self.repository.recover_delivering()
         self._wake_event = asyncio.Event()
-        self._worker_task = asyncio.create_task(self._dispatch_loop(), name="oundnote-webhook-dispatcher")
+        self._worker_task = asyncio.create_task(
+            self._dispatch_loop(), name="oundnote-webhook-dispatcher"
+        )
         await asyncio.sleep(0)
 
     async def stop(self) -> None:
@@ -622,7 +634,10 @@ class WebhookService:
                 return
             retryable = status_code in {408, 425, 429} or 500 <= status_code <= 599
             self._finish_failed_attempt(
-                delivery, endpoint, status_code=status_code, error=f"Remote returned HTTP {status_code}",
+                delivery,
+                endpoint,
+                status_code=status_code,
+                error=f"Remote returned HTTP {status_code}",
                 duration_ms=duration, excerpt=excerpt, retryable=retryable,
                 headers=result.headers,
             )
@@ -700,8 +715,16 @@ class WebhookService:
             accepted.append({
                 "type": kind[:40],
                 "text": text_value[:2000],
-                "confidence": max(0.0, min(float(confidence), 1.0)) if confidence is not None else None,
-                "related_segment_ids": [str(value) for value in related[:20]] if isinstance(related, list) else [],
+                "confidence": (
+                    max(0.0, min(float(confidence), 1.0))
+                    if confidence is not None
+                    else None
+                ),
+                "related_segment_ids": (
+                    [str(value) for value in related[:20]]
+                    if isinstance(related, list)
+                    else []
+                ),
             })
         if accepted:
             self.repository.add_insights(endpoint=endpoint, event=event, suggestions=accepted)
