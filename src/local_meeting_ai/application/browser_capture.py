@@ -162,7 +162,7 @@ class BrowserCaptureService:
                 )
 
                 destination = self.storage.new_live_capture_path(meeting.uuid)
-                writer = wave.open(str(destination), "wb")
+                writer = wave.open(str(destination), "wb")  # noqa: SIM115 - session owns the writer until Stop
                 writer.setnchannels(CHANNELS)
                 writer.setsampwidth(SAMPLE_WIDTH)
                 writer.setframerate(SAMPLE_RATE)
