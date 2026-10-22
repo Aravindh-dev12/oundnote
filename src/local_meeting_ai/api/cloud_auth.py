@@ -109,6 +109,12 @@ class CloudAccessMiddleware(BaseHTTPMiddleware):
             "content-type", ""
         ).lower():
             return self._login_page("Submit the sign-in form to continue.", status_code=415)
+        try:
+            content_length = int(request.headers.get("content-length", "0"))
+        except ValueError:
+            return self._login_page("Invalid sign-in request.", status_code=400)
+        if content_length > 8192:
+            return self._login_page("Sign-in request is too large.", status_code=413)
 
         client_ip = request.client.host if request.client else "unknown"
         now = time.monotonic()
