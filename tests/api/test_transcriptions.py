@@ -282,7 +282,8 @@ def test_transcription_pipeline_editor_and_versions(tmp_path: Path) -> None:
         meeting_detail = client.get(f"/meetings/{meeting['id']}")
         assert meeting_detail.status_code == 200
         assert "Product launch decision" in meeting_detail.text
-        assert "AI notes" in meeting_detail.text
+        assert 'data-note-pane="summary"' in meeting_detail.text
+        assert 'id="summary-content"' in meeting_detail.text
 
 
 def test_meeting_audio_can_be_deleted_without_removing_transcript(tmp_path: Path) -> None:
