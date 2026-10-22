@@ -22,6 +22,8 @@ jobs:
           node-version: "22"
       - name: Install test tools
         run: python -m pip install --upgrade pytest ruff fastapi httpx python-multipart
+      - name: Compile hosted Python modules
+        run: python -m compileall -q src/local_meeting_ai/api/app.py src/local_meeting_ai/api/cloud_auth.py
       - name: Test cloud authentication
         env:
           PYTHONPATH: src
