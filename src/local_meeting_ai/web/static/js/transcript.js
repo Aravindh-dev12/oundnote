@@ -2024,7 +2024,7 @@
     strip.classList.toggle("hidden", false);
     strip.classList.toggle("paused", paused);
     document.querySelector("#live-capture-state").textContent = savedFilePending
-      ? "Recording saved · retry processing to upload"
+      ? session.uploaded ? "Recording uploaded · retry analysis" : "Recording saved · retry upload"
       : paused ? "Browser recording paused" : "Recording in this browser · saved after you stop";
     document.querySelector("#capture-elapsed").textContent =
       formatTimestamp(browserCaptureElapsedMs(session));
@@ -2082,7 +2082,7 @@
       document.querySelector("#live-actions").classList.add("hidden");
       document.querySelector("#live-capture-strip").classList.add("hidden");
       document.querySelector("#transcription-form").dataset.busy = "true";
-      await startFileTranscription(postprocessOptions, session.file);
+      await startFileTranscription(postprocessOptions, session.file, session);
       browserCapture = null;
       delete document.querySelector("#transcription-form").dataset.busy;
       if (browserCaptureTimer) window.clearInterval(browserCaptureTimer);
@@ -2103,25 +2103,37 @@
     }
   }
 
-  async function startFileTranscription(postprocessOptions, suppliedFile = null) {
+  async function startFileTranscription(
+    postprocessOptions,
+    suppliedFile = null,
+    browserSession = null,
+  ) {
     const file = suppliedFile || document.querySelector("#capture-file").files[0];
     if (!file) throw new Error("Choose an audio or video file.");
-    const meeting = await api("/api/meetings", {
+    const meeting = browserSession?.meeting || await api("/api/meetings", {
       method: "POST",
       body: JSON.stringify({
         title: draftTitle,
         source_type: "imported",
       }),
     });
-    await uploadFile(meeting.id, file);
-    const response = await api(`/api/meetings/${meeting.id}/transcriptions`, {
-      method: "POST",
-      body: JSON.stringify({
-        ...transcriptionOptions(),
-        postprocess: true,
-        postprocess_options: postprocessOptions,
-      }),
-    });
+    if (browserSession) browserSession.meeting = meeting;
+    if (!browserSession?.uploaded) {
+      await uploadFile(meeting.id, file);
+      if (browserSession) browserSession.uploaded = true;
+    }
+    let response = browserSession?.transcriptionResponse || null;
+    if (!response) {
+      response = await api(`/api/meetings/${meeting.id}/transcriptions`, {
+        method: "POST",
+        body: JSON.stringify({
+          ...transcriptionOptions(),
+          postprocess: true,
+          postprocess_options: postprocessOptions,
+        }),
+      });
+      if (browserSession) browserSession.transcriptionResponse = response;
+    }
     meetingId = String(meeting.id);
     postprocessMeetingId = meetingId;
     activeTranscriptionId = Number(response.transcription.id);
