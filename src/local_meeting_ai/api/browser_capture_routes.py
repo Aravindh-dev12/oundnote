@@ -85,7 +85,33 @@ async def upload_browser_audio_chunk(
             media_type="text/plain",
             status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         )
-    pcm = await request.body()
+    content_length = request.headers.get("content-length")
+    if content_length:
+        try:
+            if int(content_length) > 512 * 1024:
+                return Response(
+                    content="Audio chunks must be 512 KiB or smaller",
+                    media_type="text/plain",
+                    status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                )
+        except ValueError:
+            return Response(
+                content="Invalid Content-Length",
+                media_type="text/plain",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
+    pieces: list[bytes] = []
+    total_bytes = 0
+    async for piece in request.stream():
+        total_bytes += len(piece)
+        if total_bytes > 512 * 1024:
+            return Response(
+                content="Audio chunks must be 512 KiB or smaller",
+                media_type="text/plain",
+                status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            )
+        pieces.append(piece)
+    pcm = b"".join(pieces)
     return await container.browser_capture_service.ingest(
         session_id,
         sequence=sequence,
