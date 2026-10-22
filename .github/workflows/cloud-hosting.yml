@@ -1,0 +1,32 @@
+name: Cloud hosting checks
+
+on:
+  push:
+    branches: [cloud-hosting]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install test tools
+        run: python -m pip install --upgrade pytest ruff fastapi httpx python-multipart
+      - name: Test cloud authentication
+        env:
+          PYTHONPATH: src
+        run: pytest -q tests/unit/test_cloud_auth.py
+      - name: Lint cloud authentication
+        run: ruff check src/local_meeting_ai/api/cloud_auth.py tests/unit/test_cloud_auth.py
+      - name: Check browser capture JavaScript syntax
+        run: node --check src/local_meeting_ai/web/static/js/transcript.js
