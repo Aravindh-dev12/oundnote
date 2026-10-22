@@ -2074,8 +2074,18 @@ def active_transcript_page(
     if not container.meetings.get(meeting_id):
         raise NotFoundError("Meeting not found")
     transcription = container.transcriptions.active_for_meeting(meeting_id)
-    if not transcription or transcription.status != "completed":
-        raise NotFoundError("A completed active transcript is not available")
+    if transcription is None or transcription.status not in {"completed", "running", "queued"}:
+        recent = container.transcription_service.list(meeting_id)
+        transcription = next(
+            (
+                item
+                for item in recent
+                if item.status in {"running", "queued"}
+            ),
+            None,
+        )
+    if not transcription or transcription.status not in {"completed", "running", "queued"}:
+        raise NotFoundError("A transcript is not available for this meeting")
     segments, has_more = container.transcriptions.segment_page(
         transcription.id,
         after_segment_index=cursor,
