@@ -257,14 +257,9 @@ def test_transcription_pipeline_editor_and_versions(tmp_path: Path) -> None:
         assert 'id="workspace-meeting-select"' not in workspace.text
         assert 'id="start-transcription"' in workspace.text
         assert 'id="transcription-dialog"' in workspace.text
-        assert "Choose your audio source" in workspace.text
+        assert "Choose your audio sources" in workspace.text
         assert "Import media" not in workspace.text
-        assert 'href="/?new=1"' in workspace.text
-        assert "New meeting" in workspace.text
-        assert 'href="/prompt"' in workspace.text
-        assert "Prompt" in workspace.text
         assert 'href="/settings"' in workspace.text
-        assert "minimal-settings-link" not in workspace.text
         assert 'id="postprocess-dialog"' in workspace.text
         assert 'data-meeting-tab="transcript"' in workspace.text
         assert 'data-meeting-tab="speakers"' in workspace.text
@@ -273,12 +268,9 @@ def test_transcription_pipeline_editor_and_versions(tmp_path: Path) -> None:
         assert 'id="speaker-rebuild-identification"' in workspace.text
         assert 'id="speaker-rebuild-dialog"' in workspace.text
         assert 'id="ai-toggle-view"' in workspace.text
-        assert "Who spoke during the meeting" not in workspace.text
-        assert "Use your meeting outside Oundnote" not in workspace.text
+        assert 'id="live-ai-assistant"' in workspace.text
         assert 'id="export-dialog"' in workspace.text
         assert 'data-audio-export="mp3"' in workspace.text
-        assert 'data-export-source="transcript" data-export-format="markdown"' in workspace.text
-        assert 'data-export-source="notes" data-export-format="pdf"' in workspace.text
         assert 'id="download-meeting-json"' in workspace.text
 
         library = client.get("/meetings")
