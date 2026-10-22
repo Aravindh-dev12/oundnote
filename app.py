@@ -11,18 +11,6 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-# Keep Vercel's Python bundler aware of optional native runtimes which
-# Oundnote loads by adapter name at runtime.
-try:
-    import faster_whisper as _faster_whisper
-except ImportError:  # Local minimal installs can still show the workspace UI.
-    _faster_whisper = None
-
-try:
-    import sherpa_onnx as _sherpa_onnx
-except ImportError:
-    _sherpa_onnx = None
-
 from local_meeting_ai.api.app import create_app
 from local_meeting_ai.config import AppSettings
 

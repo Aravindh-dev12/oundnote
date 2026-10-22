@@ -2,6 +2,10 @@ from __future__ import annotations
 
 import asyncio
 import gc
+try:
+    import faster_whisper as _faster_whisper_runtime
+except ImportError:  # Keep the adapter inspectable in minimal installations.
+    _faster_whisper_runtime = None
 import importlib
 import importlib.util
 import logging
