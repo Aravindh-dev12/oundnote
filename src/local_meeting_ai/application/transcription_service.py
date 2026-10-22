@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import asyncio
 import hashlib
 import logging
 from pathlib import Path
@@ -12,7 +11,6 @@ from local_meeting_ai.domain.entities import (
     ModelProfile,
     Transcription,
     TranscriptionEngineRequest,
-    TranscriptionResult,
 )
 from local_meeting_ai.domain.enums import JobStatus, JobType, MeetingStatus
 from local_meeting_ai.domain.errors import (
@@ -30,7 +28,6 @@ from local_meeting_ai.infrastructure.database.repositories import (
 )
 from local_meeting_ai.infrastructure.jobs import JobContext, LocalJobQueue
 from local_meeting_ai.infrastructure.storage import MeetingStorage
-from local_meeting_ai.plugins.contracts import HookContext
 
 logger = logging.getLogger(__name__)
 
