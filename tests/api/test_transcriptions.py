@@ -379,3 +379,73 @@ def test_primary_capture_page_exposes_browser_recording_controls(tmp_path: Path)
         assert 'id="browser-mic-enabled"' in response.text
         assert 'id="browser-tab-enabled"' in response.text
         assert "flow-studio.js" in response.text
+
+
+def test_browser_capture_streams_live_segments_and_finalizes(tmp_path: Path) -> None:
+    with _client(tmp_path) as client:
+        started = client.post(
+            "/api/browser-capture/sessions",
+            json={
+                "title": "Streaming browser meeting",
+                "profile_id": "balanced",
+                "use_microphone": True,
+                "use_shared_tab": False,
+                "postprocess_options": {
+                    "diarization": False,
+                    "speaker_count": None,
+                    "summary": False,
+                    "summary_template_id": None,
+                },
+            },
+        )
+        assert started.status_code == 201
+        session = started.json()
+        pcm = b"\x00\x00" * (16000 * 3)
+        chunk_url = (
+            f"/api/browser-capture/sessions/{session['session_id']}/chunks"
+        )
+        headers = {
+            "content-type": "application/octet-stream",
+            "x-audio-sequence": "0",
+        }
+        first = client.post(chunk_url, content=pcm, headers=headers)
+        assert first.status_code == 200
+        assert first.json()["last_sequence"] == 0
+        assert first.json()["segment_count"] == 2
+
+        # A retry after a lost HTTP response is idempotent.
+        repeated = client.post(chunk_url, content=pcm, headers=headers)
+        assert repeated.status_code == 200
+        assert repeated.json()["last_sequence"] == 0
+        assert repeated.json()["segment_count"] == 2
+
+        live_detail = client.get(
+            f"/api/transcriptions/{session['transcription_id']}"
+        )
+        assert live_detail.status_code == 200
+        assert len(live_detail.json()["segments"]) == 2
+        assert all(not segment["is_final"] for segment in live_detail.json()["segments"])
+
+        stopped = client.post(
+            f"/api/browser-capture/sessions/{session['session_id']}/stop",
+            json={
+                "final_transcription": True,
+                "postprocess_options": {
+                    "diarization": False,
+                    "speaker_count": None,
+                    "summary": False,
+                    "summary_template_id": None,
+                },
+            },
+        )
+        assert stopped.status_code == 200
+        job = stopped.json()["transcription_job"]
+        terminal = _wait_for_job(client, job["uuid"])
+        assert terminal["status"] == "completed"
+
+        final_detail = client.get(
+            f"/api/transcriptions/{session['transcription_id']}"
+        )
+        assert final_detail.status_code == 200
+        assert len(final_detail.json()["segments"]) == 2
+        assert all(segment["is_final"] for segment in final_detail.json()["segments"])
