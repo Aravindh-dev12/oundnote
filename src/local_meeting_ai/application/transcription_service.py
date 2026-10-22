@@ -12,7 +12,7 @@ from local_meeting_ai.domain.entities import (
     Transcription,
     TranscriptionEngineRequest,
 )
-from local_meeting_ai.domain.enums import JobStatus, JobType, MeetingStatus
+from local_meeting_ai.domain.enums import JobType, MeetingStatus
 from local_meeting_ai.domain.errors import (
     ConfirmationRequiredError,
     JobCancelledError,
