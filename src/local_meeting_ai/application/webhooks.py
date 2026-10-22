@@ -1,18 +1,19 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import hashlib
 import hmac
 import ipaddress
 import json
 import logging
-from os import PathLike
 import secrets
 import socket
 import time
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime, timedelta
 from email.utils import parsedate_to_datetime
+from os import PathLike
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -32,13 +33,13 @@ from local_meeting_ai.domain.webhooks import (
     WebhookEndpoint,
     WebhookEvent,
 )
-from local_meeting_ai.infrastructure.database.webhooks import WebhookRepository
 from local_meeting_ai.infrastructure.database.repositories import (
     JobRepository,
     SettingsRepository,
     SummaryRepository,
     TranscriptionRepository,
 )
+from local_meeting_ai.infrastructure.database.webhooks import WebhookRepository
 from local_meeting_ai.infrastructure.webhook_secrets import WebhookSecretStore
 
 logger = logging.getLogger(__name__)
@@ -120,9 +121,11 @@ def _sanitize_event_data(value: Any, content_level: str) -> Any:
                     "headers",
                 }:
                     continue
-                if lowered in {"content_markdown", "summary_markdown", "transcript_text"}:
-                    if content_level != "full":
-                        continue
+                if (
+                    lowered in {"content_markdown", "summary_markdown", "transcript_text"}
+                    and content_level != "full"
+                ):
+                    continue
                 if lowered == "segments":
                     if content_level == "metadata":
                         result["segment_count"] = len(nested) if isinstance(nested, list) else 0
@@ -559,19 +562,21 @@ class WebhookService:
                             )
                             self._delivery_tasks.add(task)
                             task.add_done_callback(self._delivery_tasks.discard)
-                try:
-                    await asyncio.wait_for(self._wake_event.wait(), timeout=self.poll_interval)
-                except TimeoutError:
-                    pass
+                with contextlib.suppress(TimeoutError):
+                    await asyncio.wait_for(
+                        self._wake_event.wait(),
+                        timeout=self.poll_interval,
+                    )
                 self._wake_event.clear()
             except asyncio.CancelledError:
                 raise
             except Exception:
                 logger.exception("Webhook dispatcher iteration failed")
-                try:
-                    await asyncio.wait_for(self._wake_event.wait(), timeout=self.poll_interval)
-                except TimeoutError:
-                    pass
+                with contextlib.suppress(TimeoutError):
+                    await asyncio.wait_for(
+                        self._wake_event.wait(),
+                        timeout=self.poll_interval,
+                    )
                 self._wake_event.clear()
 
     async def _deliver(self, delivery: WebhookDelivery) -> None:
