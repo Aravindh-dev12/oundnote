@@ -15,6 +15,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from local_meeting_ai import __version__
+from local_meeting_ai.api.browser_capture_routes import router as browser_capture_router
 from local_meeting_ai.api.cloud_auth import CloudAccessMiddleware
 from local_meeting_ai.api.live_assistant_routes import router as live_assistant_router
 from local_meeting_ai.api.routes import router as api_router
@@ -111,6 +112,7 @@ def create_app(
         finally:
             logger.info("Stopping Oundnote services")
             await container.capture_service.shutdown()
+            await container.browser_capture_service.shutdown()
             await container.live_assistant_service.shutdown()
             await container.queue.stop()
             # Keep the dispatcher alive until producers have stopped so terminal
@@ -220,6 +222,7 @@ def create_app(
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
     app.include_router(api_router)
     app.include_router(studio_router)
+    app.include_router(browser_capture_router)
     app.include_router(live_assistant_router)
     app.include_router(webhook_router)
     _register_web_routes(app, templates, container)
