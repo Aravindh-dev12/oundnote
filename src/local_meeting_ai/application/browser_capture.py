@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import wave
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -68,6 +68,7 @@ class _BrowserSession:
     stopping: bool = False
     engine_ready: bool = False
     last_error: str | None = None
+    stop_result: dict[str, Any] | None = None
 
 
 class BrowserCaptureService:
@@ -452,6 +453,8 @@ class BrowserCaptureService:
         session = self._require_session(session_id)
         async with session.lock:
             if session.stopping:
+                if session.stop_result is not None:
+                    return session.stop_result
                 raise ValidationError("The browser recording is already stopping")
             session.stopping = True
             session.writer.close()
@@ -503,13 +506,14 @@ class BrowserCaptureService:
                     else session.postprocess_options
                 ),
             )
-            return {
+            session.stop_result = {
                 "session": self._payload(session),
                 "recording": recording,
                 "import_job": import_job,
                 "transcription": transcription,
                 "transcription_job": transcription_job,
             }
+            return session.stop_result
         except Exception:
             self.transcriptions.set_status(session.transcription_id, "failed")
             self.meetings.set_status(session.meeting_id, MeetingStatus.FAILED)
