@@ -225,6 +225,7 @@ class TranscriptionService:
                 "postprocess": True,
                 "postprocess_options": options,
                 "run_final_pass": bool(run_final_pass),
+                "skip_final_pass": not bool(run_final_pass),
             },
             message=(
                 "Refining the complete recording"
@@ -470,17 +471,27 @@ class TranscriptionService:
     @staticmethod
     def _normalize_postprocess_options(value: dict[str, Any] | Any | None) -> dict[str, Any]:
         if value is None:
-            return {}
-        if isinstance(value, dict):
-            return value
-        model_dump = getattr(value, "model_dump", None)
-        if callable(model_dump):
-            try:
-                dumped = model_dump(mode="json")
-            except TypeError:
-                dumped = model_dump()
-            return dumped if isinstance(dumped, dict) else {}
-        return {}
+            source: dict[str, Any] = {}
+        elif isinstance(value, dict):
+            source = value
+        else:
+            model_dump = getattr(value, "model_dump", None)
+            if callable(model_dump):
+                try:
+                    dumped = model_dump(mode="json")
+                except TypeError:
+                    dumped = model_dump()
+                source = dumped if isinstance(dumped, dict) else {}
+            else:
+                source = {}
+        # Keep the queued job payload deterministic. It is persisted and is also
+        # used by recovery, the final-processing pipeline, and the public job API.
+        return {
+            "diarization": bool(source.get("diarization", True)),
+            "speaker_count": source.get("speaker_count"),
+            "summary": bool(source.get("summary", True)),
+            "summary_template_id": source.get("summary_template_id"),
+        }
 
     @staticmethod
     def _require_download_confirmation(profile: ModelProfile, allow_model_download: bool) -> None:
