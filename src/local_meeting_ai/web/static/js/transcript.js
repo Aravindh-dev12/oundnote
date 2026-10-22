@@ -1905,40 +1905,52 @@
       throw new Error("Browser capture requires HTTPS (or localhost during development).");
     }
     if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
-      throw new Error("This browser does not support microphone recording. Try a current version of Chrome or Edge.");
+      throw new Error("This browser does not support microphone recording. Try current Chrome or Edge.");
     }
+
     const ownedStreams = [];
     let audioContext = null;
     try {
-      if (useMicrophone) {
-        ownedStreams.push(await navigator.mediaDevices.getUserMedia({ audio: true }));
-      }
-      if (useSharedTab) {
-        if (!navigator.mediaDevices.getDisplayMedia) {
-          throw new Error("This browser cannot capture shared-tab audio. Use a current version of Chrome or Edge.");
-        }
-        const sharedStream = await navigator.mediaDevices.getDisplayMedia({
-          audio: true,
-          video: true,
-        });
-        if (!sharedStream.getAudioTracks().length) {
-          sharedStream.getTracks().forEach((track) => track.stop());
-          throw new Error("No shared-tab audio was provided. In the share dialog, choose the meeting tab and enable tab audio.");
-        }
-        ownedStreams.push(sharedStream);
-      }
-
       const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
       if (!AudioContextConstructor) throw new Error("This browser does not support audio mixing.");
+      // Create/resume the audio context and request all selected sources in the same
+      // user gesture. This is important because getDisplayMedia requires activation.
       audioContext = new AudioContextConstructor();
+      const audioContextReady = audioContext.resume();
+      let microphoneStream = null;
+      let sharedStream = null;
+      const microphonePromise = useMicrophone
+        ? navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+          ownedStreams.push(stream);
+          microphoneStream = stream;
+          return stream;
+        })
+        : Promise.resolve(null);
+      const sharedTabPromise = useSharedTab
+        ? navigator.mediaDevices.getDisplayMedia({ audio: true, video: true }).then((stream) => {
+          ownedStreams.push(stream);
+          sharedStream = stream;
+          if (!stream.getAudioTracks().length) {
+            throw new Error(
+              "No shared-tab audio was provided. Choose the meeting tab and enable tab audio in the share dialog.",
+            );
+          }
+          return stream;
+        })
+        : Promise.resolve(null);
+      const sourceResults = await Promise.allSettled([microphonePromise, sharedTabPromise]);
+      const failedSource = sourceResults.find((result) => result.status === "rejected");
+      if (failedSource?.status === "rejected") throw failedSource.reason;
+      await audioContextReady;
+
       const destination = audioContext.createMediaStreamDestination();
-      for (const stream of ownedStreams) {
+      for (const stream of [microphoneStream, sharedStream]) {
+        if (!stream) continue;
         const tracks = stream.getAudioTracks();
         if (tracks.length) {
           audioContext.createMediaStreamSource(new MediaStream(tracks)).connect(destination);
         }
       }
-      await audioContext.resume();
       const mimeType = [
         "audio/webm;codecs=opus",
         "audio/mp4",
@@ -1953,11 +1965,13 @@
         streams: ownedStreams,
         audioContext,
         startedAt: performance.now(),
+        stoppedAt: null,
         pausedAt: null,
         pausedTotalMs: 0,
         useMicrophone,
         useSharedTab,
         mimeType: mimeType || recorder.mimeType || "audio/webm",
+        file: null,
       };
       const current = browserCapture;
       recorder.addEventListener("dataavailable", (event) => {
@@ -1991,7 +2005,7 @@
   }
 
   function browserCaptureElapsedMs(session) {
-    const now = performance.now();
+    const now = session.stoppedAt ?? performance.now();
     return Math.max(
       0,
       now - session.startedAt - session.pausedTotalMs
@@ -2002,20 +2016,24 @@
   function updateBrowserCaptureUi() {
     if (!browserCapture) return;
     const session = browserCapture;
+    const savedFilePending = Boolean(session.file);
     const paused = session.recorder.state === "paused";
     document.querySelector("#live-actions").classList.remove("hidden");
     const strip = document.querySelector("#live-capture-strip");
     strip.classList.remove("transcription-error");
     strip.classList.toggle("hidden", false);
     strip.classList.toggle("paused", paused);
-    document.querySelector("#live-capture-state").textContent =
-      paused ? "Browser recording paused" : "Recording in this browser · saved after you stop";
+    document.querySelector("#live-capture-state").textContent = savedFilePending
+      ? "Recording saved · retry processing to upload"
+      : paused ? "Browser recording paused" : "Recording in this browser · saved after you stop";
     document.querySelector("#capture-elapsed").textContent =
       formatTimestamp(browserCaptureElapsedMs(session));
     document.querySelector("#capture-level").style.width = "0%";
     document.querySelector("#live-input-levels").classList.add("hidden");
     document.querySelector("#pause-capture-label").textContent =
       paused ? "Resume recording" : "Pause recording";
+    document.querySelector("#pause-capture").disabled = savedFilePending;
+    document.querySelector("#stop-capture").disabled = false;
   }
 
   async function finalizeBrowserCapture(postprocessOptions) {
@@ -2031,39 +2049,57 @@
     });
     appendWorkflowMessage("browser capture", "Finalizing the browser recording");
     try {
-      if (session.recorder.state !== "inactive") {
-        await new Promise((resolve, reject) => {
-          session.recorder.addEventListener("stop", resolve, { once: true });
-          session.recorder.addEventListener("error", reject, { once: true });
-          session.recorder.stop();
-        });
+      if (!session.file) {
+        if (session.recorder.state !== "inactive") {
+          await new Promise((resolve, reject) => {
+            session.recorder.addEventListener("stop", resolve, { once: true });
+            session.recorder.addEventListener("error", reject, { once: true });
+            session.recorder.stop();
+          });
+        }
+        session.stoppedAt = performance.now();
+        const blob = new Blob(session.chunks, { type: session.mimeType });
+        if (!blob.size) {
+          throw new Error("The browser recording is empty. Check microphone permissions and try again.");
+        }
+        const extension = session.mimeType.includes("mp4") ? "mp4"
+          : session.mimeType.includes("ogg") ? "ogg" : "webm";
+        const safeTitle = (draftTitle || "Meeting recording")
+          .replace(/[^a-z0-9 _.-]/gi, "")
+          .trim()
+          .slice(0, 90) || "Meeting recording";
+        session.file = new File([blob], `${safeTitle}.${extension}`, { type: session.mimeType });
+        session.streams.forEach((stream) => stream.getTracks().forEach((track) => track.stop()));
+        session.streams = [];
+        if (session.audioContext && session.audioContext.state !== "closed") {
+          await session.audioContext.close();
+        }
+        session.audioContext = null;
+        if (browserCaptureTimer) window.clearInterval(browserCaptureTimer);
+        browserCaptureTimer = null;
       }
-      const blob = new Blob(session.chunks, { type: session.mimeType });
-      if (!blob.size) throw new Error("The browser recording is empty. Check browser microphone permissions and try again.");
-      const extension = session.mimeType.includes("mp4") ? "mp4"
-        : session.mimeType.includes("ogg") ? "ogg" : "webm";
-      const safeTitle = (draftTitle || "Meeting recording")
-        .replace(/[^a-z0-9 _.-]/gi, "")
-        .trim()
-        .slice(0, 90) || "Meeting recording";
-      const file = new File([blob], `${safeTitle}.${extension}`, { type: session.mimeType });
-      const titleForMeeting = draftTitle;
-      session.streams.forEach((stream) => stream.getTracks().forEach((track) => track.stop()));
-      if (session.audioContext && session.audioContext.state !== "closed") {
-        await session.audioContext.close();
-      }
-      browserCapture = null;
-      if (browserCaptureTimer) window.clearInterval(browserCaptureTimer);
-      browserCaptureTimer = null;
+
       document.querySelector("#live-actions").classList.add("hidden");
       document.querySelector("#live-capture-strip").classList.add("hidden");
       document.querySelector("#transcription-form").dataset.busy = "true";
-      await startFileTranscription(postprocessOptions, file);
-      toast(`Recording imported for transcription: ${titleForMeeting || "Meeting"}`);
+      await startFileTranscription(postprocessOptions, session.file);
+      browserCapture = null;
+      delete document.querySelector("#transcription-form").dataset.busy;
+      if (browserCaptureTimer) window.clearInterval(browserCaptureTimer);
+      browserCaptureTimer = null;
+      toast("Browser recording uploaded. Transcription and AI notes are processing.");
     } catch (error) {
-      stop.disabled = false;
-      pause.disabled = false;
+      delete document.querySelector("#transcription-form").dataset.busy;
+      // Keep the finalized blob in memory when upload fails, so the user can retry
+      // without recording the meeting again.
+      if (browserCapture === session) {
+        updateBrowserCaptureUi();
+        openPostprocessOptions("browser");
+      }
       throw error;
+    } finally {
+      stop.disabled = false;
+      pause.disabled = Boolean(browserCapture?.file);
     }
   }
 
@@ -2503,6 +2539,7 @@
   async function togglePause() {
     if (browserCapture) {
       const session = browserCapture;
+      if (session.file) return;
       try {
         if (session.recorder.state === "paused") {
           session.recorder.resume();
