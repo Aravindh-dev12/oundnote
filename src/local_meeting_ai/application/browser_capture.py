@@ -21,7 +21,6 @@ from local_meeting_ai.domain.entities import (
 )
 from local_meeting_ai.domain.enums import MeetingStatus, SourceType
 from local_meeting_ai.domain.errors import (
-    JobCancelledError,
     NotFoundError,
     ValidationError,
 )
@@ -186,7 +185,7 @@ class BrowserCaptureService:
                 started_at = datetime.now(UTC).isoformat(timespec="milliseconds")
                 self.meetings.update(
                     meeting.id,
-                    {"started_at": started_at, "status": MeetingStatus.READY.value},
+                    {"started_at": started_at},
                 )
                 live_session = LiveCaptureSession(
                     session_id=session_id,
@@ -535,7 +534,11 @@ class BrowserCaptureService:
                 self.meetings.set_status(session.meeting_id, MeetingStatus.FAILED)
                 if self.live_assistant is not None:
                     self.live_assistant.session_stopped(
-                        replace(session.live_session, state="stopped", realtime_status="interrupted")
+                        replace(
+                            session.live_session,
+                            state="stopped",
+                            realtime_status="interrupted",
+                        )
                     )
         self._active_session_id = None
 
@@ -556,7 +559,11 @@ class BrowserCaptureService:
             "meeting_id": session.meeting_id,
             "transcription_id": session.transcription_id,
             "title": session.title,
-            "state": "paused" if session.paused else ("stopping" if session.stopping else "recording"),
+            "state": (
+                "paused"
+                if session.paused
+                else ("stopping" if session.stopping else "recording")
+            ),
             "elapsed_ms": round(session.total_frames / SAMPLE_RATE * 1000),
             "segment_count": len(session.segments),
             "last_sequence": session.last_sequence,
