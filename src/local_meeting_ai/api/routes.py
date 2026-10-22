@@ -2073,17 +2073,13 @@ def active_transcript_page(
         raise ValidationError("start_ms cannot be after end_ms")
     if not container.meetings.get(meeting_id):
         raise NotFoundError("Meeting not found")
-    transcription = container.transcriptions.active_for_meeting(meeting_id)
-    if transcription is None or transcription.status not in {"completed", "running", "queued"}:
-        recent = container.transcription_service.list(meeting_id)
-        transcription = next(
-            (
-                item
-                for item in recent
-                if item.status in {"running", "queued"}
-            ),
-            None,
-        )
+    recent = container.transcription_service.list(meeting_id)
+    transcription = next(
+        (item for item in recent if item.status in {"running", "queued"}),
+        None,
+    )
+    if transcription is None:
+        transcription = container.transcriptions.active_for_meeting(meeting_id)
     if not transcription or transcription.status not in {"completed", "running", "queued"}:
         raise NotFoundError("A transcript is not available for this meeting")
     segments, has_more = container.transcriptions.segment_page(
