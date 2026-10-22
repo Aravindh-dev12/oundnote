@@ -55,6 +55,8 @@
   let activeTranscriptionId = null;
   let activeJob = null;
   let captureSession = null;
+  let browserCapture = null;
+  let browserCaptureTimer = null;
   let capturePollTimer = null;
   let capturePollBusy = false;
   let lastInsightPollAt = 0;
@@ -455,22 +457,32 @@
     rememberSelectedDevices();
     const mode = selectedSourceMode();
     const nativePanel = document.querySelector("#native-source-panel");
+    const browserPanel = document.querySelector("#browser-source-panel");
     const filePanel = document.querySelector("#file-source-panel");
-    nativePanel.classList.toggle("hidden", mode === "file");
+    nativePanel.classList.toggle("hidden", mode === "file" || mode === "browser");
+    browserPanel.classList.toggle("hidden", mode !== "browser");
     filePanel.classList.toggle("hidden", mode !== "file");
     const submitCopy = document.querySelector("#transcription-submit span");
     submitCopy.textContent = mode === "file"
       ? "Import and transcribe"
-      : "Start live transcription";
+      : mode === "browser"
+        ? "Start browser recording"
+        : "Start live transcription";
     const modes = selectedLiveModes();
     const summary = document.querySelector("#source-selection-summary");
     summary.classList.toggle("combined", mode === "combined");
     summary.textContent = t(mode === "file" ? "capture.file_summary"
-      : mode === "combined" ? "capture.combined_summary"
-        : modes.length ? "capture.single_summary" : "capture.choose_sources");
+      : mode === "browser" ? "capture.single_summary"
+        : mode === "combined" ? "capture.combined_summary"
+          : modes.length ? "capture.single_summary" : "capture.choose_sources");
     if (mode === "file") {
       stopSourcePreview();
       document.querySelector("#transcription-submit").disabled = false;
+      return;
+    }
+    if (mode === "browser") {
+      stopSourcePreview();
+      syncCaptureSelection();
       return;
     }
 
@@ -515,13 +527,14 @@
 
   function selectedSourceMode() {
     if (document.querySelector('input[name="source-mode"][value="file"]').checked) return "file";
+    if (document.querySelector('input[name="source-mode"][value="browser"]').checked) return "browser";
     const modes = selectedLiveModes();
     return modes.length === 2 ? "combined" : modes[0] || "none";
   }
 
   function selectedLiveModes() {
     return [...document.querySelectorAll('input[name="source-mode"]:checked')]
-      .map((input) => input.value).filter((mode) => mode !== "file");
+      .map((input) => input.value).filter((mode) => mode !== "file" && mode !== "browser");
   }
 
   function selectedNativeSources() {
@@ -536,8 +549,19 @@
   }
 
   function syncCaptureSelection() {
-    document.querySelector("#transcription-submit").disabled = selectedSourceMode() !== "file" &&
-      (!selectedLiveModes().length || selectedNativeSources().length !== selectedLiveModes().length);
+    const mode = selectedSourceMode();
+    const submit = document.querySelector("#transcription-submit");
+    if (mode === "file") {
+      submit.disabled = false;
+      return;
+    }
+    if (mode === "browser") {
+      submit.disabled = !document.querySelector("#browser-capture-mic").checked
+        && !document.querySelector("#browser-capture-tab").checked;
+      return;
+    }
+    submit.disabled = !selectedLiveModes().length
+      || selectedNativeSources().length !== selectedLiveModes().length;
   }
 
   function stopSourcePreview() {
@@ -552,7 +576,7 @@
   function scheduleSourcePreview(delay = 120) {
     if (sourcePreviewTimer) window.clearTimeout(sourcePreviewTimer);
     sourcePreviewTimer = null;
-    if (!startDialog.open || selectedSourceMode() === "file") {
+    if (!startDialog.open || ["file", "browser"].includes(selectedSourceMode())) {
       stopSourcePreview();
       return;
     }
@@ -1796,15 +1820,35 @@
     event.preventDefault();
     const submit = event.submitter;
     const mode = selectedSourceMode();
-    if (mode !== "file" && (!selectedLiveModes().length ||
-        selectedNativeSources().length !== selectedLiveModes().length)) {
-      toast("Choose an available audio source.", "error");
-      return;
-    }
     stopSourcePreview();
     if (mode === "file") {
       startDialog.close();
       openPostprocessOptions("import");
+      return;
+    }
+    if (mode === "browser") {
+      if (!document.querySelector("#browser-capture-mic").checked
+          && !document.querySelector("#browser-capture-tab").checked) {
+        toast("Select a microphone, shared-tab audio, or both.", "error");
+        return;
+      }
+      submit.disabled = true;
+      document.querySelector("#transcription-form").dataset.busy = "true";
+      startDialog.close();
+      try {
+        await startBrowserCapture();
+      } catch (error) {
+        toast(error.message || "Could not start browser recording.", "error");
+        submit.disabled = false;
+        delete document.querySelector("#transcription-form").dataset.busy;
+        if (!startDialog.open) startDialog.showModal();
+        renderSourceMode();
+      }
+      return;
+    }
+    if (!selectedLiveModes().length ||
+        selectedNativeSources().length !== selectedLiveModes().length) {
+      toast("Choose an available audio source.", "error");
       return;
     }
     submit.disabled = true;
@@ -1854,8 +1898,177 @@
     toast("Real-time local transcription started.");
   }
 
-  async function startFileTranscription(postprocessOptions) {
-    const file = document.querySelector("#capture-file").files[0];
+  async function startBrowserCapture() {
+    const useMicrophone = document.querySelector("#browser-capture-mic").checked;
+    const useSharedTab = document.querySelector("#browser-capture-tab").checked;
+    if (!window.isSecureContext) {
+      throw new Error("Browser capture requires HTTPS (or localhost during development).");
+    }
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+      throw new Error("This browser does not support microphone recording. Try a current version of Chrome or Edge.");
+    }
+    const ownedStreams = [];
+    let audioContext = null;
+    try {
+      if (useMicrophone) {
+        ownedStreams.push(await navigator.mediaDevices.getUserMedia({ audio: true }));
+      }
+      if (useSharedTab) {
+        if (!navigator.mediaDevices.getDisplayMedia) {
+          throw new Error("This browser cannot capture shared-tab audio. Use a current version of Chrome or Edge.");
+        }
+        const sharedStream = await navigator.mediaDevices.getDisplayMedia({
+          audio: true,
+          video: true,
+        });
+        if (!sharedStream.getAudioTracks().length) {
+          sharedStream.getTracks().forEach((track) => track.stop());
+          throw new Error("No shared-tab audio was provided. In the share dialog, choose the meeting tab and enable tab audio.");
+        }
+        ownedStreams.push(sharedStream);
+      }
+
+      const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextConstructor) throw new Error("This browser does not support audio mixing.");
+      audioContext = new AudioContextConstructor();
+      const destination = audioContext.createMediaStreamDestination();
+      for (const stream of ownedStreams) {
+        const tracks = stream.getAudioTracks();
+        if (tracks.length) {
+          audioContext.createMediaStreamSource(new MediaStream(tracks)).connect(destination);
+        }
+      }
+      await audioContext.resume();
+      const mimeType = [
+        "audio/webm;codecs=opus",
+        "audio/mp4",
+        "audio/ogg;codecs=opus",
+      ].find((type) => MediaRecorder.isTypeSupported(type));
+      const recorder = mimeType
+        ? new MediaRecorder(destination.stream, { mimeType })
+        : new MediaRecorder(destination.stream);
+      browserCapture = {
+        recorder,
+        chunks: [],
+        streams: ownedStreams,
+        audioContext,
+        startedAt: performance.now(),
+        pausedAt: null,
+        pausedTotalMs: 0,
+        useMicrophone,
+        useSharedTab,
+        mimeType: mimeType || recorder.mimeType || "audio/webm",
+      };
+      const current = browserCapture;
+      recorder.addEventListener("dataavailable", (event) => {
+        if (event.data && event.data.size) current.chunks.push(event.data);
+      });
+      recorder.addEventListener("error", () => {
+        toast("Browser recording hit an error. Stop the recording and try again.", "error");
+      });
+      recorder.start(1000);
+      updateBrowserCaptureUi();
+      if (browserCaptureTimer) window.clearInterval(browserCaptureTimer);
+      browserCaptureTimer = window.setInterval(updateBrowserCaptureUi, 500);
+      delete document.querySelector("#transcription-form").dataset.busy;
+      document.querySelector("#transcription-submit").disabled = false;
+      startActionAvailable = false;
+      syncStartAction();
+      const sourceNames = [
+        useMicrophone ? "Browser microphone" : "",
+        useSharedTab ? "Shared tab audio" : "",
+      ].filter(Boolean);
+      document.querySelector("#live-source-name").textContent = sourceNames.join(" + ");
+      toast("Browser recording started. Audio uploads to this workspace when you stop.");
+    } catch (error) {
+      ownedStreams.forEach((stream) => stream.getTracks().forEach((track) => track.stop()));
+      if (audioContext && audioContext.state !== "closed") {
+        await audioContext.close().catch(() => {});
+      }
+      browserCapture = null;
+      throw error;
+    }
+  }
+
+  function browserCaptureElapsedMs(session) {
+    const now = performance.now();
+    return Math.max(
+      0,
+      now - session.startedAt - session.pausedTotalMs
+        - (session.pausedAt === null ? 0 : now - session.pausedAt),
+    );
+  }
+
+  function updateBrowserCaptureUi() {
+    if (!browserCapture) return;
+    const session = browserCapture;
+    const paused = session.recorder.state === "paused";
+    document.querySelector("#live-actions").classList.remove("hidden");
+    const strip = document.querySelector("#live-capture-strip");
+    strip.classList.remove("transcription-error");
+    strip.classList.toggle("hidden", false);
+    strip.classList.toggle("paused", paused);
+    document.querySelector("#live-capture-state").textContent =
+      paused ? "Browser recording paused" : "Recording in this browser · saved after you stop";
+    document.querySelector("#capture-elapsed").textContent =
+      formatTimestamp(browserCaptureElapsedMs(session));
+    document.querySelector("#capture-level").style.width = "0%";
+    document.querySelector("#live-input-levels").classList.add("hidden");
+    document.querySelector("#pause-capture-label").textContent =
+      paused ? "Resume recording" : "Pause recording";
+  }
+
+  async function finalizeBrowserCapture(postprocessOptions) {
+    const session = browserCapture;
+    if (!session) throw new Error("The browser recording is no longer available.");
+    const stop = document.querySelector("#stop-capture");
+    const pause = document.querySelector("#pause-capture");
+    stop.disabled = true;
+    pause.disabled = true;
+    openPostprocessDialog({
+      initialLabel: "Saving browser recording…",
+      description: "Uploading the recording to your private workspace before transcription and AI notes.",
+    });
+    appendWorkflowMessage("browser capture", "Finalizing the browser recording");
+    try {
+      if (session.recorder.state !== "inactive") {
+        await new Promise((resolve, reject) => {
+          session.recorder.addEventListener("stop", resolve, { once: true });
+          session.recorder.addEventListener("error", reject, { once: true });
+          session.recorder.stop();
+        });
+      }
+      const blob = new Blob(session.chunks, { type: session.mimeType });
+      if (!blob.size) throw new Error("The browser recording is empty. Check browser microphone permissions and try again.");
+      const extension = session.mimeType.includes("mp4") ? "mp4"
+        : session.mimeType.includes("ogg") ? "ogg" : "webm";
+      const safeTitle = (draftTitle || "Meeting recording")
+        .replace(/[^a-z0-9 _.-]/gi, "")
+        .trim()
+        .slice(0, 90) || "Meeting recording";
+      const file = new File([blob], `${safeTitle}.${extension}`, { type: session.mimeType });
+      const titleForMeeting = draftTitle;
+      session.streams.forEach((stream) => stream.getTracks().forEach((track) => track.stop()));
+      if (session.audioContext && session.audioContext.state !== "closed") {
+        await session.audioContext.close();
+      }
+      browserCapture = null;
+      if (browserCaptureTimer) window.clearInterval(browserCaptureTimer);
+      browserCaptureTimer = null;
+      document.querySelector("#live-actions").classList.add("hidden");
+      document.querySelector("#live-capture-strip").classList.add("hidden");
+      document.querySelector("#transcription-form").dataset.busy = "true";
+      await startFileTranscription(postprocessOptions, file);
+      toast(`Recording imported for transcription: ${titleForMeeting || "Meeting"}`);
+    } catch (error) {
+      stop.disabled = false;
+      pause.disabled = false;
+      throw error;
+    }
+  }
+
+  async function startFileTranscription(postprocessOptions, suppliedFile = null) {
+    const file = suppliedFile || document.querySelector("#capture-file").files[0];
     if (!file) throw new Error("Choose an audio or video file.");
     const meeting = await api("/api/meetings", {
       method: "POST",
@@ -2288,6 +2501,25 @@
   }
 
   async function togglePause() {
+    if (browserCapture) {
+      const session = browserCapture;
+      try {
+        if (session.recorder.state === "paused") {
+          session.recorder.resume();
+          if (session.pausedAt !== null) {
+            session.pausedTotalMs += performance.now() - session.pausedAt;
+            session.pausedAt = null;
+          }
+        } else if (session.recorder.state === "recording") {
+          session.recorder.pause();
+          session.pausedAt = performance.now();
+        }
+        updateBrowserCaptureUi();
+      } catch (error) {
+        toast(error.message || "Could not pause browser recording.", "error");
+      }
+      return;
+    }
     if (!captureSession) return;
     const action = captureSession.state === "paused" ? "resume" : "pause";
     try {
@@ -2303,6 +2535,10 @@
   }
 
   async function stopCapture() {
+    if (browserCapture) {
+      openPostprocessOptions("browser");
+      return;
+    }
     if (!captureSession) return;
     openPostprocessOptions("live");
   }
@@ -2599,11 +2835,17 @@
     input.addEventListener("change", () => {
       if (input.checked) {
         document.querySelectorAll('input[name="source-mode"]').forEach((other) => {
-          if (input.value === "file" ? other.value !== "file" : other.value === "file") other.checked = false;
+          if (input.value === "file" || input.value === "browser") {
+            if (other.value !== input.value) other.checked = false;
+          } else if (other.value === "file" || other.value === "browser") {
+            other.checked = false;
+          }
         });
       }
       renderSourceMode();
     }));
+  document.querySelectorAll("#browser-capture-mic, #browser-capture-tab").forEach((input) =>
+    input.addEventListener("change", syncCaptureSelection));
   document.querySelector("#native-source-list").addEventListener("change", (event) => {
     if (event.target.matches("[data-native-source]")) {
       rememberSelectedDevices();
@@ -2659,6 +2901,8 @@
       const options = selectedPostprocessOptions();
       if (kind === "import") {
         await startFileTranscription(options);
+      } else if (kind === "browser") {
+        await finalizeBrowserCapture(options);
       } else {
         await finalizeLiveCapture(
           options,
