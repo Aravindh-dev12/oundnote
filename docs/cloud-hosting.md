@@ -8,18 +8,22 @@ until per-user authentication, tenant-scoped database queries, and storage isola
 ## What this deployment supports
 
 - Browser-based workspace, meeting library, transcript editor, notes, settings, and API.
-- Browser-based recording from the microphone and optional shared-tab audio, with recording uploaded
-  to the workspace after the user presses Stop.
+- Browser-based live recording from the microphone and optional shared-tab audio. Sequenced
+  PCM audio streams to the backend during capture; provisional transcript segments appear as ASR
+  completes each chunk.
 - Audio file upload and processing with the installed CPU-capable transcription backend.
 - Local background jobs, SQLite, meeting files, model downloads, and RAG index on persistent disk.
 - Existing diarization, summarization, and retrieval capabilities when the required model assets are installed.
 - HTTPS termination at the hosting provider.
 
-Browser recording captures audio in the user's browser and uploads the completed recording after Stop. It does
-not yet stream partial transcript segments to the UI while recording; transcription and AI notes begin after the
-upload. To capture other call participants, select the meeting tab and enable tab audio in the browser share dialog.
-This varies by browser; Chrome/Edge on HTTPS are recommended. Local desktop capture, global hotkeys, tray
-integration, and system loopback capture remain desktop-only.
+Browser recording streams audio to the hosted workspace over HTTPS while recording. Oundnote transcribes
+sequenced chunks and shows provisional transcript segments as they are recognized; Stop finalizes the WAV recording
+and queues the existing final transcription, speaker-identification, and AI-note pipeline. CPU inference can lag
+behind real time, especially with larger models, and the browser must remain open while chunks are uploaded. On a
+transient network failure, queued chunks are retried in the browser; keep the tab open until Stop finishes. To capture
+other call participants, select the meeting tab and enable tab audio in the browser share dialog. Browser support
+varies; current Chrome/Edge on HTTPS are recommended. Local desktop capture, global shortcuts, tray integration,
+and native system-loopback capture remain desktop-only.
 CPU model inference can be slower than a local GPU. Remote LLM providers require configuring their supported
 credentials in Oundnote settings; do not commit API keys.
 
