@@ -1,0 +1,48 @@
+name: Cloud hosting checks
+
+on:
+  push:
+    branches: [cloud-hosting]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install application and test dependencies
+        run: python -m pip install --upgrade ".[dev]"
+      - name: Install FFmpeg tools for integration tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ffmpeg
+      - name: Compile hosted Python modules
+        run: python -m compileall -q src/local_meeting_ai/api/app.py src/local_meeting_ai/api/cloud_auth.py src/local_meeting_ai/api/browser_capture_routes.py src/local_meeting_ai/application/transcription_service.py src/local_meeting_ai/application/webhooks.py src/local_meeting_ai/application/browser_capture.py
+      - name: Test cloud authentication
+        env:
+          PYTHONPATH: src
+        run: pytest --confcutdir=tests/unit -q tests/unit/test_cloud_auth.py
+      - name: Test webhook API and durable delivery
+        env:
+          PYTHONPATH: src
+        run: pytest -q tests/api/test_webhooks.py
+      - name: Test transcription and live capture integration
+        env:
+          PYTHONPATH: src
+        run: pytest --confcutdir=tests/api -q tests/api/test_transcriptions.py tests/api/test_capture.py
+      - name: Lint hosted Python code
+        run: ruff check src/local_meeting_ai/api/cloud_auth.py src/local_meeting_ai/api/browser_capture_routes.py src/local_meeting_ai/application/transcription_service.py src/local_meeting_ai/application/webhooks.py src/local_meeting_ai/application/browser_capture.py tests/unit/test_cloud_auth.py
+      - name: Check browser capture JavaScript syntax
+        run: |
+          node --check src/local_meeting_ai/web/static/js/transcript.js
+          node --check src/local_meeting_ai/web/static/js/flow-studio.js

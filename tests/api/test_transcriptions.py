@@ -216,7 +216,7 @@ def test_transcription_pipeline_editor_and_versions(tmp_path: Path) -> None:
             "We approved the product launch.",
         ]
         assert all(segment["is_final"] for segment in detail.json()["segments"])
-        assert 'data-default-title="New Transcription 2"' in client.get("/").text
+        assert 'data-default-title="New Transcription 2"' in client.get(f"/meetings/{meeting['id']}/transcript").text
 
         renamed = client.patch(
             f"/api/transcriptions/{transcription_id}",
@@ -227,7 +227,7 @@ def test_transcription_pipeline_editor_and_versions(tmp_path: Path) -> None:
         assert client.get(f"/api/meetings/{meeting['id']}").json()["title"] == (
             "Product launch decision"
         )
-        assert 'data-default-title="New Transcription"' in client.get("/").text
+        assert 'data-default-title="New Transcription"' in client.get(f"/meetings/{meeting['id']}/transcript").text
 
         first_segment = detail.json()["segments"][0]
         edited = client.patch(
@@ -252,19 +252,14 @@ def test_transcription_pipeline_editor_and_versions(tmp_path: Path) -> None:
         assert versions.status_code == 200
         assert versions.json()[0]["segment_count"] == 2
 
-        workspace = client.get(f"/?meeting={meeting['id']}")
+        workspace = client.get(f"/meetings/{meeting['id']}/transcript")
         assert workspace.status_code == 200
         assert 'id="workspace-meeting-select"' not in workspace.text
         assert 'id="start-transcription"' in workspace.text
         assert 'id="transcription-dialog"' in workspace.text
-        assert "Choose your audio source" in workspace.text
+        assert "Choose your audio sources" in workspace.text
         assert "Import media" not in workspace.text
-        assert 'href="/?new=1"' in workspace.text
-        assert "New meeting" in workspace.text
-        assert 'href="/prompt"' in workspace.text
-        assert "Prompt" in workspace.text
         assert 'href="/settings"' in workspace.text
-        assert "minimal-settings-link" not in workspace.text
         assert 'id="postprocess-dialog"' in workspace.text
         assert 'data-meeting-tab="transcript"' in workspace.text
         assert 'data-meeting-tab="speakers"' in workspace.text
@@ -273,12 +268,9 @@ def test_transcription_pipeline_editor_and_versions(tmp_path: Path) -> None:
         assert 'id="speaker-rebuild-identification"' in workspace.text
         assert 'id="speaker-rebuild-dialog"' in workspace.text
         assert 'id="ai-toggle-view"' in workspace.text
-        assert "Who spoke during the meeting" not in workspace.text
-        assert "Use your meeting outside Oundnote" not in workspace.text
+        assert 'id="live-ai-assistant"' in workspace.text
         assert 'id="export-dialog"' in workspace.text
         assert 'data-audio-export="mp3"' in workspace.text
-        assert 'data-export-source="transcript" data-export-format="markdown"' in workspace.text
-        assert 'data-export-source="notes" data-export-format="pdf"' in workspace.text
         assert 'id="download-meeting-json"' in workspace.text
 
         library = client.get("/meetings")
@@ -287,12 +279,11 @@ def test_transcription_pipeline_editor_and_versions(tmp_path: Path) -> None:
         assert "Product review" not in library.text
         assert f'href="/?meeting={meeting["id"]}"' in library.text
 
-        meeting_redirect = client.get(
-            f"/meetings/{meeting['id']}",
-            follow_redirects=False,
-        )
-        assert meeting_redirect.status_code == 307
-        assert meeting_redirect.headers["location"] == f"/?meeting={meeting['id']}"
+        meeting_detail = client.get(f"/meetings/{meeting['id']}")
+        assert meeting_detail.status_code == 200
+        assert "Product launch decision" in meeting_detail.text
+        assert 'data-note-pane="summary"' in meeting_detail.text
+        assert 'id="summary-content"' in meeting_detail.text
 
 
 def test_meeting_audio_can_be_deleted_without_removing_transcript(tmp_path: Path) -> None:
@@ -377,3 +368,90 @@ def test_composite_asr_persists_integrated_speaker_turns(tmp_path: Path) -> None
             True,
             True,
         ]
+
+
+
+def test_primary_capture_page_exposes_browser_recording_controls(tmp_path: Path) -> None:
+    with _client(tmp_path) as client:
+        response = client.get("/capture")
+        assert response.status_code == 200
+        assert 'id="browser-capture-enabled"' in response.text
+        assert 'id="browser-mic-enabled"' in response.text
+        assert 'id="browser-tab-enabled"' in response.text
+        assert "flow-studio.js" in response.text
+
+
+def test_browser_capture_streams_live_segments_and_finalizes(tmp_path: Path) -> None:
+    with _client(tmp_path) as client:
+        started = client.post(
+            "/api/browser-capture/sessions",
+            json={
+                "title": "Streaming browser meeting",
+                "profile_id": "balanced",
+                "use_microphone": True,
+                "use_shared_tab": False,
+                "postprocess_options": {
+                    "diarization": False,
+                    "speaker_count": None,
+                    "summary": False,
+                    "summary_template_id": None,
+                },
+            },
+        )
+        assert started.status_code == 201
+        session = started.json()
+        pcm = b"\x00\x00" * (16000 * 3)
+        chunk_url = (
+            f"/api/browser-capture/sessions/{session['session_id']}/chunks"
+        )
+        headers = {
+            "content-type": "application/octet-stream",
+            "x-audio-sequence": "0",
+        }
+        first = client.post(chunk_url, content=pcm, headers=headers)
+        assert first.status_code == 200
+        assert first.json()["last_sequence"] == 0
+        assert first.json()["segment_count"] == 2
+
+        # A retry after a lost HTTP response is idempotent.
+        repeated = client.post(chunk_url, content=pcm, headers=headers)
+        assert repeated.status_code == 200
+        assert repeated.json()["last_sequence"] == 0
+        assert repeated.json()["segment_count"] == 2
+
+        live_detail = client.get(
+            f"/api/transcriptions/{session['transcription_id']}"
+        )
+        assert live_detail.status_code == 200
+        assert len(live_detail.json()["segments"]) == 2
+        assert all(not segment["is_final"] for segment in live_detail.json()["segments"])
+
+        live_page = client.get(
+            f"/api/meetings/{session['meeting_id']}/transcript?cursor=-1&limit=100"
+        )
+        assert live_page.status_code == 200
+        assert len(live_page.json()["segments"]) == 2
+
+        stopped = client.post(
+            f"/api/browser-capture/sessions/{session['session_id']}/stop",
+            json={
+                "final_transcription": True,
+                "postprocess_options": {
+                    "diarization": False,
+                    "speaker_count": None,
+                    "summary": False,
+                    "summary_template_id": None,
+                },
+            },
+        )
+        assert stopped.status_code == 200
+        job = stopped.json()["transcription_job"]
+        terminal = _wait_for_job(client, job["uuid"])
+        assert terminal["status"] == "completed"
+
+        final_detail = client.get(
+            f"/api/transcriptions/{session['transcription_id']}"
+        )
+        assert final_detail.status_code == 200
+        assert len(final_detail.json()["segments"]) == 2
+        assert all(segment["is_final"] for segment in final_detail.json()["segments"])

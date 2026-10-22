@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: oundnote-cloud
+    runtime: docker
+    plan: pro_plus
+    region: singapore
+    branch: cloud-hosting
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    healthCheckPath: /healthz
+    disk:
+      name: oundnote-data
+      mountPath: /var/data
+      sizeGB: 40
+    envVars:
+      - key: M2N_HOST
+        value: 0.0.0.0
+      - key: M2N_PORT
+        value: 10000
+      - key: M2N_ALLOWED_HOSTS
+        value: oundnote-cloud.onrender.com,localhost,127.0.0.1
+      - key: M2N_DATA_DIR
+        value: /var/data/oundnote
+      - key: M2N_MODELS_DIR
+        value: /var/data/models
+      - key: M2N_OPEN_BROWSER
+        value: "false"
+      - key: M2N_WEB_PASSWORD
+        sync: false
+      - key: M2N_WEB_SESSION_SECRET
+        generateValue: true
