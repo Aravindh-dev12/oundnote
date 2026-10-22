@@ -426,6 +426,12 @@ def test_browser_capture_streams_live_segments_and_finalizes(tmp_path: Path) -> 
         assert len(live_detail.json()["segments"]) == 2
         assert all(not segment["is_final"] for segment in live_detail.json()["segments"])
 
+        live_page = client.get(
+            f"/api/meetings/{session['meeting_id']}/transcript?cursor=-1&limit=100"
+        )
+        assert live_page.status_code == 200
+        assert len(live_page.json()["segments"]) == 2
+
         stopped = client.post(
             f"/api/browser-capture/sessions/{session['session_id']}/stop",
             json={
