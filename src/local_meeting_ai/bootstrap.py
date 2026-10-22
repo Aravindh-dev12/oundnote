@@ -18,6 +18,7 @@ from local_meeting_ai.application.ai_services import (
     DiarizationService,
     SummaryService,
 )
+from local_meeting_ai.application.browser_capture import BrowserCaptureService
 from local_meeting_ai.application.capture_service import LiveCaptureService
 from local_meeting_ai.application.final_pipeline import FinalProcessingPipeline
 from local_meeting_ai.application.live_assistant import LiveAssistantService
@@ -163,6 +164,7 @@ class Container:
     transcription_service: TranscriptionService
     audio_capture_backend: AudioCaptureBackend
     capture_service: LiveCaptureService
+    browser_capture_service: BrowserCaptureService
     diarization_engine: DiarizationEngine
     diarization_service: DiarizationService
     summary_engine: SummaryEngine
@@ -323,6 +325,18 @@ def build_container(
     )
     queue.register(JobType.IMPORT_MEDIA, import_service.process_import)
     queue.register(JobType.TRANSCRIBE, transcription_service.process)
+    browser_capture_service = BrowserCaptureService(
+        meetings=meetings,
+        meeting_service=meeting_service,
+        transcriptions=transcriptions,
+        transcription_service=transcription_service,
+        transcription_engine=resolved_engine,
+        storage=storage,
+        import_service=import_service,
+        preferences=preferences,
+        live_assistant=live_assistant_service,
+        webhooks=webhook_service,
+    )
     if diarization_engine is not None:
         resolved_diarization = diarization_engine
         profile_matcher = None
@@ -430,6 +444,7 @@ def build_container(
         transcription_service=transcription_service,
         audio_capture_backend=resolved_capture_backend,
         capture_service=capture_service,
+        browser_capture_service=browser_capture_service,
         diarization_engine=resolved_diarization,
         diarization_service=diarization_service,
         summary_engine=resolved_summary,
