@@ -26,7 +26,11 @@ def test_session_rejects_tampering_and_wrong_secret() -> None:
     token = sign_session(expires_at, secret)
 
     assert not valid_session(token + "x", secret, now=1_999_999_000)
-    assert not valid_session(token, "a-different-session-secret-that-is-long-enough", now=1_999_999_000)
+    assert not valid_session(
+        token,
+        "a-different-session-secret-that-is-long-enough",
+        now=1_999_999_000,
+    )
 
 
 def test_session_rejects_unreasonably_long_lifetime() -> None:
@@ -67,7 +71,11 @@ def test_cloud_password_gate_and_private_health_endpoint(monkeypatch) -> None:
         api_unauthorized = client.get("/api/private", headers={"accept": "application/json"})
         assert api_unauthorized.status_code == 401
 
-        login = client.post("/login", data={"password": "correct-horse-battery-staple"}, follow_redirects=False)
+        login = client.post(
+            "/login",
+            data={"password": "correct-horse-battery-staple"},
+            follow_redirects=False,
+        )
         assert login.status_code == 303
         assert "oundnote_session" in login.headers.get("set-cookie", "")
         assert "httponly" in login.headers.get("set-cookie", "").lower()
