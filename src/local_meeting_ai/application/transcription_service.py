@@ -102,7 +102,11 @@ class TranscriptionService:
         clean_task = self._resolve_task(task)
         prefs = self.preferences.get_all()
         asr_config = faster_whisper_config(prefs)
-        resolved_language = language.strip() if language and language.strip() else asr_config.get("language")
+        resolved_language = (
+            language.strip()
+            if language and language.strip()
+            else asr_config.get("language")
+        )
         clean_title = (title or "").strip() or self.transcriptions.next_default_title()
         transcription = self.transcriptions.create(
             meeting_id=meeting_id,
@@ -147,7 +151,11 @@ class TranscriptionService:
         self._require_download_confirmation(profile, allow_model_download)
         prefs = self.preferences.get_all()
         asr_config = faster_whisper_config(prefs)
-        clean_language = language.strip() if language and language.strip() else asr_config.get("language")
+        clean_language = (
+            language.strip()
+            if language and language.strip()
+            else asr_config.get("language")
+        )
         clean_task = self._resolve_task(task or str(asr_config.get("task") or "transcribe"))
         clean_title = (title or "").strip() or self.transcriptions.next_default_title()
         options = self._normalize_postprocess_options(postprocess_options)
@@ -271,12 +279,17 @@ class TranscriptionService:
         allow_model_download = bool(job.payload.get("allow_model_download", False))
         self._require_download_confirmation(profile, allow_model_download)
         language_value = job.payload.get("language")
-        language = str(language_value).strip() if isinstance(language_value, str) and language_value.strip() else None
+        language = (
+            str(language_value).strip()
+            if isinstance(language_value, str) and language_value.strip()
+            else None
+        )
         asr_config = faster_whisper_config(self.preferences.get_all())
         if language is None:
             configured_language = asr_config.get("language")
             language = str(configured_language).strip() if configured_language else None
-        task = self._resolve_task(str(job.payload.get("task") or asr_config.get("task") or "transcribe"))
+        task_value = job.payload.get("task") or asr_config.get("task") or "transcribe"
+        task = self._resolve_task(str(task_value))
 
         normalized_path: Path | None = None
         try:
@@ -564,7 +577,8 @@ class TranscriptionService:
     def _is_registered_path(self, path: Path) -> bool:
         target = str(path.resolve())
         for meeting in self.meetings.list(limit=1000):
-            if any(record.local_path == target for record in self.recordings.list_for_meeting(meeting.id)):
+            records = self.recordings.list_for_meeting(meeting.id)
+            if any(record.local_path == target for record in records):
                 return True
         return False
 
