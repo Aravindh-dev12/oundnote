@@ -22,8 +22,12 @@ jobs:
           node-version: "22"
       - name: Install application and test dependencies
         run: python -m pip install --upgrade ".[dev]"
+      - name: Install FFmpeg tools for integration tests
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends ffmpeg
       - name: Compile hosted Python modules
-        run: python -m compileall -q src/local_meeting_ai/api/app.py src/local_meeting_ai/api/cloud_auth.py
+        run: python -m compileall -q src/local_meeting_ai/api/app.py src/local_meeting_ai/api/cloud_auth.py src/local_meeting_ai/application/transcription_service.py src/local_meeting_ai/application/webhooks.py
       - name: Test cloud authentication
         env:
           PYTHONPATH: src
