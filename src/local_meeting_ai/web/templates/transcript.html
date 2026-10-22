@@ -359,6 +359,14 @@
         <span><strong>Media file</strong><small>MP3, WAV, M4A, MP4 and more</small></span>
         <i></i>
       </label>
+      <label class="source-mode-card">
+        <input type="checkbox" name="source-mode" value="browser">
+        <span class="source-mode-icon microphone">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </span>
+        <span><strong>Browser capture</strong><small>Microphone and shared-tab audio</small></span>
+        <i></i>
+      </label>
     </div>
     <div class="source-selection-summary" id="source-selection-summary" role="status" aria-live="polite"></div>
 
@@ -378,6 +386,26 @@
       <div class="source-guidance hidden" id="source-guidance"></div>
     </section>
 
+    <section class="source-picker-panel browser-source-panel hidden" id="browser-source-panel">
+      <div class="source-picker-heading">
+        <div>
+          <strong>Browser recording sources</strong>
+          <span>Use HTTPS; tab audio depends on browser support.</span>
+        </div>
+      </div>
+      <div class="native-source-list">
+        <label class="native-source-option">
+          <input id="browser-capture-mic" type="checkbox" checked>
+          <span><strong>Microphone</strong><small>Capture your voice from this browser.</small></span>
+        </label>
+        <label class="native-source-option">
+          <input id="browser-capture-tab" type="checkbox">
+          <span><strong>Shared tab audio</strong><small>Choose the meeting tab and enable tab audio in the browser share dialog.</small></span>
+        </label>
+      </div>
+      <p class="source-guidance">Browser audio is uploaded to this Oundnote workspace when you stop recording so it can be transcribed and summarized. Obtain all required recording consent first.</p>
+    </section>
+
     <section class="file-source-panel hidden" id="file-source-panel">
       <label class="compact-file-drop" id="capture-file-drop">
         <input id="capture-file" type="file" accept=".wav,.mp3,.m4a,.flac,.ogg,.aac,.mp4,.mkv,.webm,.mov">
@@ -395,7 +423,7 @@
 
     <div class="capture-privacy-note">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.9 8.1 7 10 4.1-1.9 7-5.4 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-5"/></svg>
-      <span><strong>Local and private.</strong> Recording never starts without this button and no audio is uploaded.</span>
+      <span><strong>Recording consent.</strong> Recording starts only after you press the button. Browser recordings are uploaded to this workspace when stopped; native capture stays on this device.</span>
     </div>
 
     <div class="modal-actions capture-modal-actions">
