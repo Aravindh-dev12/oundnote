@@ -18,8 +18,8 @@ MAX_FAILED_LOGINS = 5
 
 def sign_session(expires_at: int, secret: str) -> str:
     """Create a tamper-evident session token; it contains no meeting data."""
-    payload = f"oundnote-session:{expires_at}".encode("utf-8")
-    signature = hmac.new(secret.encode("utf-8"), payload, hashlib.sha256).hexdigest()
+    payload = f"oundnote-session:{expires_at}".encode()
+    signature = hmac.new(secret.encode(), payload, hashlib.sha256).hexdigest()
     return f"{expires_at}.{signature}"
 
 
@@ -137,7 +137,7 @@ class CloudAccessMiddleware(BaseHTTPMiddleware):
             return self._login_page("Invalid sign-in request.", status_code=400)
 
         if not isinstance(provided, str) or not hmac.compare_digest(
-            provided.encode("utf-8"), self.password.encode("utf-8")
+            provided.encode(), self.password.encode()
         ):
             recent.append(now)
             self.failed_logins[client_ip] = recent
