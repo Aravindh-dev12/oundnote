@@ -35,6 +35,7 @@ dependencies = [
     "aiofiles>=24.1.0,<25",
     "fastembed>=0.8.0,<1",
     "fastapi>=0.115.0,<1",
+    "faster-whisper>=1.1.0,<2",
     "httpx>=0.28.0,<1",
     "jinja2>=3.1.4,<4",
     "keyring>=25.6,<26",
@@ -44,6 +45,7 @@ dependencies = [
     "pydantic>=2.12.0,<3",
     "pydantic-settings>=2.7.0,<3",
     "python-multipart>=0.0.18,<1",
+    "sherpa-onnx>=1.10.28,<2",
     "uvicorn[standard]>=0.34.0,<1",
 ]
 
