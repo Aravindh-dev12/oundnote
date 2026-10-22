@@ -25,7 +25,7 @@ jobs:
       - name: Test cloud authentication
         env:
           PYTHONPATH: src
-        run: pytest -q tests/unit/test_cloud_auth.py
+        run: pytest --confcutdir=tests/unit -q tests/unit/test_cloud_auth.py
       - name: Lint cloud authentication
         run: ruff check src/local_meeting_ai/api/cloud_auth.py tests/unit/test_cloud_auth.py
       - name: Check browser capture JavaScript syntax
