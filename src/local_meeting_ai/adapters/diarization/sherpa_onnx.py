@@ -8,6 +8,11 @@ import logging
 import os
 import platform
 import shutil
+try:
+    import sherpa_onnx as _sherpa_onnx_runtime
+except ImportError:  # Optional native runtime; deployments may exclude it.
+    _sherpa_onnx_runtime = None
+
 import sys
 import tarfile
 import threading
