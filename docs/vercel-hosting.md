@@ -1,6 +1,12 @@
 # Vercel preview hosting
 
-This entrypoint lets Vercel's Python/FastAPI runtime serve Oundnote's UI and API. It is a **private preview / compatibility test**, not yet a durable multi-user service.
+This entrypoint lets Vercel's Python/FastAPI runtime serve Oundnote's UI and API. It is a **private preview / compatibility test**, not yet a durable multi-user service. The ASR, diarization, and summary model adapters are not currently deployable in the same Vercel function because of the function bundle-size limit.
+
+## Current preview status
+
+The Vercel preview is intentionally a **UI/API compatibility preview**, not yet a complete meeting-transcription deployment. The deployed checks have returned 200 for `/healthz`, `/`, `/capture`, the studio JavaScript/CSS, and basic meeting/jobs APIs. The deployed `/api/capabilities` endpoint currently reports transcription, diarization, and summaries as `requires_install`.
+
+The base FastAPI dependency set is kept small so Vercel can bundle it under the function size limit. Adding native Faster Whisper and speaker-diarization runtimes to the same function currently exceeds Vercel's 500 MB total function limit. The optional `transcription`, `diarization`, and `summaries` extras are therefore not installed in this preview. Do not use this deployment to process real recordings or rely on meeting data persisting across requests.
 
 ## Vercel configuration
 
