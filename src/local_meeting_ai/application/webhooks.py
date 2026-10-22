@@ -476,17 +476,34 @@ class WebhookService:
             transcription_id=transcription_id,
         )
 
-    def publish_pipeline_finished(self, job: Job, status: JobStatus) -> None:
-        if status not in {JobStatus.COMPLETED, JobStatus.FAILED, JobStatus.CANCELLED}:
+    def publish_pipeline_finished(
+        self,
+        *,
+        meeting_id: int | None,
+        transcription_id: int,
+        pipeline_id: str | None,
+        status: str,
+        options: dict[str, Any],
+    ) -> None:
+        if status not in {"completed", "failed", "cancelled"}:
             return
-        meeting_id = job.meeting_id
         meeting = self.meetings.get(meeting_id) if meeting_id is not None else None
         payload = {
             "meeting": {"id": meeting.id, "title": meeting.title, "status": str(meeting.status)}
             if meeting is not None else {"id": meeting_id},
-            "processing": {"job_id": job.uuid, "status": status.value},
+            "transcription": {"id": transcription_id},
+            "processing": {
+                "pipeline_id": pipeline_id,
+                "status": status,
+                "options": options,
+            },
         }
-        self.publish("meeting.processing.completed", payload, meeting_id=meeting_id)
+        self.publish(
+            "meeting.processing.completed",
+            payload,
+            meeting_id=meeting_id,
+            transcription_id=transcription_id,
+        )
 
     async def start(self) -> None:
         if self._worker_task is not None and not self._worker_task.done():
