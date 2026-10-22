@@ -32,6 +32,10 @@ jobs:
         env:
           PYTHONPATH: src
         run: pytest --confcutdir=tests/unit -q tests/unit/test_cloud_auth.py
+      - name: Test webhook API and durable delivery
+        env:
+          PYTHONPATH: src
+        run: pytest -q tests/api/test_webhooks.py
       - name: Test transcription and live capture integration
         env:
           PYTHONPATH: src
@@ -39,4 +43,6 @@ jobs:
       - name: Lint hosted Python code
         run: ruff check src/local_meeting_ai/api/cloud_auth.py src/local_meeting_ai/application/transcription_service.py tests/unit/test_cloud_auth.py
       - name: Check browser capture JavaScript syntax
-        run: node --check src/local_meeting_ai/web/static/js/transcript.js
+        run: |
+          node --check src/local_meeting_ai/web/static/js/transcript.js
+          node --check src/local_meeting_ai/web/static/js/flow-studio.js
